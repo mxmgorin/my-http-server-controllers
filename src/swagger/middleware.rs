@@ -42,6 +42,7 @@ impl HttpServerMiddleware for SwaggerMiddleware {
 
         if path == "/swagger/index.html" {
             let result = HttpOkResult::Content {
+                headers: None,
                 content_type: Some(WebContentType::Html),
                 content: super::resources::INDEX_PAGE.to_vec(),
             };
@@ -50,6 +51,7 @@ impl HttpServerMiddleware for SwaggerMiddleware {
 
         if path == "/swagger/swagger-ui.css" {
             let result = HttpOkResult::Content {
+                headers: None,
                 content_type: Some(WebContentType::Css),
                 content: super::resources::SWAGGER_UI_CSS.to_vec(),
             };
@@ -58,6 +60,7 @@ impl HttpServerMiddleware for SwaggerMiddleware {
 
         if path == "/swagger/swagger-ui-bundle.js" {
             let result = HttpOkResult::Content {
+                headers: None,
                 content_type: Some(WebContentType::JavaScript),
                 content: super::resources::SWAGGER_UI_BUNDLE_JS.to_vec(),
             };
@@ -66,6 +69,7 @@ impl HttpServerMiddleware for SwaggerMiddleware {
 
         if path == "/swagger/swagger-ui-standalone-preset.js" {
             let result = HttpOkResult::Content {
+                headers: None,
                 content_type: Some(WebContentType::JavaScript),
                 content: super::resources::SWAGGER_UI_STANDALONE_PRESET_JS.to_vec(),
             };
@@ -74,6 +78,7 @@ impl HttpServerMiddleware for SwaggerMiddleware {
 
         if path == "/swagger/favicon-32x32.png" {
             let result = HttpOkResult::Content {
+                headers: None,
                 content_type: Some(WebContentType::Png),
                 content: super::resources::FAVICON_32.to_vec(),
             };
@@ -82,6 +87,7 @@ impl HttpServerMiddleware for SwaggerMiddleware {
 
         if path == "/swagger/favicon-16x16.png" {
             let result = HttpOkResult::Content {
+                headers: None,
                 content_type: Some(WebContentType::Png),
                 content: super::resources::FAVICON_16.to_vec(),
             };
@@ -104,6 +110,7 @@ impl HttpServerMiddleware for SwaggerMiddleware {
             }
 
             *write_access = Some(HttpOkResult::Content {
+                headers: None,
                 content_type: Some(WebContentType::Json),
                 content: super::swagger_json::builder::build(
                     self.controllers.as_ref(),
@@ -123,6 +130,7 @@ impl HttpServerMiddleware for SwaggerMiddleware {
         match result {
             Ok(content) => {
                 let result = HttpOkResult::Content {
+                    headers: None,
                     content_type: None,
                     content,
                 };

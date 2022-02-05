@@ -60,6 +60,10 @@ impl HttpDataType {
         }
     }
 
+    pub fn as_array_simple_type(simple_type: HttpSimpleType) -> Self {
+        Self::ArrayOf(ArrayElement::SimpleType(simple_type))
+    }
+
     pub fn as_array_of_object(object: HttpObjectStructure) -> Self {
         Self::ArrayOf(ArrayElement::Object(object))
     }

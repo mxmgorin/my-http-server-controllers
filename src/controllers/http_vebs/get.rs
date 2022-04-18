@@ -47,9 +47,9 @@ impl GetRoute {
         }
     }
 
-    pub async fn handle_request(
-        &self,
-        ctx: &mut HttpContext,
+    pub async fn handle_request<'s, 'c>(
+        &'s self,
+        ctx: &'s mut HttpContext<'c>,
     ) -> Result<Option<HttpOkResult>, HttpFailResult> {
         let path = ctx.request.get_path_lower_case();
         if let Some(route_action) = self.no_keys.get(path) {

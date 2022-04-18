@@ -1,9 +1,9 @@
 use async_trait::async_trait;
 use std::sync::Arc;
 
-use hyper::Method;
 use my_http_server::{
-    HttpContext, HttpFailResult, HttpOkResult, HttpServerMiddleware, HttpServerRequestFlow,
+    HttpContext, HttpFailResult, HttpMethod, HttpOkResult, HttpServerMiddleware,
+    HttpServerRequestFlow,
 };
 
 use super::{
@@ -93,44 +93,44 @@ impl ControllersMiddleware {
 
 #[async_trait]
 impl HttpServerMiddleware for ControllersMiddleware {
-    async fn handle_request(
-        &self,
-        ctx: &mut HttpContext,
-        get_next: &mut HttpServerRequestFlow,
+    async fn handle_request<'s, 'c>(
+        &'s self,
+        ctx: &'c mut HttpContext<'c>,
+        get_next: &'s mut HttpServerRequestFlow,
     ) -> Result<HttpOkResult, HttpFailResult> {
-        let ref method = *ctx.request.get_method();
-        match method {
-            &Method::GET => {
-                if let Some(result) = self.get.handle_request(ctx).await? {
-                    return Ok(result);
-                } else {
-                    return get_next.next(ctx).await;
+        match ctx.request.get_method() {
+            HttpMethod::Get => {
+                {
+                    if let Some(result) = self.get.handle_request(ctx).await? {
+                        return Ok(result);
+                    }
                 }
+                return get_next.next(ctx).await;
             }
-            &Method::POST => {
+            HttpMethod::Post => {
                 if let Some(result) = self.post.handle_request(ctx).await? {
                     return Ok(result);
                 } else {
                     return get_next.next(ctx).await;
                 }
             }
-            &Method::PUT => {
+            HttpMethod::Put => {
                 if let Some(result) = self.put.handle_request(ctx).await? {
                     return Ok(result);
                 } else {
                     return get_next.next(ctx).await;
                 }
             }
-            &Method::DELETE => {
+            HttpMethod::Delete => {
                 if let Some(result) = self.delete.handle_request(ctx).await? {
                     return Ok(result);
                 } else {
                     return get_next.next(ctx).await;
                 }
             }
-            _ => {}
+            _ => {
+                return get_next.next(ctx).await;
+            }
         }
-
-        return get_next.next(ctx).await;
     }
 }

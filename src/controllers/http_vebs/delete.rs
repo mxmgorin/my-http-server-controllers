@@ -46,9 +46,9 @@ impl DeleteRoute {
         }
     }
 
-    pub async fn handle_request(
-        &self,
-        ctx: &mut HttpContext,
+    pub async fn handle_request<'s, 'c>(
+        &'s self,
+        ctx: &'s mut HttpContext<'c>,
     ) -> Result<Option<HttpOkResult>, HttpFailResult> {
         if let Some(route_action) = self.no_keys.get(ctx.request.get_path_lower_case()) {
             let result = route_action.action.handle_request(ctx).await?;

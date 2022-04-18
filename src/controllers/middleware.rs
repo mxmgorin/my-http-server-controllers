@@ -93,10 +93,10 @@ impl ControllersMiddleware {
 
 #[async_trait]
 impl HttpServerMiddleware for ControllersMiddleware {
-    async fn handle_request<'s, 'c>(
-        &'s self,
-        ctx: &'c mut HttpContext<'c>,
-        get_next: &'s mut HttpServerRequestFlow,
+    async fn handle_request(
+        &self,
+        ctx: &mut HttpContext,
+        get_next: &mut HttpServerRequestFlow,
     ) -> Result<HttpOkResult, HttpFailResult> {
         match ctx.request.get_method() {
             HttpMethod::Get => {

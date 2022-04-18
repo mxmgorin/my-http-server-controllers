@@ -1,9 +1,9 @@
 use async_trait::async_trait;
+use hyper::Method;
 use std::sync::Arc;
 
 use my_http_server::{
-    HttpContext, HttpFailResult, HttpMethod, HttpOkResult, HttpServerMiddleware,
-    HttpServerRequestFlow,
+    HttpContext, HttpFailResult, HttpOkResult, HttpServerMiddleware, HttpServerRequestFlow,
 };
 
 use super::{
@@ -99,7 +99,7 @@ impl HttpServerMiddleware for ControllersMiddleware {
         get_next: &mut HttpServerRequestFlow,
     ) -> Result<HttpOkResult, HttpFailResult> {
         match ctx.request.get_method() {
-            HttpMethod::Get => {
+            &Method::GET => {
                 {
                     if let Some(result) = self.get.handle_request(ctx).await? {
                         return Ok(result);
@@ -107,21 +107,21 @@ impl HttpServerMiddleware for ControllersMiddleware {
                 }
                 return get_next.next(ctx).await;
             }
-            HttpMethod::Post => {
+            &Method::POST => {
                 if let Some(result) = self.post.handle_request(ctx).await? {
                     return Ok(result);
                 } else {
                     return get_next.next(ctx).await;
                 }
             }
-            HttpMethod::Put => {
+            &Method::PUT => {
                 if let Some(result) = self.put.handle_request(ctx).await? {
                     return Ok(result);
                 } else {
                     return get_next.next(ctx).await;
                 }
             }
-            HttpMethod::Delete => {
+            &Method::DELETE => {
                 if let Some(result) = self.delete.handle_request(ctx).await? {
                     return Ok(result);
                 } else {

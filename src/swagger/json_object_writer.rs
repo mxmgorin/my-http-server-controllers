@@ -74,6 +74,13 @@ impl JsonObjectWriter {
         self.raw.extend(object.build());
     }
 
+    pub fn write_raw(&mut self, key: &str, raw: &str) {
+        self.add_delimetr();
+        let data_to_add = format!("\"{}\":", key);
+
+        self.raw.extend_from_slice(raw.as_bytes());
+    }
+
     pub fn build(mut self) -> Vec<u8> {
         self.raw.push(self.last_element);
         self.raw

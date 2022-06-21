@@ -5,7 +5,6 @@ use my_http_server::{
     HttpContext, HttpFailResult, HttpOkResult, HttpOutput, HttpServerMiddleware,
     HttpServerRequestFlow, WebContentType,
 };
-use tokio::sync::Mutex;
 
 use super::super::controllers::ControllersMiddleware;
 
@@ -13,7 +12,6 @@ pub struct SwaggerMiddleware {
     controllers: Arc<ControllersMiddleware>,
     title: String,
     version: String,
-    swagger_json_ok_result: Mutex<Option<HttpOkResult>>,
 }
 
 impl SwaggerMiddleware {
@@ -22,7 +20,6 @@ impl SwaggerMiddleware {
             controllers,
             title,
             version,
-            swagger_json_ok_result: Mutex::new(None),
         }
     }
 }
@@ -127,11 +124,6 @@ impl HttpServerMiddleware for SwaggerMiddleware {
         }
 
         if path == "/swagger/v1/swagger.json" {
-            let mut write_access = self.swagger_json_ok_result.lock().await;
-            if let Some(result) = &*write_access {
-                return Ok(result.clone());
-            }
-
             let output = HttpOutput::Content {
                 headers: None,
                 content_type: Some(WebContentType::Json),
@@ -144,12 +136,12 @@ impl HttpServerMiddleware for SwaggerMiddleware {
                 ),
             };
 
-            *write_access = Some(HttpOkResult {
+            let result = HttpOkResult {
                 write_telemetry: false,
                 output,
-            });
+            };
 
-            return Ok(write_access.as_ref().unwrap().clone());
+            return Ok(result);
         }
 
         let result =

@@ -14,6 +14,7 @@ pub fn build(
     version: &str,
     host: &str,
     scheme: &str,
+    enable_authorization: bool,
 ) -> Vec<u8> {
     let mut json_object_writer = JsonObjectWriter::as_object();
 
@@ -27,6 +28,10 @@ pub fn build(
     }
 
     json_object_writer.write_object("paths", super::paths::build(&path_descriptions));
+
+    if enable_authorization {
+        json_object_writer.write_object("securityDefinitions", super::security_defentions::build());
+    }
 
     json_object_writer.build()
 }

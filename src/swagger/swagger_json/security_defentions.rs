@@ -1,0 +1,14 @@
+use crate::swagger::json_object_writer::JsonObjectWriter;
+
+pub fn build() -> JsonObjectWriter {
+    let mut security_fileds = JsonObjectWriter::as_object();
+
+    security_fileds.write_string_value("type", "apiKey");
+    security_fileds.write_string_value("description", "Bearer Token");
+    security_fileds.write_string_value("name", "Authorization");
+    security_fileds.write_string_value("in", "header");
+
+    let mut result = JsonObjectWriter::as_object();
+    result.write_object("Bearer", security_fileds);
+    result
+}

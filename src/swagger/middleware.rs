@@ -12,6 +12,7 @@ pub struct SwaggerMiddleware {
     controllers: Arc<ControllersMiddleware>,
     title: String,
     version: String,
+    authorization_enabled: bool,
 }
 
 impl SwaggerMiddleware {
@@ -20,7 +21,12 @@ impl SwaggerMiddleware {
             controllers,
             title,
             version,
+            authorization_enabled: false,
         }
+    }
+
+    pub fn enable_athorization(&mut self) {
+        self.authorization_enabled = true;
     }
 }
 
@@ -133,6 +139,7 @@ impl HttpServerMiddleware for SwaggerMiddleware {
                     self.version.as_ref(),
                     host,
                     scheme.as_ref(),
+                    self.authorization_enabled,
                 ),
             };
 

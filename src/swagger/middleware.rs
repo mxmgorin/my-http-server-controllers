@@ -122,7 +122,10 @@ impl HttpServerMiddleware for SwaggerMiddleware {
         if path == "/swagger" {
             let new_url = format!("{}://{}/swagger/index.html", scheme, host);
 
-            let output = HttpOutput::Redirect { url: new_url };
+            let output = HttpOutput::Redirect {
+                url: new_url,
+                permanent: false,
+            };
             return Ok(HttpOkResult {
                 write_telemetry: false,
                 output,
@@ -168,7 +171,10 @@ impl HttpServerMiddleware for SwaggerMiddleware {
             }
             _ => {
                 let new_url = format!("{}://{}/swagger/index.html", scheme, host);
-                let output = HttpOutput::Redirect { url: new_url };
+                let output = HttpOutput::Redirect {
+                    url: new_url,
+                    permanent: false,
+                };
                 return Ok(HttpOkResult {
                     write_telemetry: false,
                     output,

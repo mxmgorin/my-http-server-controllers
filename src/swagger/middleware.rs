@@ -154,32 +154,6 @@ impl HttpServerMiddleware for SwaggerMiddleware {
             return Ok(result);
         }
 
-        let result =
-            my_http_server::middlewares::files::get(format!("./wwwroot{}", path).as_str()).await;
-
-        match result {
-            Ok(content) => {
-                let output = HttpOutput::Content {
-                    headers: None,
-                    content_type: None,
-                    content,
-                };
-                return Ok(HttpOkResult {
-                    write_telemetry: false,
-                    output,
-                });
-            }
-            _ => {
-                let new_url = format!("{}://{}/swagger/index.html", scheme, host);
-                let output = HttpOutput::Redirect {
-                    url: new_url,
-                    permanent: false,
-                };
-                return Ok(HttpOkResult {
-                    write_telemetry: false,
-                    output,
-                });
-            }
-        }
+        get_next.next(ctx).await
     }
 }

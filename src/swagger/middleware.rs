@@ -37,89 +37,19 @@ impl HttpServerMiddleware for SwaggerMiddleware {
         ctx: &mut HttpContext,
         get_next: &mut HttpServerRequestFlow,
     ) -> Result<HttpOkResult, HttpFailResult> {
-        let path = ctx.request.get_path_lower_case();
-
-        if !path.starts_with("/swagger") {
+        if ctx.request.http_path.is_root() {
             return get_next.next(ctx).await;
         }
 
-        if path == "/swagger/index.html" {
-            let output = HttpOutput::Content {
-                headers: None,
-                content_type: Some(WebContentType::Html),
-                content: super::resources::INDEX_PAGE.to_vec(),
-            };
-            return Ok(HttpOkResult {
-                write_telemetry: false,
-                output,
-            });
+        if let Some(value) = ctx.request.http_path.get_segment_value(0) {
+            if value != "swagger" {
+                return get_next.next(ctx).await;
+            }
         }
 
-        if path == "/swagger/swagger-ui.css" {
-            let output = HttpOutput::Content {
-                headers: None,
-                content_type: Some(WebContentType::Css),
-                content: super::resources::SWAGGER_UI_CSS.to_vec(),
-            };
-            return Ok(HttpOkResult {
-                write_telemetry: false,
-                output,
-            });
-        }
-
-        if path == "/swagger/swagger-ui-bundle.js" {
-            let output = HttpOutput::Content {
-                headers: None,
-                content_type: Some(WebContentType::JavaScript),
-                content: super::resources::SWAGGER_UI_BUNDLE_JS.to_vec(),
-            };
-            return Ok(HttpOkResult {
-                write_telemetry: false,
-                output,
-            });
-        }
-
-        if path == "/swagger/swagger-ui-standalone-preset.js" {
-            let output = HttpOutput::Content {
-                headers: None,
-                content_type: Some(WebContentType::JavaScript),
-                content: super::resources::SWAGGER_UI_STANDALONE_PRESET_JS.to_vec(),
-            };
-            return Ok(HttpOkResult {
-                write_telemetry: false,
-                output,
-            });
-        }
-
-        if path == "/swagger/favicon-32x32.png" {
-            let output = HttpOutput::Content {
-                headers: None,
-                content_type: Some(WebContentType::Png),
-                content: super::resources::FAVICON_32.to_vec(),
-            };
-            return Ok(HttpOkResult {
-                write_telemetry: false,
-                output,
-            });
-        }
-
-        if path == "/swagger/favicon-16x16.png" {
-            let output = HttpOutput::Content {
-                headers: None,
-                content_type: Some(WebContentType::Png),
-                content: super::resources::FAVICON_16.to_vec(),
-            };
-            return Ok(HttpOkResult {
-                write_telemetry: false,
-                output,
-            });
-        }
-
-        let scheme = ctx.request.get_scheme();
-
-        let host = ctx.request.get_host();
-
-        if path == "/swagger" {
+        if ctx.request.http_path.segments_amount() == 1 {
+            let scheme = ctx.request.get_scheme();
+            let host = ctx.request.get_host();
             let new_url = format!("{}://{}/swagger/index.html", scheme, host);
 
             let output = HttpOutput::Redirect {
@@ -132,7 +62,110 @@ impl HttpServerMiddleware for SwaggerMiddleware {
             });
         }
 
-        if path == "/swagger/v1/swagger.json" {
+        if ctx
+            .request
+            .http_path
+            .has_value_at_index_case_insensitive(1, "index.html")
+        {
+            let output = HttpOutput::Content {
+                headers: None,
+                content_type: Some(WebContentType::Html),
+                content: super::resources::INDEX_PAGE.to_vec(),
+            };
+            return Ok(HttpOkResult {
+                write_telemetry: false,
+                output,
+            });
+        }
+
+        if ctx
+            .request
+            .http_path
+            .has_value_at_index_case_insensitive(1, "swagger-ui.css")
+        {
+            let output = HttpOutput::Content {
+                headers: None,
+                content_type: Some(WebContentType::Css),
+                content: super::resources::SWAGGER_UI_CSS.to_vec(),
+            };
+            return Ok(HttpOkResult {
+                write_telemetry: false,
+                output,
+            });
+        }
+
+        if ctx
+            .request
+            .http_path
+            .has_value_at_index_case_insensitive(1, "swagger-ui-bundle.js")
+        {
+            let output = HttpOutput::Content {
+                headers: None,
+                content_type: Some(WebContentType::JavaScript),
+                content: super::resources::SWAGGER_UI_BUNDLE_JS.to_vec(),
+            };
+            return Ok(HttpOkResult {
+                write_telemetry: false,
+                output,
+            });
+        }
+
+        if ctx
+            .request
+            .http_path
+            .has_value_at_index_case_insensitive(1, "swagger-ui-standalone-preset.js")
+        {
+            let output = HttpOutput::Content {
+                headers: None,
+                content_type: Some(WebContentType::JavaScript),
+                content: super::resources::SWAGGER_UI_STANDALONE_PRESET_JS.to_vec(),
+            };
+            return Ok(HttpOkResult {
+                write_telemetry: false,
+                output,
+            });
+        }
+
+        if ctx
+            .request
+            .http_path
+            .has_value_at_index_case_insensitive(1, "favicon-32x32.png")
+        {
+            let output = HttpOutput::Content {
+                headers: None,
+                content_type: Some(WebContentType::Png),
+                content: super::resources::FAVICON_32.to_vec(),
+            };
+            return Ok(HttpOkResult {
+                write_telemetry: false,
+                output,
+            });
+        }
+
+        if ctx
+            .request
+            .http_path
+            .has_value_at_index_case_insensitive(1, "favicon-16x16.png")
+        {
+            let output = HttpOutput::Content {
+                headers: None,
+                content_type: Some(WebContentType::Png),
+                content: super::resources::FAVICON_16.to_vec(),
+            };
+            return Ok(HttpOkResult {
+                write_telemetry: false,
+                output,
+            });
+        }
+
+        if ctx
+            .request
+            .http_path
+            .has_values_at_index_case_insensitive(1, &["v1", "swagger.json"])
+        {
+            let scheme = ctx.request.get_scheme();
+            let host = ctx.request.get_host();
+
             let output = HttpOutput::Content {
                 headers: None,
                 content_type: Some(WebContentType::Json),

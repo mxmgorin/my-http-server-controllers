@@ -1,10 +1,7 @@
 use std::collections::BTreeMap;
 
 use crate::{
-    controllers::{
-        documentation::{HttpActionDescription, HttpActionDescriptionProvider},
-        ControllersMiddleware,
-    },
+    controllers::{documentation::HttpActionDescription, ControllersMiddleware},
     swagger::json_object_writer::JsonObjectWriter,
 };
 
@@ -43,52 +40,52 @@ fn build_paths_descriptions(
     let mut result = BTreeMap::new();
 
     for route_action in controllers.list_of_get_route_actions() {
-        if let Some(description) = route_action.get_description() {
-            if !result.contains_key(route_action.route.path.as_str()) {
-                result.insert(route_action.route.path.to_string(), BTreeMap::new());
+        if let Some(description) = route_action.description.get_description() {
+            if !result.contains_key(route_action.http_route.route.as_str()) {
+                result.insert(route_action.http_route.route.to_string(), BTreeMap::new());
             }
 
             result
-                .get_mut(route_action.route.path.as_str())
+                .get_mut(route_action.http_route.route.as_str())
                 .unwrap()
                 .insert("get".to_string(), description);
         }
     }
 
     for route_action in controllers.list_of_post_route_actions() {
-        if let Some(description) = route_action.get_description() {
-            if !result.contains_key(route_action.route.path.as_str()) {
-                result.insert(route_action.route.path.to_string(), BTreeMap::new());
+        if let Some(description) = route_action.description.get_description() {
+            if !result.contains_key(route_action.http_route.route.as_str()) {
+                result.insert(route_action.http_route.route.to_string(), BTreeMap::new());
             }
 
             result
-                .get_mut(route_action.route.path.as_str())
+                .get_mut(route_action.http_route.route.as_str())
                 .unwrap()
                 .insert("post".to_string(), description);
         }
     }
 
     for route_action in controllers.list_of_put_route_actions() {
-        if let Some(description) = route_action.get_description() {
-            if !result.contains_key(route_action.route.path.as_str()) {
-                result.insert(route_action.route.path.to_string(), BTreeMap::new());
+        if let Some(description) = route_action.description.get_description() {
+            if !result.contains_key(route_action.http_route.route.as_str()) {
+                result.insert(route_action.http_route.route.to_string(), BTreeMap::new());
             }
 
             result
-                .get_mut(route_action.route.path.as_str())
+                .get_mut(route_action.http_route.route.as_str())
                 .unwrap()
                 .insert("put".to_string(), description);
         }
     }
 
     for route_action in controllers.list_of_delete_route_actions() {
-        if let Some(description) = route_action.get_description() {
-            if !result.contains_key(route_action.route.path.as_str()) {
-                result.insert(route_action.route.path.to_string(), BTreeMap::new());
+        if let Some(description) = route_action.description.get_description() {
+            if !result.contains_key(route_action.http_route.route.as_str()) {
+                result.insert(route_action.http_route.route.to_string(), BTreeMap::new());
             }
 
             result
-                .get_mut(route_action.route.path.as_str())
+                .get_mut(route_action.http_route.route.as_str())
                 .unwrap()
                 .insert("delete".to_string(), description);
         }

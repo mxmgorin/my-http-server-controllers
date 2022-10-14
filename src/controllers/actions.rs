@@ -6,22 +6,18 @@ use super::{documentation::HttpActionDescription, HttpRoute};
 
 pub trait GetAction {
     fn get_route(&self) -> &str;
-    fn get_description(&self) -> Option<HttpActionDescription>;
 }
 
 pub trait PostAction {
     fn get_route(&self) -> &str;
-    fn get_description(&self) -> Option<HttpActionDescription>;
 }
 
 pub trait PutAction {
     fn get_route(&self) -> &str;
-    fn get_description(&self) -> Option<HttpActionDescription>;
 }
 
 pub trait DeleteAction {
     fn get_route(&self) -> &str;
-    fn get_description(&self) -> Option<HttpActionDescription>;
 }
 
 #[async_trait::async_trait]

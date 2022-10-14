@@ -1,4 +1,4 @@
-use my_http_server::HttpPath;
+use my_http_server::{HttpFailResult, HttpPath};
 
 use super::{HttpRouteSegment, RouteValue};
 
@@ -79,9 +79,19 @@ impl HttpRoute {
         true
     }
 
-    pub fn get_value<'s>(&'s self, path: &'s HttpPath, key: &str) -> Option<RouteValue<'s>> {
+    pub fn get_value<'s>(
+        &'s self,
+        path: &'s HttpPath,
+        key: &str,
+    ) -> Result<RouteValue<'s>, HttpFailResult> {
         if self.keys_amount == 0 {
-            return None;
+            return Err(HttpFailResult {
+                content_type: my_http_server::WebContentType::Text,
+                status_code: 400,
+                content: format!("Route {} does not contain any keys", self.route).into_bytes(),
+                write_telemetry: false,
+                write_to_log: true,
+            });
         }
 
         let mut index = 0;
@@ -89,8 +99,12 @@ impl HttpRoute {
             match segment {
                 HttpRouteSegment::Key(segment_key) => {
                     if segment_key == key {
-                        let value = path.get_segment_value(index)?;
-                        return Some(RouteValue::new(value));
+                        match path.get_segment_value(index) {
+                            Some(value) => return Ok(RouteValue::new(value)),
+                            None => {
+                                panic!("Should not be here");
+                            }
+                        }
                     }
                 }
                 HttpRouteSegment::Segment(_) => {}
@@ -99,7 +113,13 @@ impl HttpRoute {
             index += 1;
         }
 
-        None
+        return Err(HttpFailResult {
+            content_type: my_http_server::WebContentType::Text,
+            status_code: 400,
+            content: format!("Route {} does not have key {}", self.route, key).into_bytes(),
+            write_telemetry: false,
+            write_to_log: true,
+        });
     }
 }
 

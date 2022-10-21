@@ -85,7 +85,7 @@ fn get_param_type(data_type: &HttpDataType) -> Option<&str> {
         HttpDataType::SimpleType(param_type) => Some(param_type.as_swagger_type()),
         HttpDataType::ObjectId { struct_id: _ } => None,
         HttpDataType::None => None,
-        HttpDataType::ArrayOf(_) => None,
+        HttpDataType::ArrayOf(_) => Some("array"),
         HttpDataType::Object(_) => None,
         HttpDataType::Enum(data) => match &data.enum_type {
             EnumType::Integer => Some("integer"),

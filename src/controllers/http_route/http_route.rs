@@ -154,7 +154,7 @@ mod tests {
     #[test]
     fn general_test() {
         let route = HttpRoute::new("/test/{key}/second");
-        let path = HttpPath::new("/test/1/second");
+        let path = HttpPath::from_str("/test/1/second");
         assert_eq!(route.is_my_path(&path), true);
 
         assert_eq!(route.get_value(&path, "key").unwrap().as_str(), "1");
@@ -163,27 +163,27 @@ mod tests {
     #[test]
     fn test_root() {
         let route = HttpRoute::new("/");
-        let path = HttpPath::new("/");
+        let path = HttpPath::from_str("/");
         assert_eq!(route.is_my_path(&path), true);
     }
 
     #[test]
     fn test_not_my_route() {
         let route = HttpRoute::new("/test/{key}/second");
-        let path = HttpPath::new("/test/1/");
+        let path = HttpPath::from_str("/test/1/");
         assert_eq!(route.is_my_path(&path), false);
 
-        let path = HttpPath::new("/test/1");
+        let path = HttpPath::from_str("/test/1");
         assert_eq!(route.is_my_path(&path), false);
     }
 
     #[test]
     fn test_not_my_route_2() {
         let route = HttpRoute::new("/test/{key}/second");
-        let path = HttpPath::new("/test/1/second/4/");
+        let path = HttpPath::from_str("/test/1/second/4/");
         assert_eq!(route.is_my_path(&path), false);
 
-        let path = HttpPath::new("/test/1/second/4");
+        let path = HttpPath::from_str("/test/1/second/4");
         assert_eq!(route.is_my_path(&path), false);
     }
 }

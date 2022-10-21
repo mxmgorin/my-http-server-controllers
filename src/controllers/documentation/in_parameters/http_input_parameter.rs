@@ -15,6 +15,15 @@ pub enum HttpParameterInputSource {
 }
 
 impl HttpParameterInputSource {
+    pub fn is_query(&self) -> bool {
+        match self {
+            HttpParameterInputSource::Query => true,
+            _ => false,
+        }
+    }
+}
+
+impl HttpParameterInputSource {
     pub fn as_str(&self) -> &str {
         match self {
             HttpParameterInputSource::Path => "path",

@@ -35,7 +35,17 @@ fn build_parameter(param: &HttpInputParameter) -> JsonObjectWriter {
     }
 
     result.write_string_value("in", param.source.as_str());
-    result.write_string_value("name", param.field.name.as_str());
+
+    if param.source.is_query() {
+        if param.field.data_type.is_array() {
+            result.write_string_value("name", format!("{}[]", param.field.name.as_str()).as_str());
+        } else {
+            result.write_string_value("name", param.field.name.as_str());
+        }
+    } else {
+        result.write_string_value("name", param.field.name.as_str());
+    }
+
     result.write_bool_value("x-nullable", !param.field.required);
 
     if param.field.required && param.field.default_value.is_none() {

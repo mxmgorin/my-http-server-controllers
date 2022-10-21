@@ -10,6 +10,12 @@ pub enum HttpDataType {
 }
 
 impl HttpDataType {
+    pub fn is_array(&self) -> bool {
+        match self {
+            HttpDataType::ArrayOf(_) => true,
+            _ => false,
+        }
+    }
     pub fn as_string() -> Self {
         Self::SimpleType(HttpSimpleType::String)
     }

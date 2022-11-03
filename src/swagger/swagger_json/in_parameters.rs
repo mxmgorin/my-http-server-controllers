@@ -22,6 +22,8 @@ pub fn build(action_description: &HttpActionDescription) -> JsonObjectWriter {
 fn build_parameter(param: &HttpInputParameter) -> JsonObjectWriter {
     let mut result = JsonObjectWriter::as_object();
 
+    result.write_string_value("description", param.description.as_str());
+
     if let Some(enum_object) = build_enum_field(&param.field.data_type) {
         result.write_object("enum", enum_object);
 

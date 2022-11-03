@@ -11,6 +11,7 @@ pub fn build(action_description: &HttpActionDescription) -> JsonObjectWriter {
     let mut result = JsonObjectWriter::as_object();
 
     result.write_object("tags", compile_tags(action_description));
+    result.write_string_value("summary", action_description.description);
     result.write_string_value("description", action_description.description);
     result.write_object("produces", compile_produces(action_description));
     result.write_object("responses", compile_responses(&action_description.results));

@@ -12,7 +12,7 @@ pub fn build(action_description: &HttpActionDescription) -> JsonObjectWriter {
 
     result.write_object("tags", compile_tags(action_description));
 
-    result.write_string("summary", action_description.summary);
+    result.write_string_value("summary", action_description.summary);
 
     result.write_string_value("description", action_description.description);
     result.write_object("produces", compile_produces(action_description));

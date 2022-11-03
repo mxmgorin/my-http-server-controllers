@@ -27,7 +27,7 @@ pub fn build(
     json_object_writer.write_object("paths", super::paths::build(&path_descriptions));
 
     if enable_authorization {
-        json_object_writer.write_raw("security", "[{Bearer: []}]");
+        json_object_writer.write_raw("security", "[{\"Bearer\": []}]");
         json_object_writer.write_object("securityDefinitions", super::security_defentions::build());
     }
 

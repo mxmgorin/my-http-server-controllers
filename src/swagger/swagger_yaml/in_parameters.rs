@@ -8,19 +8,16 @@ use super::yaml_writer::YamlWriter;
 
 pub fn build(yaml_writer: &mut YamlWriter, action_description: &HttpActionDescription) {
     yaml_writer.write_empty("parameters");
-    yaml_writer.increase_level();
 
     if let Some(in_params) = &action_description.input_params {
         for param in in_params {
+            yaml_writer.write("- in", param.source.as_str());
             build_parameter(yaml_writer, param);
         }
     }
-
-    yaml_writer.decrease_level();
 }
 
-fn build_parameter(yaml_writer: &mut YamlWriter, param: &HttpInputParameter) {
-    yaml_writer.write("- in", param.source.as_str());
+fn Fbuild_parameter(yaml_writer: &mut YamlWriter, param: &HttpInputParameter) {
     yaml_writer.increase_level();
     yaml_writer.write("description", param.description.as_str());
 

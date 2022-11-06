@@ -11,19 +11,21 @@ use crate::controllers::{
 use super::yaml_writer::YamlWriter;
 
 pub fn build_and_write(
-    result: &mut YamlWriter,
+    yaml_writer: &mut YamlWriter,
     controllers: &ControllersMiddleware,
     path_descriptions: &BTreeMap<String, BTreeMap<String, HttpActionDescription>>,
 ) {
-    result.reset_level();
+    yaml_writer.reset_level();
     let mut definitions = HashMap::new();
 
-    result.write_empty("definitions");
-    result.increase_level();
+    yaml_writer.write_empty("definitions");
+    yaml_writer.increase_level();
 
     for http_object in &controllers.http_objects {
         if !definitions.contains_key(http_object.struct_id.as_str()) {
-            super::http_object_type::build(result, http_object);
+            super::http_object_type::build(yaml_writer, http_object);
+
+            println!("Populating from http_object: {}", http_object.struct_id);
 
             definitions.insert(http_object.struct_id.to_string(), ());
         }
@@ -31,27 +33,19 @@ pub fn build_and_write(
 
     for (_, action_descriptions) in path_descriptions {
         for (_, action_description) in action_descriptions {
-            populate_from_actions(result, &mut definitions, action_description);
+            for result in &action_description.results {
+                populate_object_type(yaml_writer, &mut definitions, &result.data_type);
+            }
+
+            if let Some(input_parameters) = &action_description.input_params {
+                for in_param in input_parameters {
+                    populate_object_type(yaml_writer, &mut definitions, &in_param.field.data_type);
+                }
+            }
         }
     }
 
-    result.decrease_level();
-}
-
-fn populate_from_actions(
-    yaml_writer: &mut YamlWriter,
-    definitions: &mut HashMap<String, ()>,
-    action_description: &HttpActionDescription,
-) {
-    for result in &action_description.results {
-        populate_object_type(yaml_writer, definitions, &result.data_type);
-    }
-
-    if let Some(input_parameters) = &action_description.input_params {
-        for in_param in input_parameters {
-            populate_object_type(yaml_writer, definitions, &in_param.field.data_type);
-        }
-    }
+    yaml_writer.decrease_level();
 }
 
 fn populate_object_type(

@@ -19,6 +19,7 @@ pub fn build(yaml_writer: &mut YamlWriter, action_description: &HttpActionDescri
 
 fn build_parameter(yaml_writer: &mut YamlWriter, param: &HttpInputParameter) {
     yaml_writer.increase_level();
+    yaml_writer.increase_level();
     yaml_writer.write("description", param.description.as_str());
 
     if let HttpDataType::Enum(enum_struct) = &param.field.data_type {
@@ -58,6 +59,7 @@ fn build_parameter(yaml_writer: &mut YamlWriter, param: &HttpInputParameter) {
         yaml_writer.write("description", line_to_add.as_str());
     }
 
+    yaml_writer.decrease_level();
     yaml_writer.decrease_level();
 }
 

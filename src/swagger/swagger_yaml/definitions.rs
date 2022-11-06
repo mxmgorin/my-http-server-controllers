@@ -15,11 +15,7 @@ pub fn build_and_write(
     controllers: &ControllersMiddleware,
     path_descriptions: &BTreeMap<String, BTreeMap<String, HttpActionDescription>>,
 ) {
-    yaml_writer.reset_level();
     let mut definitions = HashMap::new();
-
-    yaml_writer.write_empty("components");
-    yaml_writer.increase_level();
 
     yaml_writer.write_empty("schemas");
     yaml_writer.increase_level();

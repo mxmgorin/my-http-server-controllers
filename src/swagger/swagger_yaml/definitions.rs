@@ -18,7 +18,10 @@ pub fn build_and_write(
     yaml_writer.reset_level();
     let mut definitions = HashMap::new();
 
-    yaml_writer.write_empty("definitions");
+    yaml_writer.write_empty("components:");
+    yaml_writer.increase_level();
+
+    yaml_writer.write_empty("schemas:");
     yaml_writer.increase_level();
 
     for http_object in &controllers.http_objects {
@@ -45,6 +48,7 @@ pub fn build_and_write(
         }
     }
 
+    yaml_writer.decrease_level();
     yaml_writer.decrease_level();
 }
 

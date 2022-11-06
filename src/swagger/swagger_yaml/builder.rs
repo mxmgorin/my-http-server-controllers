@@ -26,19 +26,9 @@ pub fn build(
     yaml_writer.increase_level();
     yaml_writer.write("- url", format!("{}://{}", scheme, host).as_str());
 
-    /*
-       let mut json_object_writer = JsonObjectWriter::as_object();
-
-       super::title::write(&mut json_object_writer, host, title, version);
-       json_object_writer.write_object("scheme", super::schemes::build(scheme));
-    */
-
     let path_descriptions = build_paths_descriptions(controllers);
 
     super::definitions::build_and_write(&mut yaml_writer, controllers, &path_descriptions);
-    //    {
-    //        json_object_writer.write_object("definitions", definitions);
-    //    }
 
     super::paths::build(&mut yaml_writer, controllers, &path_descriptions);
 

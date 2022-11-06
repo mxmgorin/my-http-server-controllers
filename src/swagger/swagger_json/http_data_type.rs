@@ -33,6 +33,6 @@ fn build_simple_type(param_type: &HttpSimpleType) -> JsonObjectWriter {
 
 fn build_object_type(struct_id: &str) -> JsonObjectWriter {
     let mut result = JsonObjectWriter::as_object();
-    result.write_string_value("$ref", format!("#/definitions/{}", struct_id).as_str());
+    result.write_string_value("$ref", format!("\"#/definitions/{}\"", struct_id).as_str());
     result
 }

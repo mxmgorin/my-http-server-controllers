@@ -27,8 +27,7 @@ fn build_parameter(yaml_writer: &mut YamlWriter, param: &HttpInputParameter) {
             "enum",
             enum_struct.cases.iter().map(|case| case.value.as_str()),
         );
-
-        super::http_data_type::build(yaml_writer, "x-schema", &param.field.data_type);
+        super::http_data_type::build(yaml_writer, "schema", &param.field.data_type);
     } else {
         super::http_data_type::build(yaml_writer, "schema", &param.field.data_type);
     }

@@ -22,7 +22,6 @@ pub fn build_and_write(
         if !definitions.contains_key(http_object.struct_id.as_str()) {
             if result.level == 0 {
                 result.write_empty("definitions");
-                result.increase_level();
             }
 
             super::http_object_type::build(result, http_object);
@@ -35,7 +34,6 @@ pub fn build_and_write(
         for (_, action_description) in action_descriptions {
             if result.level == 0 {
                 result.write_empty("definitions");
-                result.increase_level();
             }
             populate_from_actions(result, &mut definitions, action_description);
         }

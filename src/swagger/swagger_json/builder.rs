@@ -29,6 +29,7 @@ pub fn build(
         super::paths::build(&path_descriptions, enable_authorization),
     );
 
+    //todo!("Uncomment")
     /*
        if enable_authorization {
            json_object_writer.write_raw("security", "[{\"Bearer\": []}]");

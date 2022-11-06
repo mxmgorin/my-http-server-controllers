@@ -19,8 +19,6 @@ pub fn build(result: &mut YamlWriter, http_object: &HttpObjectStructure) {
     write_properties(result, http_object);
 
     result.decrease_level();
-    //todo!("Delete this line");
-    //result.write_object("properties", compile_properties(http_object));
 }
 
 fn write_properties(yaml_writer: &mut YamlWriter, src: &HttpObjectStructure) {

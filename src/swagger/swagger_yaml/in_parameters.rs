@@ -7,9 +7,8 @@ use crate::controllers::documentation::{
 use super::yaml_writer::YamlWriter;
 
 pub fn build(yaml_writer: &mut YamlWriter, action_description: &HttpActionDescription) {
-    yaml_writer.write_empty("parameters");
-
     if let Some(in_params) = &action_description.input_params {
+        yaml_writer.write_empty("parameters");
         for param in in_params {
             yaml_writer.write("- in", param.source.as_str());
             build_parameter(yaml_writer, param);

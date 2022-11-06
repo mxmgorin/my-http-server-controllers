@@ -99,7 +99,7 @@ impl YamlWriter {
     }
 
     pub fn reset_level(&mut self) {
-        self.level -= 0;
+        self.level = 0;
     }
 
     pub fn build(self) -> Vec<u8> {

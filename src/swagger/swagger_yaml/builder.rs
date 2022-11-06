@@ -15,7 +15,7 @@ pub fn build(
 
     yaml_writer.write("openapi", "3.0.0");
 
-    yaml_writer.write("info", "3.0.0");
+    yaml_writer.write_empty("info");
 
     yaml_writer.increase_level();
     yaml_writer.write("title", title);

@@ -17,7 +17,7 @@ pub fn build(yaml_writer: &mut YamlWriter, action_description: &HttpActionDescri
     }
 }
 
-fn Fbuild_parameter(yaml_writer: &mut YamlWriter, param: &HttpInputParameter) {
+fn build_parameter(yaml_writer: &mut YamlWriter, param: &HttpInputParameter) {
     yaml_writer.increase_level();
     yaml_writer.write("description", param.description.as_str());
 

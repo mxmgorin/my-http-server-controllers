@@ -29,13 +29,11 @@ pub fn build(
         super::paths::build(&path_descriptions, enable_authorization),
     );
 
-    //todo!("Uncomment")
-    /*
-       if enable_authorization {
-           json_object_writer.write_raw("security", "[{\"Bearer\": []}]");
-           json_object_writer.write_object("securityDefinitions", super::security_defentions::build());
-       }
-    */
+    if enable_authorization {
+        //json_object_writer.write_raw("security", "[{\"Bearer\": []}]");
+        json_object_writer.write_object("securityDefinitions", super::security_defentions::build());
+    }
+
     json_object_writer.build()
 }
 

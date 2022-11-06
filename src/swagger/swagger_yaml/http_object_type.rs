@@ -26,7 +26,7 @@ pub fn build(result: &mut YamlWriter, http_object: &HttpObjectStructure) {
 }
 
 fn write_properties(yaml_writer: &mut YamlWriter, src: &HttpObjectStructure) {
-    yaml_writer.write("properties", "object");
+    yaml_writer.write_empty("properties");
 
     yaml_writer.increase_level();
 

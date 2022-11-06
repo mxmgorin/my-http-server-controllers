@@ -35,7 +35,7 @@ fn build_object_type(struct_id: &str) -> JsonObjectWriter {
     let mut result = JsonObjectWriter::as_object();
     result.write_string_value(
         "$ref",
-        format!("\"#/components/schemas/{}\"", struct_id).as_str(),
+        format!("'#/components/schemas/{}'", struct_id).as_str(),
     );
     result
 }

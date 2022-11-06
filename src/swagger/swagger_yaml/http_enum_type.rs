@@ -17,7 +17,10 @@ pub fn build(yaml_writer: &mut YamlWriter, enum_structure: &HttpEnumStructure) {
 
     yaml_writer.write_array_with_strings(
         "enum",
-        enum_structure.cases.iter().map(|case| case.id.to_string()),
+        enum_structure
+            .cases
+            .iter()
+            .map(|case| case.value.to_string()),
     );
 
     yaml_writer.decrease_level();

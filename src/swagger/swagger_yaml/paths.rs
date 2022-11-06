@@ -12,6 +12,7 @@ pub fn build(
     controllers: &ControllersMiddleware,
     actions: &BTreeMap<String, BTreeMap<String, HttpActionDescription>>,
 ) {
+    yaml_writer.reset_level();
     yaml_writer.write_empty("paths");
 
     yaml_writer.increase_level();

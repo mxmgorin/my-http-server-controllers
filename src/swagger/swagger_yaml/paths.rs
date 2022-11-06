@@ -1,9 +1,6 @@
 use std::collections::BTreeMap;
 
-use crate::{
-    controllers::{documentation::HttpActionDescription, ControllersMiddleware},
-    swagger::json_object_writer::JsonObjectWriter,
-};
+use crate::controllers::{documentation::HttpActionDescription, ControllersMiddleware};
 
 use super::yaml_writer::YamlWriter;
 

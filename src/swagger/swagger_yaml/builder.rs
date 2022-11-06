@@ -28,21 +28,16 @@ pub fn build(
 
     let path_descriptions = build_paths_descriptions(controllers);
 
+    yaml_writer.reset_level();
+    yaml_writer.write_empty("components");
+    yaml_writer.increase_level();
     super::definitions::build_and_write(&mut yaml_writer, controllers, &path_descriptions);
 
-    super::paths::build(&mut yaml_writer, controllers, &path_descriptions);
-
     if let Some(authorization) = controllers.authorization.as_ref() {
-
-        /*
-        todo!("Uncomment");
-        if authorization.is_global_authorization() {
-            json_object_writer.write_raw("security", "[{\"Bearer\": []}]");
-        }
-
-        json_object_writer.write_object("securityDefinitions", super::security_defentions::build());
-         */
+        super::security_defentions::build(&mut yaml_writer, authorization);
     }
+
+    super::paths::build(&mut yaml_writer, controllers, &path_descriptions);
 
     yaml_writer.build()
 }

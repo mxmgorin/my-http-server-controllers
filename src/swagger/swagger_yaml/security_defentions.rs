@@ -1,29 +1,38 @@
-use crate::{controllers::ControllersAuthorization, swagger::json_object_writer::JsonObjectWriter};
+use crate::controllers::ControllersAuthorization;
 
-pub fn build(auth: &ControllersAuthorization) -> JsonObjectWriter {
-    let mut security_fileds = JsonObjectWriter::as_object();
+use super::yaml_writer::YamlWriter;
+
+pub fn build(yaml_writer: &mut YamlWriter, auth: &ControllersAuthorization) {
+    yaml_writer.write_empty("securitySchemes");
 
     match auth {
-        ControllersAuthorization::BasicAuthentication { global } => {
-            security_fileds.write_string_value("type", "apiKey");
-            security_fileds.write_string_value("description", "Bearer Token");
-            security_fileds.write_string_value("name", "Authorization");
-            security_fileds.write_string_value("in", "header");
-
-            let mut result = JsonObjectWriter::as_object();
-            result.write_object("Bearer", security_fileds);
-            result
+        ControllersAuthorization::BasicAuthentication { global: _ } => {
+            yaml_writer.increase_level();
+            yaml_writer.write_empty("BasicAuth");
+            yaml_writer.increase_level();
+            yaml_writer.write("type", "http");
+            yaml_writer.write("scheme", "basic");
+            yaml_writer.decrease_level();
+            yaml_writer.decrease_level();
         }
-        ControllersAuthorization::ApiKeys { global } => todo!(),
-        ControllersAuthorization::BearerAuthentication { global } => {
-            security_fileds.write_string_value("type", "apiKey");
-            security_fileds.write_string_value("description", "Bearer Token");
-            security_fileds.write_string_value("name", "Authorization");
-            security_fileds.write_string_value("in", "header");
-
-            let mut result = JsonObjectWriter::as_object();
-            result.write_object("Bearer", security_fileds);
-            result
+        ControllersAuthorization::ApiKeys { global: _ } => {
+            yaml_writer.increase_level();
+            yaml_writer.write_empty("ApiKeyAuth");
+            yaml_writer.increase_level();
+            yaml_writer.write("type", "apiKey");
+            yaml_writer.write("in", "header");
+            yaml_writer.write("name", "X-API-Key");
+            yaml_writer.decrease_level();
+            yaml_writer.decrease_level();
+        }
+        ControllersAuthorization::BearerAuthentication { global: _ } => {
+            yaml_writer.increase_level();
+            yaml_writer.write_empty("BearerAuth");
+            yaml_writer.increase_level();
+            yaml_writer.write("type", "http");
+            yaml_writer.write("scheme", "bearer");
+            yaml_writer.decrease_level();
+            yaml_writer.decrease_level();
         }
     }
 }

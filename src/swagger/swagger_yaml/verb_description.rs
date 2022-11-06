@@ -1,11 +1,8 @@
 use my_http_server::WebContentType;
 
-use crate::{
-    controllers::{
-        documentation::{data_types::HttpDataType, out_results::HttpResult, HttpActionDescription},
-        ControllersMiddleware,
-    },
-    swagger::json_object_writer::JsonObjectWriter,
+use crate::controllers::{
+    documentation::{data_types::HttpDataType, out_results::HttpResult, HttpActionDescription},
+    ControllersMiddleware,
 };
 
 use super::yaml_writer::YamlWriter;
@@ -68,8 +65,6 @@ fn compile_responses(yaml_writer: &mut YamlWriter, results: &[HttpResult]) {
     yaml_writer.write_empty("responses");
     yaml_writer.increase_level();
 
-    let mut result = JsonObjectWriter::as_object();
-
     for http_result in results {
         yaml_writer.write_empty(format!("{}", http_result.http_code).as_str());
         yaml_writer.increase_level();
@@ -83,5 +78,12 @@ fn compile_responses(yaml_writer: &mut YamlWriter, results: &[HttpResult]) {
 fn compile_response(yaml_writer: &mut YamlWriter, src: &HttpResult) {
     yaml_writer.write("description", src.description.as_str());
 
+    yaml_writer.write_empty("content");
+    yaml_writer.increase_level();
+    yaml_writer.write_empty("application/json");
+    yaml_writer.increase_level();
     super::http_data_type::build(yaml_writer, "schema", &src.data_type);
+
+    yaml_writer.decrease_level();
+    yaml_writer.decrease_level();
 }

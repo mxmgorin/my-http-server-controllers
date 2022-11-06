@@ -7,24 +7,20 @@ use crate::{
     swagger::json_object_writer::JsonObjectWriter,
 };
 
-pub fn build(action_description: &HttpActionDescription, auth_enabled: bool) -> JsonObjectWriter {
+pub fn build(action_description: &HttpActionDescription) -> JsonObjectWriter {
     let mut result = JsonObjectWriter::as_array();
 
     if let Some(in_params) = &action_description.input_params {
         for param in in_params {
-            result.write_array_object_element(build_parameter(param, auth_enabled));
+            result.write_array_object_element(build_parameter(param));
         }
     }
 
     result
 }
 
-fn build_parameter(param: &HttpInputParameter, auth_enabled: bool) -> JsonObjectWriter {
+fn build_parameter(param: &HttpInputParameter) -> JsonObjectWriter {
     let mut result = JsonObjectWriter::as_object();
-
-    if auth_enabled {
-        result.write_raw("security", "[{\"Bearer\": []}]");
-    }
 
     result.write_string_value("description", param.description.as_str());
 

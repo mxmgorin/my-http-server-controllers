@@ -10,6 +10,10 @@ use crate::{
 pub fn build(action_description: &HttpActionDescription, auth_enabled: bool) -> JsonObjectWriter {
     let mut result = JsonObjectWriter::as_object();
 
+    if auth_enabled {
+        result.write_raw("security", "[{\"Bearer\": []}]");
+    }
+
     result.write_object("tags", compile_tags(action_description));
 
     result.write_string_value("summary", action_description.summary);
@@ -20,7 +24,7 @@ pub fn build(action_description: &HttpActionDescription, auth_enabled: bool) -> 
 
     result.write_object(
         "parameters",
-        super::in_parameters::build(&action_description, auth_enabled),
+        super::in_parameters::build(&action_description),
     );
 
     result

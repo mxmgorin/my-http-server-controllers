@@ -24,7 +24,7 @@ pub fn build(
     yaml_writer.reset_level();
     yaml_writer.write_empty("servers");
     yaml_writer.increase_level();
-    yaml_writer.write("url", format!("{}://{}", scheme, host).as_str());
+    yaml_writer.write("- url", format!("{}://{}", scheme, host).as_str());
 
     /*
        let mut json_object_writer = JsonObjectWriter::as_object();

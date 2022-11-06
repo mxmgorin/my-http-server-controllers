@@ -17,13 +17,15 @@ pub fn build(
 
     yaml_writer.increase_level();
 
-    let mut result = JsonObjectWriter::as_object();
     for (path, actions) in actions {
-        let mut path_object = JsonObjectWriter::as_object();
+        yaml_writer.write_empty(path);
+        yaml_writer.increase_level();
+
         for (verb, action_description) in actions {
             super::verb_description::build(yaml_writer, verb, controllers, action_description)
         }
-        result.write_object(path.as_str(), path_object);
+
+        yaml_writer.decrease_level();
     }
 
     yaml_writer.decrease_level();

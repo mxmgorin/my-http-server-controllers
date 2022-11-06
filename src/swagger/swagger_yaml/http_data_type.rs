@@ -49,6 +49,9 @@ fn write_simple_type(yaml_writer: &mut YamlWriter, param_type: &HttpSimpleType) 
 
 fn write_object_type(yaml_writer: &mut YamlWriter, struct_id: &str) {
     yaml_writer.increase_level();
-    yaml_writer.write("$ref", format!("\"#/definitions/{}\"", struct_id).as_str());
+    yaml_writer.write(
+        "$ref",
+        format!("\"#/components/schemas/{}\"", struct_id).as_str(),
+    );
     yaml_writer.decrease_level();
 }

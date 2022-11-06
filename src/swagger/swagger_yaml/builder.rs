@@ -13,7 +13,7 @@ pub fn build(
 ) -> Vec<u8> {
     let mut yaml_writer = YamlWriter::new();
 
-    yaml_writer.write("swagger", "\"2.0\"");
+    yaml_writer.write("openapi", "3.0.0");
 
     yaml_writer.write_empty("info");
 
@@ -22,8 +22,9 @@ pub fn build(
     yaml_writer.write("version", version);
 
     yaml_writer.reset_level();
-    yaml_writer.write("host", host);
-    yaml_writer.write_array("schemes", [scheme].into_iter());
+    yaml_writer.write_empty("servers");
+    yaml_writer.increase_level();
+    yaml_writer.write("url", format!("{}://{}", scheme, host).as_str());
 
     /*
        let mut json_object_writer = JsonObjectWriter::as_object();

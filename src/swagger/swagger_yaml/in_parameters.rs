@@ -1,22 +1,22 @@
-use crate::{
-    controllers::documentation::{
-        data_types::{EnumType, HttpDataType},
-        in_parameters::HttpInputParameter,
-        HttpActionDescription,
-    },
-    swagger::json_object_writer::JsonObjectWriter,
+use crate::controllers::documentation::{
+    data_types::{EnumType, HttpDataType},
+    in_parameters::HttpInputParameter,
+    HttpActionDescription,
 };
 
 use super::yaml_writer::YamlWriter;
 
 pub fn build(yaml_writer: &mut YamlWriter, action_description: &HttpActionDescription) {
-    let mut result = JsonObjectWriter::as_array();
+    yaml_writer.write_empty("parameters");
+    yaml_writer.increase_level();
 
     if let Some(in_params) = &action_description.input_params {
         for param in in_params {
             build_parameter(yaml_writer, param);
         }
     }
+
+    yaml_writer.decrease_level();
 }
 
 fn build_parameter(yaml_writer: &mut YamlWriter, param: &HttpInputParameter) {

@@ -34,12 +34,9 @@ pub fn build(
 
     compile_produces(yaml_writer, action_description);
 
-    compile_responses(yaml_writer, &action_description.results);
-
-    yaml_writer.write_empty("parameters");
-    yaml_writer.increase_level();
     super::in_parameters::build(yaml_writer, &action_description);
-    yaml_writer.decrease_level();
+
+    compile_responses(yaml_writer, &action_description.results);
 
     yaml_writer.decrease_level();
 }

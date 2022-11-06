@@ -45,7 +45,6 @@ pub fn build_and_write(
     }
 
     yaml_writer.decrease_level();
-    yaml_writer.decrease_level();
 }
 
 fn populate_object_type(

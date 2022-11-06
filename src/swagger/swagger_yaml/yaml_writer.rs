@@ -73,22 +73,6 @@ impl YamlWriter {
         }
     }
 
-    pub fn write_array_with_strings<TIter>(&mut self, name: &str, values: TIter)
-    where
-        TIter: Iterator<Item = String>,
-    {
-        self.write_empty(name);
-
-        for value in values {
-            self.fill_spaces(1);
-
-            self.content.extend_from_slice("- ".as_bytes());
-            self.content.extend_from_slice(value.as_bytes());
-            self.content.push(13);
-            self.content.push(10);
-        }
-    }
-
     pub fn increase_level(&mut self) {
         self.level += 1;
     }

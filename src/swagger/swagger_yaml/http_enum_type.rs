@@ -18,25 +18,19 @@ pub fn build(yaml_writer: &mut YamlWriter, enum_structure: &HttpEnumStructure) {
         enum_structure.cases.iter().map(|case| case.value.as_str()),
     );
 
-    yaml_writer.write("description", compile_description(enum_structure).as_str());
+    yaml_writer.write("description", "|");
+
+    write_enum_description(yaml_writer, enum_structure);
 
     yaml_writer.decrease_level();
 }
 
-fn compile_description(enum_structure: &HttpEnumStructure) -> String {
-    let mut result = String::new();
-
-    let mut first = true;
+fn write_enum_description(yaml_writer: &mut YamlWriter, enum_structure: &HttpEnumStructure) {
+    yaml_writer.increase_level();
 
     for case in &enum_structure.cases {
-        if first {
-            first = false;
-        } else {
-            result.push_str("\\n");
-        }
-
-        result.push_str(format!("{} = {}", case.id, case.description).as_str());
+        yaml_writer.write_empty(format!("* {} [{}]", case.id, case.description).as_str());
     }
 
-    result
+    yaml_writer.decrease_level();
 }

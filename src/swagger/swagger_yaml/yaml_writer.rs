@@ -13,7 +13,7 @@ impl YamlWriter {
 
     fn fill_spaces(&mut self, offset: usize) {
         if self.level > 0 {
-            for i in 0..(self.level + offset) * 2 {
+            for _ in 0..self.level + offset {
                 self.content.push(32);
             }
         }

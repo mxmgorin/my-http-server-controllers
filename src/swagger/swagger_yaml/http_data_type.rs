@@ -28,7 +28,7 @@ pub fn build(yaml_writer: &mut YamlWriter, root_name: &str, data_type: &HttpData
 
             yaml_writer.write_empty("items");
 
-            let items = match array_element {
+            match array_element {
                 ArrayElement::SimpleType(param_type) => write_simple_type(yaml_writer, param_type),
                 ArrayElement::ObjectId { struct_id } => write_object_type(yaml_writer, struct_id),
                 ArrayElement::Object(object_type) => {

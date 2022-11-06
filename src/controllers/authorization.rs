@@ -12,4 +12,12 @@ impl ControllersAuthorization {
             ControllersAuthorization::BearerAuthentication { global } => *global,
         }
     }
+
+    pub fn as_openid_str(&self) -> &str {
+        match self {
+            ControllersAuthorization::BasicAuthentication { global: _ } => "BasicAuth",
+            ControllersAuthorization::ApiKeys { global: _ } => "ApiKeyAuth",
+            ControllersAuthorization::BearerAuthentication { global: _ } => "BearerAuth",
+        }
+    }
 }

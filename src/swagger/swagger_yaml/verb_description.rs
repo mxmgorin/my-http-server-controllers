@@ -17,11 +17,16 @@ pub fn build(
 
     yaml_writer.increase_level();
 
-    /*
-    if let Some(authorization) = controllers.authorization {
-        yaml_writer.write("security", "[\"Bearer\"]");
+    if let Some(authorization) = &controllers.authorization {
+        if authorization.is_global_authorization() {
+            yaml_writer.write_empty("security");
+
+            yaml_writer.write(
+                format!(" - {}", authorization.as_openid_str()).as_str(),
+                "[]",
+            );
+        }
     }
-     */
 
     yaml_writer.write_array("tags", [action_description.controller_name].into_iter());
 

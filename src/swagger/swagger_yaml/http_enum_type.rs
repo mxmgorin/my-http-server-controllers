@@ -7,31 +7,22 @@ pub fn build(yaml_writer: &mut YamlWriter, enum_structure: &HttpEnumStructure) {
     match enum_structure.enum_type {
         EnumType::Integer => {
             yaml_writer.write("type", "integer");
-
-            yaml_writer.write_array_with_strings(
-                "enum",
-                enum_structure
-                    .cases
-                    .iter()
-                    .map(|case| format!("{} [{}]", case.id, case.value.as_str())),
-            );
         }
         EnumType::String => {
             yaml_writer.write("type", "string");
-
-            yaml_writer.write_array(
-                "enum",
-                enum_structure.cases.iter().map(|case| case.value.as_str()),
-            );
         }
     }
 
-    // result.write_string_value("description", compile_description(enum_structure).as_str());
+    yaml_writer.write_array(
+        "enum",
+        enum_structure.cases.iter().map(|case| case.value.as_str()),
+    );
+
+    yaml_writer.write("description", compile_description(enum_structure).as_str());
 
     yaml_writer.decrease_level();
 }
 
-/*
 fn compile_description(enum_structure: &HttpEnumStructure) -> String {
     let mut result = String::new();
 
@@ -49,4 +40,3 @@ fn compile_description(enum_structure: &HttpEnumStructure) -> String {
 
     result
 }
- */

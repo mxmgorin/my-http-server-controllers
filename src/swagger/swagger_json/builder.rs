@@ -24,7 +24,10 @@ pub fn build(
         json_object_writer.write_object("definitions", definitions);
     }
 
-    json_object_writer.write_object("paths", super::paths::build(&path_descriptions));
+    json_object_writer.write_object(
+        "paths",
+        super::paths::build(&path_descriptions, enable_authorization),
+    );
 
     if enable_authorization {
         json_object_writer.write_raw("security", "[{\"Bearer\": []}]");

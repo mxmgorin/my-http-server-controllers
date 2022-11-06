@@ -7,7 +7,7 @@ use crate::{
     swagger::json_object_writer::JsonObjectWriter,
 };
 
-pub fn build(action_description: &HttpActionDescription) -> JsonObjectWriter {
+pub fn build(action_description: &HttpActionDescription, auth_enabled: bool) -> JsonObjectWriter {
     let mut result = JsonObjectWriter::as_object();
 
     result.write_object("tags", compile_tags(action_description));
@@ -20,7 +20,7 @@ pub fn build(action_description: &HttpActionDescription) -> JsonObjectWriter {
 
     result.write_object(
         "parameters",
-        super::in_parameters::build(&action_description),
+        super::in_parameters::build(&action_description, auth_enabled),
     );
 
     result

@@ -20,6 +20,8 @@ pub fn build(yaml_writer: &mut YamlWriter, action_description: &HttpActionDescri
 }
 
 fn build_parameter(yaml_writer: &mut YamlWriter, param: &HttpInputParameter) {
+    yaml_writer.write("- in", param.source.as_str());
+    yaml_writer.increase_level();
     yaml_writer.write("description", param.description.as_str());
 
     if let HttpDataType::Enum(enum_struct) = &param.field.data_type {
@@ -32,8 +34,6 @@ fn build_parameter(yaml_writer: &mut YamlWriter, param: &HttpInputParameter) {
         super::http_data_type::build(yaml_writer, "schema", &param.field.data_type);
     }
 
-    yaml_writer.write("in", param.source.as_str());
-
     if param.source.is_query() {
         if param.field.data_type.is_array() {
             yaml_writer.write("name", format!("{}[]", param.field.name.as_str()).as_str());
@@ -43,8 +43,6 @@ fn build_parameter(yaml_writer: &mut YamlWriter, param: &HttpInputParameter) {
     } else {
         yaml_writer.write("name", param.field.name.as_str());
     }
-
-    yaml_writer.write_bool("x-nullable", !param.field.required);
 
     if param.field.required && param.field.default_value.is_none() {
         yaml_writer.write_bool("required", true);
@@ -62,6 +60,8 @@ fn build_parameter(yaml_writer: &mut YamlWriter, param: &HttpInputParameter) {
         let line_to_add = format!("{}. Default value: {}", param.description, default_value);
         yaml_writer.write("description", line_to_add.as_str());
     }
+
+    yaml_writer.decrease_level();
 }
 
 fn get_param_format(data_type: &HttpDataType) -> Option<&str> {

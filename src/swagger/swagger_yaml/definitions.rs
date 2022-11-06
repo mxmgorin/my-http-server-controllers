@@ -107,8 +107,6 @@ fn write_enum_type(
         return;
     };
 
-    yaml_writer.increase_level();
-
     yaml_writer.write_empty(enum_structure.struct_id.as_ref());
 
     super::http_enum_type::build(yaml_writer, enum_structure);

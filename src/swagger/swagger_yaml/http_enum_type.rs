@@ -20,11 +20,6 @@ pub fn build(yaml_writer: &mut YamlWriter, enum_structure: &HttpEnumStructure) {
         enum_structure.cases.iter().map(|case| case.id.to_string()),
     );
 
-    yaml_writer.write_array(
-        "x-enumNames",
-        enum_structure.cases.iter().map(|case| case.value.as_str()),
-    );
-
     yaml_writer.decrease_level();
 }
 

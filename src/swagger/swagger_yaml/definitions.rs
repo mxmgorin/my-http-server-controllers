@@ -32,9 +32,9 @@ pub fn build_and_write(
 
     for (_, action_descriptions) in path_descriptions {
         for (_, action_description) in action_descriptions {
-            if result.level == 0 {
-                result.write_empty("definitions");
-            }
+            //       if result.level == 0 {
+            //           result.write_empty("definitions");
+            //       }
             populate_from_actions(result, &mut definitions, action_description);
         }
     }

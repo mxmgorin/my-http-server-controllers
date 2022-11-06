@@ -64,6 +64,7 @@ fn populate_object_type(
         HttpDataType::Enum(enum_structure) => {
             write_enum_type(yaml_writer, definitions, enum_structure);
         }
+
         HttpDataType::None => {}
     }
 }

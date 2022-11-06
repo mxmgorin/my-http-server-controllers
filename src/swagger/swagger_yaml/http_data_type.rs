@@ -16,10 +16,16 @@ pub fn build(yaml_writer: &mut YamlWriter, root_name: &str, data_type: &HttpData
             yaml_writer.write_empty(root_name);
             write_object_type(yaml_writer, &object_type.struct_id);
         }
-        HttpDataType::Enum(enum_type) => {
-            yaml_writer.write_empty(root_name);
-            write_object_type(yaml_writer, &enum_type.struct_id);
-        }
+        HttpDataType::Enum(enum_type) => match enum_type.enum_type {
+            crate::controllers::documentation::data_types::EnumType::Integer => {
+                yaml_writer.write_empty(root_name);
+                write_simple_type(yaml_writer, &HttpSimpleType::Integer);
+            }
+            crate::controllers::documentation::data_types::EnumType::String => {
+                yaml_writer.write_empty(root_name);
+                write_object_type(yaml_writer, &enum_type.struct_id);
+            }
+        },
         HttpDataType::None => {}
         HttpDataType::ArrayOf(array_element) => {
             yaml_writer.write_empty(root_name);

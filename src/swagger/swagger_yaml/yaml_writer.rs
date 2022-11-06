@@ -54,8 +54,6 @@ impl YamlWriter {
 
         self.content.push(13);
         self.content.push(10);
-
-        self.increase_level();
     }
 
     pub fn write_array<'s, TIter>(&mut self, name: &str, values: TIter)

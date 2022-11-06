@@ -13,7 +13,7 @@ pub fn build(
 ) -> Vec<u8> {
     let mut yaml_writer = YamlWriter::new();
 
-    yaml_writer.write("openapi", "3.0.0");
+    yaml_writer.write("openapi", "2.0");
 
     yaml_writer.write_empty("info");
 

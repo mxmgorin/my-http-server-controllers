@@ -5,21 +5,25 @@ use crate::{
     swagger::json_object_writer::JsonObjectWriter,
 };
 
+use super::yaml_writer::YamlWriter;
+
 pub fn build(
+    yaml_writer: &mut YamlWriter,
     controllers: &ControllersMiddleware,
     actions: &BTreeMap<String, BTreeMap<String, HttpActionDescription>>,
-) -> JsonObjectWriter {
+) {
+    yaml_writer.write_empty("paths");
+
+    yaml_writer.increase_level();
+
     let mut result = JsonObjectWriter::as_object();
     for (path, actions) in actions {
         let mut path_object = JsonObjectWriter::as_object();
         for (verb, action_description) in actions {
-            path_object.write_object(
-                verb,
-                super::verb_description::build(controllers, action_description),
-            );
+            super::verb_description::build(yaml_writer, verb, controllers, action_description)
         }
         result.write_object(path.as_str(), path_object);
     }
 
-    result
+    yaml_writer.decrease_level();
 }

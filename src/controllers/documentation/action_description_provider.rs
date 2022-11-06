@@ -6,6 +6,7 @@ pub struct HttpActionDescription<'s> {
     pub description: &'s str,
     pub input_params: Option<Vec<HttpInputParameter>>,
     pub results: Vec<HttpResult>,
+    pub authorized: Option<bool>,
 }
 
 pub trait HttpActionDescriptionProvider {

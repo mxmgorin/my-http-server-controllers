@@ -12,7 +12,6 @@ pub struct SwaggerMiddleware {
     controllers: Arc<ControllersMiddleware>,
     title: String,
     version: String,
-    authorization_enabled: bool,
 }
 
 impl SwaggerMiddleware {
@@ -21,12 +20,7 @@ impl SwaggerMiddleware {
             controllers,
             title,
             version,
-            authorization_enabled: false,
         }
-    }
-
-    pub fn enable_athorization(&mut self) {
-        self.authorization_enabled = true;
     }
 }
 
@@ -161,7 +155,7 @@ impl HttpServerMiddleware for SwaggerMiddleware {
         if ctx
             .request
             .http_path
-            .has_values_at_index_case_insensitive(1, &["v1", "swagger.json"])
+            .has_values_at_index_case_insensitive(1, &["v1", "swagger.yaml"])
         {
             let scheme = ctx.request.get_scheme();
             let host = ctx.request.get_host();
@@ -169,13 +163,12 @@ impl HttpServerMiddleware for SwaggerMiddleware {
             let output = HttpOutput::Content {
                 headers: None,
                 content_type: Some(WebContentType::Json),
-                content: super::swagger_json::builder::build(
+                content: super::swagger_yaml::builder::build(
                     self.controllers.as_ref(),
                     self.title.as_ref(),
                     self.version.as_ref(),
                     host,
                     scheme.as_ref(),
-                    self.authorization_enabled,
                 ),
             };
 

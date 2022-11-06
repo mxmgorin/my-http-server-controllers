@@ -12,7 +12,7 @@ use super::{
         PostAction,
     },
     documentation::data_types::HttpObjectStructure,
-    HttpRoute,
+    ControllersAuthorization, HttpRoute,
 };
 
 pub struct ControllersMiddleware {
@@ -21,16 +21,19 @@ pub struct ControllersMiddleware {
     pub put: HttpActions,
     pub delete: HttpActions,
     pub http_objects: Vec<HttpObjectStructure>,
+
+    pub authorization: Option<ControllersAuthorization>,
 }
 
 impl ControllersMiddleware {
-    pub fn new() -> Self {
+    pub fn new(authorization: Option<ControllersAuthorization>) -> Self {
         Self {
             get: HttpActions::new(),
             post: HttpActions::new(),
             put: HttpActions::new(),
             delete: HttpActions::new(),
             http_objects: Vec::new(),
+            authorization,
         }
     }
 

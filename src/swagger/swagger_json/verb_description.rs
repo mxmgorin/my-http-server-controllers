@@ -1,16 +1,20 @@
 use my_http_server::WebContentType;
 
 use crate::{
-    controllers::documentation::{
-        data_types::HttpDataType, out_results::HttpResult, HttpActionDescription,
+    controllers::{
+        documentation::{data_types::HttpDataType, out_results::HttpResult, HttpActionDescription},
+        ControllersMiddleware,
     },
     swagger::json_object_writer::JsonObjectWriter,
 };
 
-pub fn build(action_description: &HttpActionDescription, auth_enabled: bool) -> JsonObjectWriter {
+pub fn build(
+    controllers: &ControllersMiddleware,
+    action_description: &HttpActionDescription,
+) -> JsonObjectWriter {
     let mut result = JsonObjectWriter::as_object();
 
-    if auth_enabled {
+    if let Some(authorization) = controllers.authorization {
         result.write_raw("security", "[{\"Bearer\": []}]");
     }
 

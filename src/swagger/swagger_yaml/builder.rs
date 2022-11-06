@@ -1,9 +1,8 @@
 use std::collections::BTreeMap;
 
-use crate::{
-    controllers::{documentation::HttpActionDescription, ControllersMiddleware},
-    swagger::json_object_writer::JsonObjectWriter,
-};
+use crate::controllers::{documentation::HttpActionDescription, ControllersMiddleware};
+
+use super::yaml_writer::YamlWriter;
 
 pub fn build(
     controllers: &ControllersMiddleware,
@@ -12,38 +11,49 @@ pub fn build(
     host: &str,
     scheme: &str,
 ) -> Vec<u8> {
-    let mut result = String::new();
+    let mut yaml_writer = YamlWriter::new();
 
-    result.push_str("openapi: 3.0.0");
+    yaml_writer.write("openapi", "3.0.0");
 
-    result.push_str("info:");
-    result.push_str("  title: ");
+    yaml_writer.write("info", "3.0.0");
 
-    let mut json_object_writer = JsonObjectWriter::as_object();
+    yaml_writer.increase_level();
+    yaml_writer.write("title", title);
+    yaml_writer.write("version", version);
 
-    super::title::write(&mut json_object_writer, host, title, version);
-    json_object_writer.write_object("scheme", super::schemes::build(scheme));
+    yaml_writer.reset_level();
+    yaml_writer.write("host", host);
+    yaml_writer.write_array("schemes", [scheme].into_iter());
+
+    /*
+       let mut json_object_writer = JsonObjectWriter::as_object();
+
+       super::title::write(&mut json_object_writer, host, title, version);
+       json_object_writer.write_object("scheme", super::schemes::build(scheme));
+    */
 
     let path_descriptions = build_paths_descriptions(controllers);
 
-    if let Some(definitions) = super::definitions::build(controllers, &path_descriptions) {
-        json_object_writer.write_object("definitions", definitions);
-    }
+    super::definitions::build_and_write(&mut yaml_writer, controllers, &path_descriptions);
+    //    {
+    //        json_object_writer.write_object("definitions", definitions);
+    //    }
 
-    json_object_writer.write_object(
-        "paths",
-        super::paths::build(controllers, &path_descriptions),
-    );
+    super::paths::build(&mut yaml_writer, controllers, &path_descriptions);
 
     if let Some(authorization) = controllers.authorization.as_ref() {
+
+        /*
+        todo!("Uncomment");
         if authorization.is_global_authorization() {
             json_object_writer.write_raw("security", "[{\"Bearer\": []}]");
         }
 
         json_object_writer.write_object("securityDefinitions", super::security_defentions::build());
+         */
     }
 
-    json_object_writer.build()
+    yaml_writer.build()
 }
 
 fn build_paths_descriptions(

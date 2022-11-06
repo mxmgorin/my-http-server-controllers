@@ -18,7 +18,13 @@ pub fn build(
     yaml_writer.increase_level();
 
     if let Some(authorization) = &controllers.authorization {
-        if authorization.is_global_authorization() {
+        let mut should_be_authorized = authorization.is_global_authorization();
+
+        if let Some(overriden) = action_description.should_be_authorized {
+            should_be_authorized = overriden;
+        }
+
+        if should_be_authorized {
             yaml_writer.write_empty("security");
 
             yaml_writer.write(

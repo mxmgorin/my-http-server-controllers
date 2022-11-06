@@ -3,7 +3,6 @@ use crate::controllers::documentation::data_types::HttpObjectStructure;
 use super::yaml_writer::YamlWriter;
 
 pub fn build(result: &mut YamlWriter, http_object: &HttpObjectStructure) {
-    result.increase_level();
     result.write_empty(http_object.struct_id.as_str());
     result.increase_level();
     result.write("type", "object");
@@ -19,7 +18,6 @@ pub fn build(result: &mut YamlWriter, http_object: &HttpObjectStructure) {
 
     write_properties(result, http_object);
 
-    result.decrease_level();
     result.decrease_level();
     //todo!("Delete this line");
     //result.write_object("properties", compile_properties(http_object));

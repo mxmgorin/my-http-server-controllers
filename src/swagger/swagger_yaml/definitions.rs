@@ -18,12 +18,11 @@ pub fn build_and_write(
     result.reset_level();
     let mut definitions = HashMap::new();
 
+    result.write_empty("definitions");
+    result.increase_level();
+
     for http_object in &controllers.http_objects {
         if !definitions.contains_key(http_object.struct_id.as_str()) {
-            if result.level == 0 {
-                result.write_empty("definitions");
-            }
-
             super::http_object_type::build(result, http_object);
 
             definitions.insert(http_object.struct_id.to_string(), ());
@@ -32,12 +31,11 @@ pub fn build_and_write(
 
     for (_, action_descriptions) in path_descriptions {
         for (_, action_description) in action_descriptions {
-            //       if result.level == 0 {
-            //           result.write_empty("definitions");
-            //       }
             populate_from_actions(result, &mut definitions, action_description);
         }
     }
+
+    result.decrease_level();
 }
 
 fn populate_from_actions(

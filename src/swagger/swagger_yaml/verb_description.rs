@@ -23,8 +23,17 @@ pub fn build<TRequestCredentials: RequestCredentials + Send + Sync + 'static>(
     if let Some(authorization) = &controllers.authorization {
         let mut should_be_authorized = authorization.is_global_authorization();
 
-        if let Some(overriden) = action_description.should_be_authorized {
-            should_be_authorized = overriden;
+        match &action_description.should_be_authorized {
+            crate::controllers::documentation::ShouldBeAuthorized::Yes => {
+                should_be_authorized = true;
+            }
+            crate::controllers::documentation::ShouldBeAuthorized::YesWithClaims(_) => {
+                should_be_authorized = true;
+            }
+            crate::controllers::documentation::ShouldBeAuthorized::No => {
+                should_be_authorized = false;
+            }
+            crate::controllers::documentation::ShouldBeAuthorized::UseGlobal => {}
         }
 
         if should_be_authorized {

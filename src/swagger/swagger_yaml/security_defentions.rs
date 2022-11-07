@@ -6,7 +6,10 @@ pub fn build(yaml_writer: &mut YamlWriter, auth: &ControllersAuthorization) {
     yaml_writer.write_empty("securitySchemes");
 
     match auth {
-        ControllersAuthorization::BasicAuthentication { global: _ } => {
+        ControllersAuthorization::BasicAuthentication {
+            global: _,
+            global_claims: _,
+        } => {
             yaml_writer.increase_level();
             yaml_writer.write_empty("BasicAuth");
             yaml_writer.increase_level();
@@ -15,7 +18,10 @@ pub fn build(yaml_writer: &mut YamlWriter, auth: &ControllersAuthorization) {
             yaml_writer.decrease_level();
             yaml_writer.decrease_level();
         }
-        ControllersAuthorization::ApiKeys { global: _ } => {
+        ControllersAuthorization::ApiKeys {
+            global: _,
+            global_claims: _,
+        } => {
             yaml_writer.increase_level();
             yaml_writer.write_empty("ApiKeyAuth");
             yaml_writer.increase_level();
@@ -25,7 +31,10 @@ pub fn build(yaml_writer: &mut YamlWriter, auth: &ControllersAuthorization) {
             yaml_writer.decrease_level();
             yaml_writer.decrease_level();
         }
-        ControllersAuthorization::BearerAuthentication { global: _ } => {
+        ControllersAuthorization::BearerAuthentication {
+            global: _,
+            global_claims: _,
+        } => {
             yaml_writer.increase_level();
             yaml_writer.write_empty("BearerAuth");
             yaml_writer.increase_level();

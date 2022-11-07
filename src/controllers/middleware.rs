@@ -12,7 +12,7 @@ use super::{
         DeleteAction, GetAction, GetDescription, HandleHttpRequest, HttpAction, HttpActions,
         PostAction,
     },
-    documentation::data_types::HttpObjectStructure,
+    documentation::{data_types::HttpObjectStructure, ShouldBeAuthorized},
     HttpRoute,
 };
 
@@ -66,7 +66,7 @@ impl<TRequestCredentials: RequestCredentials + Send + Sync + 'static>
             should_be_authorized: if let Some(desc) = action.get_description() {
                 desc.should_be_authorized
             } else {
-                None
+                ShouldBeAuthorized::UseGlobal
             },
             description: action,
         });
@@ -91,7 +91,7 @@ impl<TRequestCredentials: RequestCredentials + Send + Sync + 'static>
             should_be_authorized: if let Some(desc) = action.get_description() {
                 desc.should_be_authorized
             } else {
-                None
+                ShouldBeAuthorized::UseGlobal
             },
             description: action,
         });
@@ -116,7 +116,7 @@ impl<TRequestCredentials: RequestCredentials + Send + Sync + 'static>
             should_be_authorized: if let Some(desc) = action.get_description() {
                 desc.should_be_authorized
             } else {
-                None
+                ShouldBeAuthorized::UseGlobal
             },
             description: action,
         });
@@ -141,7 +141,7 @@ impl<TRequestCredentials: RequestCredentials + Send + Sync + 'static>
             should_be_authorized: if let Some(desc) = action.get_description() {
                 desc.should_be_authorized
             } else {
-                None
+                ShouldBeAuthorized::UseGlobal
             },
             description: action,
         });

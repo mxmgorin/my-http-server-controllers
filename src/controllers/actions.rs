@@ -2,7 +2,10 @@ use std::sync::Arc;
 
 use my_http_server::{HttpContext, HttpFailResult, HttpOkResult, RequestCredentials};
 
-use super::{documentation::HttpActionDescription, ControllersAuthorization, HttpRoute};
+use super::{
+    documentation::{HttpActionDescription, ShouldBeAuthorized},
+    ControllersAuthorization, HttpRoute,
+};
 
 pub trait GetAction {
     fn get_route(&self) -> &str;
@@ -40,7 +43,7 @@ pub struct HttpAction<TRequestCredentials: RequestCredentials + Send + Sync + 's
     >,
     pub http_route: HttpRoute,
     pub description: Arc<dyn GetDescription + Send + Sync + 'static>,
-    pub should_be_authorized: Option<bool>,
+    pub should_be_authorized: ShouldBeAuthorized,
 }
 
 pub struct HttpActions<TRequestCredentials: RequestCredentials + Send + Sync + 'static> {
@@ -72,59 +75,36 @@ impl<TRequestCredentials: RequestCredentials + Send + Sync + 'static>
                     return Some(action.handler.handle_request(&action.http_route, ctx).await);
                 }
 
-                if let Some(authorization_setup) = global_authorization {
-                    if authorization_setup.is_global_authorization() {
-                        //Global Authorization is enbaled
-
-                        if let Some(should_be_authorized) = action.should_be_authorized {
-                            if should_be_authorized {
-                                if ctx.credentials.is_none() {
-                                    return Some(Err(HttpFailResult::as_unauthorized(None)));
-                                }
-                            } else {
-                                //Should be authourized is false - means we pass it though
-                                return Some(
-                                    action.handler.handle_request(&action.http_route, ctx).await,
-                                );
-                            }
-                        } else {
-                            //Should be authourized is not set - global authorization says - it must go with authorization
+                match &action.should_be_authorized {
+                    ShouldBeAuthorized::Yes => {
+                        if ctx.credentials.is_none() {
                             return Some(Err(HttpFailResult::as_unauthorized(None)));
-                        }
-                    } else {
-                        if let Some(should_be_authorized) = action.should_be_authorized {
-                            if should_be_authorized {
-                                if ctx.credentials.is_none() {
-                                    return Some(Err(HttpFailResult::as_unauthorized(None)));
-                                }
-                            } else {
-                                //Should be authourized is false - means we pass it though
-                                return Some(
-                                    action.handler.handle_request(&action.http_route, ctx).await,
-                                );
-                            }
                         } else {
-                            //Should be authourized is not set - global authorization says - it can go without authorization
                             return Some(
                                 action.handler.handle_request(&action.http_route, ctx).await,
                             );
                         }
                     }
-                } else {
-                    if let Some(should_be_authorized) = action.should_be_authorized {
-                        if should_be_authorized {
-                            if ctx.credentials.is_none() {
-                                return Some(Err(HttpFailResult::as_unauthorized(None)));
-                            }
+                    ShouldBeAuthorized::YesWithClaims(claims) => {
+                        if ctx.credentials.is_none() {
+                            return Some(Err(HttpFailResult::as_unauthorized(None)));
                         } else {
-                            //Should be authourized is false - means we pass it though
+                            return self.execute_with_claims(action, ctx, claims).await;
+                        }
+                    }
+                    ShouldBeAuthorized::No => {
+                        return Some(action.handler.handle_request(&action.http_route, ctx).await);
+                    }
+                    ShouldBeAuthorized::UseGlobal => {
+                        if let Some(global_auth) = global_authorization {
+                            return self
+                                .execute_with_claims(action, ctx, global_auth.get_global_claims())
+                                .await;
+                        } else {
                             return Some(
                                 action.handler.handle_request(&action.http_route, ctx).await,
                             );
                         }
-                    } else {
-                        //Action should_be_authourized is not set - global authorization is not set - it can go though
-                        return Some(action.handler.handle_request(&action.http_route, ctx).await);
                     }
                 }
             }
@@ -135,5 +115,21 @@ impl<TRequestCredentials: RequestCredentials + Send + Sync + 'static>
 
     pub fn get_actions(&self) -> &Vec<HttpAction<TRequestCredentials>> {
         &self.actions
+    }
+
+    async fn execute_with_claims(
+        &self,
+        action: &HttpAction<TRequestCredentials>,
+        ctx: &mut HttpContext<TRequestCredentials>,
+        claims: &[String],
+    ) -> Option<Result<HttpOkResult, HttpFailResult>> {
+        for claim_id in claims {
+            if let Some(credential) = &ctx.credentials {
+                if credential.get_claim(&ctx.request, claim_id).is_none() {
+                    return Some(Err(HttpFailResult::as_unauthorized(None)));
+                }
+            }
+        }
+        return Some(action.handler.handle_request(&action.http_route, ctx).await);
     }
 }

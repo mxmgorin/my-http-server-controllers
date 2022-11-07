@@ -1,15 +1,15 @@
 pub enum ControllersAuthorization {
     BasicAuthentication {
         global: bool,
-        global_claims: Vec<String>,
+        global_claims: Option<Vec<String>>,
     },
     ApiKeys {
         global: bool,
-        global_claims: Vec<String>,
+        global_claims: Option<Vec<String>>,
     },
     BearerAuthentication {
         global: bool,
-        global_claims: Vec<String>,
+        global_claims: Option<Vec<String>>,
     },
 }
 
@@ -31,7 +31,7 @@ impl ControllersAuthorization {
         }
     }
 
-    pub fn get_global_claims(&self) -> &[String] {
+    pub fn get_global_claims(&self) -> &Option<Vec<String>> {
         match self {
             ControllersAuthorization::BasicAuthentication {
                 global: _,

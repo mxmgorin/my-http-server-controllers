@@ -97,9 +97,20 @@ impl<TRequestCredentials: RequestCredentials + Send + Sync + 'static>
                     }
                     ShouldBeAuthorized::UseGlobal => {
                         if let Some(global_auth) = global_authorization {
-                            return self
-                                .execute_with_claims(action, ctx, global_auth.get_global_claims())
-                                .await;
+                            if let Some(claims) = global_auth.get_global_claims() {
+                                return self.execute_with_claims(action, ctx, claims).await;
+                            } else {
+                                if ctx.credentials.is_some() {
+                                    return Some(
+                                        action
+                                            .handler
+                                            .handle_request(&action.http_route, ctx)
+                                            .await,
+                                    );
+                                } else {
+                                    return Some(Err(HttpFailResult::as_unauthorized(None)));
+                                }
+                            }
                         } else {
                             return Some(
                                 action.handler.handle_request(&action.http_route, ctx).await,
@@ -121,15 +132,18 @@ impl<TRequestCredentials: RequestCredentials + Send + Sync + 'static>
         &self,
         action: &HttpAction<TRequestCredentials>,
         ctx: &mut HttpContext<TRequestCredentials>,
-        claims: &[String],
+        claims: &Vec<String>,
     ) -> Option<Result<HttpOkResult, HttpFailResult>> {
-        for claim_id in claims {
-            if let Some(credential) = &ctx.credentials {
+        if let Some(credential) = &ctx.credentials {
+            for claim_id in claims {
                 if credential.get_claim(&ctx.request, claim_id).is_none() {
                     return Some(Err(HttpFailResult::as_unauthorized(None)));
                 }
             }
+
+            return Some(action.handler.handle_request(&action.http_route, ctx).await);
         }
-        return Some(action.handler.handle_request(&action.http_route, ctx).await);
+
+        return Some(Err(HttpFailResult::as_unauthorized(None)));
     }
 }

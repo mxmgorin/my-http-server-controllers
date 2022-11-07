@@ -9,11 +9,17 @@ use super::yaml_writer::YamlWriter;
 pub fn build(yaml_writer: &mut YamlWriter, action_description: &HttpActionDescription) {
     if let Some(in_params) = &action_description.input_params {
         let mut has_form_data = false;
-        yaml_writer.write_empty("parameters");
+
+        let mut parameters_is_set = false;
+
         for param in in_params {
             if param.source.is_form_data() {
                 has_form_data = true;
             } else {
+                if !parameters_is_set {
+                    yaml_writer.write_empty("parameters");
+                    parameters_is_set = true;
+                }
                 yaml_writer.write("- in", param.source.as_str());
                 build_parameter(yaml_writer, param);
             }

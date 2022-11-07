@@ -3,19 +3,25 @@ use std::sync::Arc;
 use async_trait::async_trait;
 use my_http_server::{
     HttpContext, HttpFailResult, HttpOkResult, HttpOutput, HttpServerMiddleware,
-    HttpServerRequestFlow, WebContentType,
+    HttpServerRequestFlow, RequestCredentials, WebContentType,
 };
 
 use super::super::controllers::ControllersMiddleware;
 
-pub struct SwaggerMiddleware {
-    controllers: Arc<ControllersMiddleware>,
+pub struct SwaggerMiddleware<TRequestCredentials: RequestCredentials + Send + Sync + 'static> {
+    controllers: Arc<ControllersMiddleware<TRequestCredentials>>,
     title: String,
     version: String,
 }
 
-impl SwaggerMiddleware {
-    pub fn new(controllers: Arc<ControllersMiddleware>, title: String, version: String) -> Self {
+impl<TRequestCredentials: RequestCredentials + Send + Sync + 'static>
+    SwaggerMiddleware<TRequestCredentials>
+{
+    pub fn new(
+        controllers: Arc<ControllersMiddleware<TRequestCredentials>>,
+        title: String,
+        version: String,
+    ) -> Self {
         Self {
             controllers,
             title,
@@ -25,11 +31,14 @@ impl SwaggerMiddleware {
 }
 
 #[async_trait]
-impl HttpServerMiddleware for SwaggerMiddleware {
+impl<TRequestCredentials: RequestCredentials + Send + Sync + 'static> HttpServerMiddleware
+    for SwaggerMiddleware<TRequestCredentials>
+{
+    type TRequestCredentials = TRequestCredentials;
     async fn handle_request(
         &self,
-        ctx: &mut HttpContext,
-        get_next: &mut HttpServerRequestFlow,
+        ctx: &mut HttpContext<TRequestCredentials>,
+        get_next: &mut HttpServerRequestFlow<TRequestCredentials>,
     ) -> Result<HttpOkResult, HttpFailResult> {
         if ctx.request.http_path.is_root() {
             return get_next.next(ctx).await;

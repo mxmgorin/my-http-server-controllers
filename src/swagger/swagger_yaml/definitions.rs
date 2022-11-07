@@ -1,5 +1,7 @@
 use std::collections::{BTreeMap, HashMap};
 
+use my_http_server::RequestCredentials;
+
 use crate::controllers::{
     documentation::{
         data_types::{ArrayElement, HttpDataType, HttpObjectStructure},
@@ -10,9 +12,9 @@ use crate::controllers::{
 
 use super::yaml_writer::YamlWriter;
 
-pub fn build_and_write(
+pub fn build_and_write<TRequestCredentials: RequestCredentials + Send + Sync + 'static>(
     yaml_writer: &mut YamlWriter,
-    controllers: &ControllersMiddleware,
+    controllers: &ControllersMiddleware<TRequestCredentials>,
     path_descriptions: &BTreeMap<String, BTreeMap<String, HttpActionDescription>>,
 ) {
     let mut definitions = HashMap::new();

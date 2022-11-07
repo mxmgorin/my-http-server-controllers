@@ -44,6 +44,7 @@ pub fn build(yaml_writer: &mut YamlWriter, action_description: &HttpActionDescri
                     yaml_writer.increase_level();
                     if let Some(param_type) = get_param_type(&param.field.data_type) {
                         yaml_writer.write("type", param_type);
+                        yaml_writer.write("required", "true");
                     }
                     yaml_writer.decrease_level();
                 }

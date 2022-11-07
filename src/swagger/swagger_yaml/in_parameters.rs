@@ -8,18 +8,18 @@ use super::yaml_writer::YamlWriter;
 
 pub fn build(yaml_writer: &mut YamlWriter, action_description: &HttpActionDescription) {
     if let Some(in_params) = &action_description.input_params {
-        let mut has_body = false;
+        let mut has_form_data = false;
         yaml_writer.write_empty("parameters");
         for param in in_params {
-            if param.source.is_body() {
-                has_body = true;
+            if param.source.is_form_data() {
+                has_form_data = true;
             } else {
                 yaml_writer.write("- in", param.source.as_str());
                 build_parameter(yaml_writer, param);
             }
         }
 
-        if has_body {
+        if has_form_data {
             yaml_writer.write_empty("requestBody");
             yaml_writer.increase_level();
             yaml_writer.write_empty("content");
@@ -33,7 +33,7 @@ pub fn build(yaml_writer: &mut YamlWriter, action_description: &HttpActionDescri
             yaml_writer.write_empty("properties");
             yaml_writer.increase_level();
             for param in in_params {
-                if param.source.is_body() {
+                if param.source.is_form_data() {
                     yaml_writer.write_empty(&param.field.name);
                     yaml_writer.increase_level();
                     if let Some(param_type) = get_param_type(&param.field.data_type) {

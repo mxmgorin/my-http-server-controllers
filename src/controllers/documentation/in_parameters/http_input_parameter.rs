@@ -21,6 +21,13 @@ impl HttpParameterInputSource {
             _ => false,
         }
     }
+
+    pub fn is_body(&self) -> bool {
+        match self {
+            HttpParameterInputSource::Body => true,
+            _ => false,
+        }
+    }
 }
 
 impl HttpParameterInputSource {

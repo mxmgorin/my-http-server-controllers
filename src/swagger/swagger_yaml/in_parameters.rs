@@ -8,10 +8,46 @@ use super::yaml_writer::YamlWriter;
 
 pub fn build(yaml_writer: &mut YamlWriter, action_description: &HttpActionDescription) {
     if let Some(in_params) = &action_description.input_params {
+        let mut has_body = false;
         yaml_writer.write_empty("parameters");
         for param in in_params {
-            yaml_writer.write("- in", param.source.as_str());
-            build_parameter(yaml_writer, param);
+            if param.source.is_body() {
+                has_body = true;
+            } else {
+                yaml_writer.write("- in", param.source.as_str());
+                build_parameter(yaml_writer, param);
+            }
+        }
+
+        if has_body {
+            yaml_writer.write_empty("requestBody");
+            yaml_writer.increase_level();
+            yaml_writer.write_empty("content");
+            yaml_writer.increase_level();
+
+            yaml_writer.write_empty("application/x-www-form-urlencoded");
+            yaml_writer.increase_level();
+            yaml_writer.write_empty("schema");
+            yaml_writer.increase_level();
+            yaml_writer.write("type", "object");
+            yaml_writer.write_empty("properties");
+            yaml_writer.increase_level();
+            for param in in_params {
+                if param.source.is_body() {
+                    yaml_writer.write_empty(&param.field.name);
+                    yaml_writer.increase_level();
+                    if let Some(param_type) = get_param_type(&param.field.data_type) {
+                        yaml_writer.write("type", param_type);
+                    }
+                    yaml_writer.decrease_level();
+                }
+            }
+
+            yaml_writer.decrease_level();
+            yaml_writer.decrease_level();
+            yaml_writer.decrease_level();
+            yaml_writer.decrease_level();
+            yaml_writer.decrease_level();
         }
     }
 }

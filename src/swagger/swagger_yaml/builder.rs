@@ -1,13 +1,11 @@
 use std::collections::BTreeMap;
 
-use my_http_server::RequestCredentials;
-
 use crate::controllers::{documentation::HttpActionDescription, ControllersMiddleware};
 
 use super::yaml_writer::YamlWriter;
 
-pub fn build<TRequestCredentials: RequestCredentials + Send + Sync + 'static>(
-    controllers: &ControllersMiddleware<TRequestCredentials>,
+pub fn build(
+    controllers: &ControllersMiddleware,
     title: &str,
     version: &str,
     host: &str,
@@ -50,8 +48,8 @@ pub fn build<TRequestCredentials: RequestCredentials + Send + Sync + 'static>(
     yaml_writer.build()
 }
 
-fn build_paths_descriptions<TRequestCredentials: RequestCredentials + Send + Sync + 'static>(
-    controllers: &ControllersMiddleware<TRequestCredentials>,
+fn build_paths_descriptions(
+    controllers: &ControllersMiddleware,
 ) -> BTreeMap<String, BTreeMap<String, HttpActionDescription>> {
     let mut result = BTreeMap::new();
 

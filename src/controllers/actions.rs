@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use my_http_server::{HttpContext, HttpFailResult, HttpOkResult, RequestCredentials};
+use my_http_server::{HttpContext, HttpFailResult, HttpOkResult};
 
 use super::{
     documentation::{HttpActionDescription, ShouldBeAuthorized},
@@ -25,11 +25,10 @@ pub trait DeleteAction {
 
 #[async_trait::async_trait]
 pub trait HandleHttpRequest {
-    type TRequestCredentials: RequestCredentials + Send + Sync + 'static;
     async fn handle_request(
         &self,
         http_route: &HttpRoute,
-        ctx: &mut HttpContext<Self::TRequestCredentials>,
+        ctx: &mut HttpContext,
     ) -> Result<HttpOkResult, HttpFailResult>;
 }
 
@@ -37,35 +36,31 @@ pub trait GetDescription {
     fn get_description(&self) -> Option<HttpActionDescription>;
 }
 
-pub struct HttpAction<TRequestCredentials: RequestCredentials + Send + Sync + 'static> {
-    pub handler: Arc<
-        dyn HandleHttpRequest<TRequestCredentials = TRequestCredentials> + Send + Sync + 'static,
-    >,
+pub struct HttpAction {
+    pub handler: Arc<dyn HandleHttpRequest + Send + Sync + 'static>,
     pub http_route: HttpRoute,
     pub description: Arc<dyn GetDescription + Send + Sync + 'static>,
     pub should_be_authorized: ShouldBeAuthorized,
 }
 
-pub struct HttpActions<TRequestCredentials: RequestCredentials + Send + Sync + 'static> {
-    actions: Vec<HttpAction<TRequestCredentials>>,
+pub struct HttpActions {
+    actions: Vec<HttpAction>,
 }
 
-impl<TRequestCredentials: RequestCredentials + Send + Sync + 'static>
-    HttpActions<TRequestCredentials>
-{
+impl HttpActions {
     pub fn new() -> Self {
         Self {
             actions: Vec::new(),
         }
     }
 
-    pub fn register(&mut self, action: HttpAction<TRequestCredentials>) {
+    pub fn register(&mut self, action: HttpAction) {
         self.actions.push(action);
     }
 
     pub async fn handle_request(
         &self,
-        ctx: &mut HttpContext<TRequestCredentials>,
+        ctx: &mut HttpContext,
         global_authorization: &Option<ControllersAuthorization>,
     ) -> Option<Result<HttpOkResult, HttpFailResult>> {
         for action in &self.actions {
@@ -124,14 +119,14 @@ impl<TRequestCredentials: RequestCredentials + Send + Sync + 'static>
         None
     }
 
-    pub fn get_actions(&self) -> &Vec<HttpAction<TRequestCredentials>> {
+    pub fn get_actions(&self) -> &Vec<HttpAction> {
         &self.actions
     }
 
     async fn execute_with_claims(
         &self,
-        action: &HttpAction<TRequestCredentials>,
-        ctx: &mut HttpContext<TRequestCredentials>,
+        action: &HttpAction,
+        ctx: &mut HttpContext,
         claims: &Vec<String>,
     ) -> Option<Result<HttpOkResult, HttpFailResult>> {
         if let Some(credential) = &ctx.credentials {

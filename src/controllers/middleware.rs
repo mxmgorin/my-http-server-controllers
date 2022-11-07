@@ -4,7 +4,6 @@ use std::sync::Arc;
 
 use my_http_server::{
     HttpContext, HttpFailResult, HttpOkResult, HttpServerMiddleware, HttpServerRequestFlow,
-    RequestCredentials,
 };
 
 use super::{
@@ -19,20 +18,18 @@ use super::{
 #[cfg(feature = "with-authorization")]
 use super::ControllersAuthorization;
 
-pub struct ControllersMiddleware<TRequestCredentials: RequestCredentials + Send + Sync + 'static> {
-    pub get: HttpActions<TRequestCredentials>,
-    pub post: HttpActions<TRequestCredentials>,
-    pub put: HttpActions<TRequestCredentials>,
-    pub delete: HttpActions<TRequestCredentials>,
+pub struct ControllersMiddleware {
+    pub get: HttpActions,
+    pub post: HttpActions,
+    pub put: HttpActions,
+    pub delete: HttpActions,
     pub http_objects: Vec<HttpObjectStructure>,
 
     #[cfg(feature = "with-authorization")]
     pub authorization: Option<ControllersAuthorization>,
 }
 
-impl<TRequestCredentials: RequestCredentials + Send + Sync + 'static>
-    ControllersMiddleware<TRequestCredentials>
-{
+impl ControllersMiddleware {
     pub fn new(
         #[cfg(feature = "with-authorization")] authorization: Option<ControllersAuthorization>,
     ) -> Self {
@@ -48,12 +45,7 @@ impl<TRequestCredentials: RequestCredentials + Send + Sync + 'static>
     }
 
     pub fn register_get_action<
-        TGetAction: GetAction
-            + HandleHttpRequest<TRequestCredentials = TRequestCredentials>
-            + GetDescription
-            + Send
-            + Sync
-            + 'static,
+        TGetAction: GetAction + HandleHttpRequest + GetDescription + Send + Sync + 'static,
     >(
         &mut self,
         action: Arc<TGetAction>,
@@ -73,12 +65,7 @@ impl<TRequestCredentials: RequestCredentials + Send + Sync + 'static>
     }
 
     pub fn register_post_action<
-        TPostAction: PostAction
-            + HandleHttpRequest<TRequestCredentials = TRequestCredentials>
-            + GetDescription
-            + Send
-            + Sync
-            + 'static,
+        TPostAction: PostAction + HandleHttpRequest + GetDescription + Send + Sync + 'static,
     >(
         &mut self,
         action: Arc<TPostAction>,
@@ -98,12 +85,7 @@ impl<TRequestCredentials: RequestCredentials + Send + Sync + 'static>
     }
 
     pub fn register_put_action<
-        TPutAction: PostAction
-            + HandleHttpRequest<TRequestCredentials = TRequestCredentials>
-            + GetDescription
-            + Send
-            + Sync
-            + 'static,
+        TPutAction: PostAction + HandleHttpRequest + GetDescription + Send + Sync + 'static,
     >(
         &mut self,
         action: Arc<TPutAction>,
@@ -123,12 +105,7 @@ impl<TRequestCredentials: RequestCredentials + Send + Sync + 'static>
     }
 
     pub fn register_delete_action<
-        TDeleteAction: DeleteAction
-            + HandleHttpRequest<TRequestCredentials = TRequestCredentials>
-            + GetDescription
-            + Send
-            + Sync
-            + 'static,
+        TDeleteAction: DeleteAction + HandleHttpRequest + GetDescription + Send + Sync + 'static,
     >(
         &mut self,
         action: Arc<TDeleteAction>,
@@ -147,32 +124,29 @@ impl<TRequestCredentials: RequestCredentials + Send + Sync + 'static>
         });
     }
 
-    pub fn list_of_get_route_actions(&self) -> &Vec<HttpAction<TRequestCredentials>> {
+    pub fn list_of_get_route_actions(&self) -> &Vec<HttpAction> {
         self.get.get_actions()
     }
 
-    pub fn list_of_post_route_actions(&self) -> &Vec<HttpAction<TRequestCredentials>> {
+    pub fn list_of_post_route_actions(&self) -> &Vec<HttpAction> {
         self.post.get_actions()
     }
 
-    pub fn list_of_put_route_actions(&self) -> &Vec<HttpAction<TRequestCredentials>> {
+    pub fn list_of_put_route_actions(&self) -> &Vec<HttpAction> {
         self.put.get_actions()
     }
 
-    pub fn list_of_delete_route_actions<'s>(&self) -> &Vec<HttpAction<TRequestCredentials>> {
+    pub fn list_of_delete_route_actions<'s>(&self) -> &Vec<HttpAction> {
         self.delete.get_actions()
     }
 }
 
 #[async_trait]
-impl<TRequestCredentials: RequestCredentials + Send + Sync + 'static> HttpServerMiddleware
-    for ControllersMiddleware<TRequestCredentials>
-{
-    type TRequestCredentials = TRequestCredentials;
+impl HttpServerMiddleware for ControllersMiddleware {
     async fn handle_request(
         &self,
-        ctx: &mut HttpContext<TRequestCredentials>,
-        get_next: &mut HttpServerRequestFlow<TRequestCredentials>,
+        ctx: &mut HttpContext,
+        get_next: &mut HttpServerRequestFlow,
     ) -> Result<HttpOkResult, HttpFailResult> {
         match ctx.request.get_method() {
             &Method::GET => {

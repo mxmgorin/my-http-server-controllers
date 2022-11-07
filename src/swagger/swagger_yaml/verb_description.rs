@@ -1,4 +1,4 @@
-use my_http_server::{RequestCredentials, WebContentType};
+use my_http_server::WebContentType;
 
 use crate::controllers::documentation::{
     data_types::HttpDataType, out_results::HttpResult, HttpActionDescription,
@@ -9,11 +9,11 @@ use crate::controllers::ControllersMiddleware;
 
 use super::yaml_writer::YamlWriter;
 
-pub fn build<TRequestCredentials: RequestCredentials + Send + Sync + 'static>(
+pub fn build(
     yaml_writer: &mut YamlWriter,
     verb: &str,
     action_description: &HttpActionDescription,
-    #[cfg(feature = "with-authorization")] controllers: &ControllersMiddleware<TRequestCredentials>,
+    #[cfg(feature = "with-authorization")] controllers: &ControllersMiddleware,
 ) {
     yaml_writer.write_empty(verb);
 

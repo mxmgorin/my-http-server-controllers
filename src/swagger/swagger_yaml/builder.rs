@@ -33,11 +33,17 @@ pub fn build(
     yaml_writer.increase_level();
     super::definitions::build_and_write(&mut yaml_writer, controllers, &path_descriptions);
 
+    #[cfg(feature = "with-authorization")]
     if let Some(authorization) = controllers.authorization.as_ref() {
         super::security_defentions::build(&mut yaml_writer, authorization);
     }
 
-    super::paths::build(&mut yaml_writer, controllers, &path_descriptions);
+    super::paths::build(
+        &mut yaml_writer,
+        &path_descriptions,
+        #[cfg(feature = "with-authorization")]
+        controllers,
+    );
 
     yaml_writer.build()
 }

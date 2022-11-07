@@ -17,6 +17,12 @@ jobs:
       - uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
+      - name: Test Default Build      
+        run: |
+          cargo build          
+      - name: Test With Authorization      
+        run: |
+          cargo build --features "with-authorization"                    
       - name: Test Build      
         run: |
           cargo test

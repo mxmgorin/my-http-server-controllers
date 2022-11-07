@@ -12,8 +12,11 @@ use super::{
         PostAction,
     },
     documentation::data_types::HttpObjectStructure,
-    ControllersAuthorization, HttpRoute,
+    HttpRoute,
 };
+
+#[cfg(feature = "with-authorization")]
+use super::ControllersAuthorization;
 
 pub struct ControllersMiddleware {
     pub get: HttpActions,
@@ -22,17 +25,21 @@ pub struct ControllersMiddleware {
     pub delete: HttpActions,
     pub http_objects: Vec<HttpObjectStructure>,
 
+    #[cfg(feature = "with-authorization")]
     pub authorization: Option<ControllersAuthorization>,
 }
 
 impl ControllersMiddleware {
-    pub fn new(authorization: Option<ControllersAuthorization>) -> Self {
+    pub fn new(
+        #[cfg(feature = "with-authorization")] authorization: Option<ControllersAuthorization>,
+    ) -> Self {
         Self {
             get: HttpActions::new(),
             post: HttpActions::new(),
             put: HttpActions::new(),
             delete: HttpActions::new(),
             http_objects: Vec::new(),
+            #[cfg(feature = "with-authorization")]
             authorization,
         }
     }

@@ -1,13 +1,17 @@
 use std::collections::BTreeMap;
 
-use crate::controllers::{documentation::HttpActionDescription, ControllersMiddleware};
+use crate::controllers::documentation::HttpActionDescription;
+
+#[cfg(feature = "with-authorization")]
+use crate::controllers::ControllersMiddleware;
 
 use super::yaml_writer::YamlWriter;
 
 pub fn build(
     yaml_writer: &mut YamlWriter,
-    controllers: &ControllersMiddleware,
+
     actions: &BTreeMap<String, BTreeMap<String, HttpActionDescription>>,
+    #[cfg(feature = "with-authorization")] controllers: &ControllersMiddleware,
 ) {
     yaml_writer.reset_level();
     yaml_writer.write_empty("paths");
@@ -19,7 +23,13 @@ pub fn build(
         yaml_writer.increase_level();
 
         for (verb, action_description) in actions {
-            super::verb_description::build(yaml_writer, verb, controllers, action_description)
+            super::verb_description::build(
+                yaml_writer,
+                verb,
+                action_description,
+                #[cfg(feature = "with-authorization")]
+                controllers,
+            )
         }
 
         yaml_writer.decrease_level();

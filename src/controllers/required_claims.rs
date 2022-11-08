@@ -25,14 +25,14 @@ impl RequiredClaims {
     pub fn authorized_by_claims(
         &self,
         request_ip: &str,
-        request_claims: Option<&[RequestClaim]>,
+        request_claims: Option<Vec<RequestClaim>>,
     ) -> bool {
         // No Claims means - we are authorizeds
         if self.required_claims.len() == 0 {
             return true;
         }
 
-        if let Some(request_claims) = request_claims {
+        if let Some(request_claims) = &request_claims {
             for request_claim in request_claims {
                 if !self.has_claim(&request_claim.id) {
                     return false;

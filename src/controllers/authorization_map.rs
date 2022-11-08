@@ -109,6 +109,7 @@ mod tests {
     use crate::controllers::RequiredClaims;
 
     use super::*;
+    use rust_extensions::date_time::*;
 
     pub struct HttpActionMock {
         value: ShouldBeAuthorized,
@@ -120,8 +121,13 @@ mod tests {
         }
     }
 
+    pub struct ClaimMock {
+        pub id: String,
+        pub expires: DateTimeAsMicroseconds,
+        pub allowed_ips: Option<Vec<String>>,
+    }
     pub struct RequestCredentialsMock {
-        value: Option<Vec<RequestClaim>>,
+        value: Option<Vec<ClaimMock>>,
     }
 
     impl RequestCredentials for RequestCredentialsMock {
@@ -129,9 +135,21 @@ mod tests {
             "test"
         }
 
-        fn get_claims(&self) -> Option<&[RequestClaim]> {
-            let result = self.value.as_ref()?;
-            Some(result.as_slice())
+        fn get_claims(&self) -> Option<Vec<RequestClaim>> {
+            let value = self.value.as_ref()?;
+            let mut result = Vec::with_capacity(value.len());
+
+            for claim in value {
+                let itm = RequestClaim {
+                    id: &claim.id,
+                    expires: claim.expires,
+                    allowed_ips: &claim.allowed_ips,
+                };
+
+                result.push(itm);
+            }
+
+            Some(result)
         }
     }
 

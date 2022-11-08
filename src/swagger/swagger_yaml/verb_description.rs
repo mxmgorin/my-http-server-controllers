@@ -20,8 +20,8 @@ pub fn build(
     yaml_writer.increase_level();
 
     #[cfg(feature = "with-authorization")]
-    if let Some(authorization) = &controllers.authorization {
-        let mut should_be_authorized = authorization.is_global_authorization();
+    if let Some(authorization) = &controllers.authorization_map.global_authorization {
+        let mut should_be_authorized = authorization.is_global_authorization_enabled();
 
         match &action_description.should_be_authorized {
             crate::controllers::documentation::ShouldBeAuthorized::Yes => {

@@ -14,7 +14,7 @@ pub enum ControllersAuthorization {
 }
 
 impl ControllersAuthorization {
-    pub fn is_global_authorization(&self) -> bool {
+    pub fn is_global_authorization_enabled(&self) -> bool {
         match self {
             ControllersAuthorization::BasicAuthentication {
                 global,

@@ -12,7 +12,7 @@ use super::{
         PostAction,
     },
     documentation::{data_types::HttpObjectStructure, ShouldBeAuthorized},
-    HttpRoute,
+    AuthorizationMap, HttpRoute,
 };
 
 #[cfg(feature = "with-authorization")]
@@ -26,7 +26,7 @@ pub struct ControllersMiddleware {
     pub http_objects: Vec<HttpObjectStructure>,
 
     #[cfg(feature = "with-authorization")]
-    pub authorization: Option<ControllersAuthorization>,
+    pub authorization_map: AuthorizationMap,
 }
 
 impl ControllersMiddleware {
@@ -40,7 +40,7 @@ impl ControllersMiddleware {
             delete: HttpActions::new(),
             http_objects: Vec::new(),
             #[cfg(feature = "with-authorization")]
-            authorization,
+            authorization_map: AuthorizationMap::new(authorization),
         }
     }
 
@@ -151,28 +151,34 @@ impl HttpServerMiddleware for ControllersMiddleware {
         match ctx.request.get_method() {
             &Method::GET => {
                 {
-                    if let Some(result) = self.get.handle_request(ctx, &self.authorization).await {
+                    if let Some(result) =
+                        self.get.handle_request(ctx, &self.authorization_map).await
+                    {
                         return result;
                     }
                 }
                 return get_next.next(ctx).await;
             }
             &Method::POST => {
-                if let Some(result) = self.post.handle_request(ctx, &self.authorization).await {
+                if let Some(result) = self.post.handle_request(ctx, &self.authorization_map).await {
                     return result;
                 } else {
                     return get_next.next(ctx).await;
                 }
             }
             &Method::PUT => {
-                if let Some(result) = self.put.handle_request(ctx, &self.authorization).await {
+                if let Some(result) = self.put.handle_request(ctx, &self.authorization_map).await {
                     return result;
                 } else {
                     return get_next.next(ctx).await;
                 }
             }
             &Method::DELETE => {
-                if let Some(result) = self.delete.handle_request(ctx, &self.authorization).await {
+                if let Some(result) = self
+                    .delete
+                    .handle_request(ctx, &self.authorization_map)
+                    .await
+                {
                     return result;
                 } else {
                     return get_next.next(ctx).await;

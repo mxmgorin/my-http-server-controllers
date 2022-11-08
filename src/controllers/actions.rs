@@ -85,7 +85,7 @@ impl HttpActions {
                     }
                     super::AuthorizationResult::NotAuthenticated => {
                         return Some(Err(HttpFailResult::as_unauthorized(Some(
-                            "Not session credentials are found".to_string(),
+                            "No session credentials are found".to_string(),
                         ))));
                     }
                     super::AuthorizationResult::NotAuthorized => {

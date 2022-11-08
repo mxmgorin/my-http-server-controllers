@@ -1,15 +1,17 @@
+use super::RequiredClaims;
+
 pub enum ControllersAuthorization {
     BasicAuthentication {
         global: bool,
-        global_claims: Option<Vec<String>>,
+        global_claims: RequiredClaims,
     },
     ApiKeys {
         global: bool,
-        global_claims: Option<Vec<String>>,
+        global_claims: RequiredClaims,
     },
     BearerAuthentication {
         global: bool,
-        global_claims: Option<Vec<String>>,
+        global_claims: RequiredClaims,
     },
 }
 
@@ -31,7 +33,7 @@ impl ControllersAuthorization {
         }
     }
 
-    pub fn get_global_claims(&self) -> &Option<Vec<String>> {
+    pub fn get_global_claims(&self) -> &RequiredClaims {
         match self {
             ControllersAuthorization::BasicAuthentication {
                 global: _,

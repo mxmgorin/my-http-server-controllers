@@ -1,9 +1,11 @@
+use crate::controllers::RequiredClaims;
+
 use super::{in_parameters::HttpInputParameter, out_results::HttpResult};
 
 #[derive(Debug, Clone)]
 pub enum ShouldBeAuthorized {
     Yes,
-    YesWithClaims(Vec<String>),
+    YesWithClaims(RequiredClaims),
     No,
     UseGlobal,
 }

@@ -36,11 +36,21 @@ pub trait GetDescription {
     fn get_description(&self) -> Option<HttpActionDescription>;
 }
 
+pub trait GetShouldBeAuthoriazed {
+    fn get_should_be_authorized(&self) -> &ShouldBeAuthorized;
+}
+
 pub struct HttpAction {
     pub handler: Arc<dyn HandleHttpRequest + Send + Sync + 'static>,
     pub http_route: HttpRoute,
     pub description: Arc<dyn GetDescription + Send + Sync + 'static>,
     pub should_be_authorized: ShouldBeAuthorized,
+}
+
+impl GetShouldBeAuthoriazed for HttpAction {
+    fn get_should_be_authorized(&self) -> &ShouldBeAuthorized {
+        &self.should_be_authorized
+    }
 }
 
 pub struct HttpActions {
@@ -65,14 +75,22 @@ impl HttpActions {
     ) -> Option<Result<HttpOkResult, HttpFailResult>> {
         for action in &self.actions {
             if action.http_route.is_my_path(&ctx.request.http_path) {
-                match authorization_map.is_authorized(action, ctx) {
-                    super::AuthorizationResult::Authorized => {
+                match authorization_map.is_authorized(
+                    action,
+                    &ctx.credentials,
+                    ctx.request.get_ip().get_real_ip(),
+                ) {
+                    super::AuthorizationResult::Allowed => {
                         return Some(action.handler.handle_request(&action.http_route, ctx).await);
                     }
-                    super::AuthorizationResult::Unauthenticated => {
+                    super::AuthorizationResult::NotAuthenticated => {
+                        return Some(Err(HttpFailResult::as_unauthorized(Some(
+                            "Not session credentials are found".to_string(),
+                        ))));
+                    }
+                    super::AuthorizationResult::NotAuthorized => {
                         return Some(Err(HttpFailResult::as_unauthorized(None)));
                     }
-                    super::AuthorizationResult::Unauthorized => {}
                 }
             }
         }

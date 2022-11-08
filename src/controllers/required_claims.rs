@@ -6,10 +6,26 @@ pub struct RequiredClaims {
 }
 
 impl RequiredClaims {
+    pub fn no_claims() -> Self {
+        Self {
+            required_claims: vec![],
+        }
+    }
+
     pub fn from_vec(claims: Vec<String>) -> Self {
         Self {
             required_claims: claims,
         }
+    }
+
+    pub fn from_slice_of_str(claims: &[&str]) -> Self {
+        let mut required_claims = Vec::with_capacity(claims.len());
+
+        for claim in claims {
+            required_claims.push(claim.to_string());
+        }
+
+        Self { required_claims }
     }
 
     fn has_claim(&self, claim_id_to_find: &str) -> bool {

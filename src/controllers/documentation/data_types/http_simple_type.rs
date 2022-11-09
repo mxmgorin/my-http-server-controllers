@@ -24,7 +24,7 @@ impl HttpSimpleType {
             HttpSimpleType::Binary => "binary",
             HttpSimpleType::Boolean => "boolean",
             HttpSimpleType::Date => "date",
-            HttpSimpleType::DateTime => "dateTime",
+            HttpSimpleType::DateTime => "date-time",
             HttpSimpleType::Password => "password",
         }
     }

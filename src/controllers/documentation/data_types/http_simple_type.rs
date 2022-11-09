@@ -13,7 +13,7 @@ pub enum HttpSimpleType {
 }
 
 impl HttpSimpleType {
-    pub fn as_str(&self) -> &str {
+    pub fn as_format(&self) -> &str {
         match self {
             HttpSimpleType::Integer => "integer",
             HttpSimpleType::Long => "long",

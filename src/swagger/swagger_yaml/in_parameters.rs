@@ -78,10 +78,6 @@ fn build_parameter(yaml_writer: &mut YamlWriter, param: &HttpInputParameter) {
         yaml_writer.write_bool("required", true);
     }
 
-    if let Some(param_format) = get_param_format(&param.field.data_type) {
-        yaml_writer.write("format", param_format);
-    }
-
     if let Some(param_type) = get_param_type(&param.field.data_type) {
         yaml_writer.write("type", param_type);
     }
@@ -99,7 +95,7 @@ fn build_parameter(yaml_writer: &mut YamlWriter, param: &HttpInputParameter) {
 
 fn get_param_format(data_type: &HttpDataType) -> Option<&str> {
     match data_type {
-        HttpDataType::SimpleType(param_type) => Some(param_type.as_str()),
+        HttpDataType::SimpleType(param_type) => Some(param_type.as_format()),
         HttpDataType::ObjectId { struct_id: _ } => None,
         HttpDataType::None => None,
         HttpDataType::ArrayOf(_) => None,

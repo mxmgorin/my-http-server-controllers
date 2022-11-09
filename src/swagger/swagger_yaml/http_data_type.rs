@@ -50,9 +50,8 @@ pub fn build(yaml_writer: &mut YamlWriter, root_name: &str, data_type: &HttpData
 fn write_simple_type(yaml_writer: &mut YamlWriter, param_type: &HttpSimpleType) {
     yaml_writer.increase_level();
     yaml_writer.write("type", param_type.as_swagger_type());
-    if let Some(param_format) = get_param_format(&param.field.data_type) {
-        yaml_writer.write("format", param_format);
-    }
+    yaml_writer.write("format", param_type.as_format());
+
     yaml_writer.decrease_level();
 }
 

@@ -73,4 +73,11 @@ impl HttpDataType {
     pub fn as_array_of_object(object: HttpObjectStructure) -> Self {
         Self::ArrayOf(ArrayElement::Object(object))
     }
+
+    pub fn is_binary(&self) -> bool {
+        match self {
+            HttpDataType::SimpleType(HttpSimpleType::Binary) => true,
+            _ => false,
+        }
+    }
 }

@@ -21,4 +21,8 @@ impl HttpField {
             default_value,
         }
     }
+
+    pub fn is_file_upload(&self) -> bool {
+        self.data_type.is_binary()
+    }
 }

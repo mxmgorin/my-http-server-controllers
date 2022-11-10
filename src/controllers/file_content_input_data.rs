@@ -1,21 +1,17 @@
-use std::str::FromStr;
-
-use my_http_server::HttpFailResult;
+use my_http_server::{HttpFailResult, HttpRequest};
 
 pub struct FileContent {
     pub file_name: String,
     pub content: Vec<u8>,
 }
 
-impl FromStr for FileContent {
-    type Err = HttpFailResult;
-
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let result = FileContent {
-            file_name: s.to_string(),
-            content: Vec::new(),
+impl FileContent {
+    pub async fn read_from_body(request: &mut HttpRequest) -> Result<Self, HttpFailResult> {
+        let http_body = request.receive_body().await?;
+        let result = Self {
+            file_name: "test".to_string(),
+            content: http_body.get_body(),
         };
-
         Ok(result)
     }
 }

@@ -9,7 +9,7 @@ impl FileContent {
     pub async fn read_from_body(request: &mut HttpRequest) -> Result<Self, HttpFailResult> {
         let headers = request.get_headers();
         for header in headers {
-            format!("{:?}", header);
+            println!("{:?}", header);
         }
         let http_body = request.receive_body().await?;
         let result = Self {

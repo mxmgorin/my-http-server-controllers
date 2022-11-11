@@ -63,6 +63,10 @@ pub fn build(yaml_writer: &mut YamlWriter, action_description: &HttpActionDescri
                     if let Some(param_type) = get_param_type(&param.field.data_type) {
                         yaml_writer.write("type", param_type);
                         yaml_writer.write("required", "true");
+
+                        if let HttpDataType::SimpleType(simple_type) = &param.field.data_type {
+                            yaml_writer.write("format", simple_type.as_format());
+                        }
                     }
                     yaml_writer.decrease_level();
                 }

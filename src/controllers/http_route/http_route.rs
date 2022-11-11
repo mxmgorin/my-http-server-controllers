@@ -1,6 +1,6 @@
-use my_http_server::{HttpFailResult, HttpPath};
+use my_http_server::{HttpFailResult, HttpPath, ValueAsString};
 
-use super::{HttpRouteSegment, RouteValue};
+use super::HttpRouteSegment;
 
 pub struct HttpRoute {
     pub route: String,
@@ -87,7 +87,7 @@ impl HttpRoute {
         &'s self,
         path: &'s HttpPath,
         key: &str,
-    ) -> Result<RouteValue<'s>, HttpFailResult> {
+    ) -> Result<ValueAsString<'s>, HttpFailResult> {
         if self.keys_amount == 0 {
             return Err(HttpFailResult {
                 content_type: my_http_server::WebContentType::Text,
@@ -104,7 +104,7 @@ impl HttpRoute {
                 HttpRouteSegment::Key(segment_key) => {
                     if segment_key == key {
                         match path.get_segment_value_as_str(index) {
-                            Some(value) => return Ok(RouteValue::new(value)),
+                            Some(value) => return Ok(ValueAsString::Raw { value, src: "path" }),
                             None => {
                                 panic!("Should not be here");
                             }
@@ -157,7 +157,14 @@ mod tests {
         let path = HttpPath::from_str("/test/1/second");
         assert_eq!(route.is_my_path(&path), true);
 
-        assert_eq!(route.get_value(&path, "key").unwrap().as_str(), "1");
+        assert_eq!(
+            route
+                .get_value(&path, "key")
+                .unwrap()
+                .get_raw_str()
+                .unwrap(),
+            "1"
+        );
     }
 
     #[test]

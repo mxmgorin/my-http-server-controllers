@@ -16,7 +16,7 @@ pub fn build(yaml_writer: &mut YamlWriter, action_description: &HttpActionDescri
         for param in in_params {
             if param.field.is_file_upload() {
                 has_file_upload = true;
-            } else if param.source.is_form_data() {
+            } else if param.is_body_reader() {
                 has_form_data = true;
             } else {
                 if !parameters_is_set {
@@ -57,7 +57,7 @@ pub fn build(yaml_writer: &mut YamlWriter, action_description: &HttpActionDescri
             yaml_writer.write_empty("properties");
             yaml_writer.increase_level();
             for param in in_params {
-                if param.source.is_form_data() {
+                if param.is_body_reader() {
                     yaml_writer.write_empty(&param.field.name);
                     yaml_writer.increase_level();
                     if let Some(param_type) = get_param_type(&param.field.data_type) {

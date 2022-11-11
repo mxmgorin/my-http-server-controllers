@@ -16,6 +16,13 @@ impl HttpDataType {
             _ => false,
         }
     }
+
+    pub fn is_simple_type(&self) -> bool {
+        match self {
+            HttpDataType::ArrayOf(_) => true,
+            _ => false,
+        }
+    }
     pub fn as_string() -> Self {
         Self::SimpleType(HttpSimpleType::String)
     }

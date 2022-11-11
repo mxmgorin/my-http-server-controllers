@@ -19,7 +19,7 @@ impl HttpDataType {
 
     pub fn is_simple_type(&self) -> bool {
         match self {
-            HttpDataType::ArrayOf(_) => true,
+            HttpDataType::SimpleType(_) => true,
             _ => false,
         }
     }

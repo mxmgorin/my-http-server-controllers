@@ -8,7 +8,7 @@ use super::yaml_writer::YamlWriter;
 
 pub fn build(yaml_writer: &mut YamlWriter, action_description: &HttpActionDescription) {
     if let Some(in_params) = &action_description.input_params {
-        let mut has_form_data = false;
+        let mut has_data_from_body_reader = false;
         let mut has_file_upload = false;
 
         let mut parameters_is_set = false;
@@ -17,7 +17,7 @@ pub fn build(yaml_writer: &mut YamlWriter, action_description: &HttpActionDescri
             if param.field.is_file_upload() {
                 has_file_upload = true;
             } else if param.is_body_reader() {
-                has_form_data = true;
+                has_data_from_body_reader = true;
             } else {
                 if !parameters_is_set {
                     yaml_writer.write_empty("parameters");
@@ -43,7 +43,7 @@ pub fn build(yaml_writer: &mut YamlWriter, action_description: &HttpActionDescri
             yaml_writer.decrease_level();
             yaml_writer.decrease_level();
             yaml_writer.decrease_level();
-        } else if has_form_data {
+        } else if has_data_from_body_reader {
             yaml_writer.write_empty("requestBody");
             yaml_writer.increase_level();
             yaml_writer.write_empty("content");

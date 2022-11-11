@@ -143,7 +143,7 @@ mod tests {
                 let itm = RequestClaim {
                     id: &claim.id,
                     expires: claim.expires,
-                    allowed_ips: &claim.allowed_ips,
+                    allowed_ips: claim.allowed_ips.as_ref(),
                 };
 
                 result.push(itm);

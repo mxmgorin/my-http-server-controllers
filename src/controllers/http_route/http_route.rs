@@ -103,7 +103,7 @@ impl HttpRoute {
             match segment {
                 HttpRouteSegment::Key(segment_key) => {
                     if segment_key == key {
-                        match path.get_segment_value(index) {
+                        match path.get_segment_value_as_str(index) {
                             Some(value) => return Ok(RouteValue::new(value)),
                             None => {
                                 panic!("Should not be here");

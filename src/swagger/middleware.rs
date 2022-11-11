@@ -35,7 +35,7 @@ impl HttpServerMiddleware for SwaggerMiddleware {
             return get_next.next(ctx).await;
         }
 
-        if let Some(value) = ctx.request.http_path.get_segment_value(0) {
+        if let Some(value) = ctx.request.http_path.get_segment_value_as_str(0) {
             if value != "swagger" {
                 return get_next.next(ctx).await;
             }

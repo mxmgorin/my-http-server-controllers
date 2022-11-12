@@ -35,6 +35,10 @@ impl HttpParameters {
 
 impl From<Vec<HttpInputParameter>> for HttpParameters {
     fn from(src: Vec<HttpInputParameter>) -> Self {
-        HttpParameters::new(Some(src))
+        if src.len() == 0 {
+            return Self::new(None);
+        } else {
+            Self::new(Some(src))
+        }
     }
 }

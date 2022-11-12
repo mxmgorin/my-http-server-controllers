@@ -26,4 +26,17 @@ impl HttpInputParameter {
             _ => false,
         }
     }
+
+    pub fn is_file_to_upload_from_body(&self) -> bool {
+        if self.field.is_file_upload() {
+            match self.source {
+                HttpParameterInputSource::Body => {
+                    return true;
+                }
+                _ => {}
+            }
+        }
+
+        false
+    }
 }

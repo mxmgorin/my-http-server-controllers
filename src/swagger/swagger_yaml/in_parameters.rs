@@ -10,13 +10,13 @@ pub fn build(yaml_writer: &mut YamlWriter, action_description: &HttpActionDescri
     if let Some(in_params) = action_description.input_params.get_all() {
         let mut has_data_from_body_reader = false;
         let mut has_form_data = false;
-        let mut has_file_upload = false;
+        let mut has_file_upload_from_body = false;
 
         let mut parameters_is_set = false;
 
         for param in in_params {
-            if param.field.is_file_upload() {
-                has_file_upload = true;
+            if param.is_file_to_upload_from_body() {
+                has_file_upload_from_body = true;
             } else if param.is_body_reader() {
                 has_data_from_body_reader = true;
             } else if param.is_form_data() {
@@ -31,7 +31,7 @@ pub fn build(yaml_writer: &mut YamlWriter, action_description: &HttpActionDescri
             }
         }
 
-        if has_file_upload {
+        if has_file_upload_from_body {
             build_req_body_as_file_to_upload(yaml_writer);
         } else if has_form_data {
             build_req_body_form_data(yaml_writer, in_params);

@@ -24,8 +24,6 @@ pub fn build_and_write(
         if !definitions.contains_key(http_object.struct_id.as_str()) {
             super::http_object_type::build(yaml_writer, http_object);
 
-            println!("Populating from http_object: {}", http_object.struct_id);
-
             definitions.insert(http_object.struct_id.to_string(), ());
         }
     }

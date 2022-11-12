@@ -32,3 +32,9 @@ impl HttpParameters {
         result.get_result()
     }
 }
+
+impl From<Vec<HttpInputParameter>> for HttpParameters {
+    fn from(src: Vec<HttpInputParameter>) -> Self {
+        HttpParameters::new(Some(src))
+    }
+}

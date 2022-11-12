@@ -1,6 +1,6 @@
 use crate::controllers::RequiredClaims;
 
-use super::{in_parameters::HttpInputParameter, out_results::HttpResult};
+use super::{in_parameters::HttpParameters, out_results::HttpResult};
 
 #[derive(Debug, Clone)]
 pub enum ShouldBeAuthorized {
@@ -14,7 +14,7 @@ pub struct HttpActionDescription<'s> {
     pub controller_name: &'s str,
     pub summary: &'s str,
     pub description: &'s str,
-    pub input_params: Option<Vec<HttpInputParameter>>,
+    pub input_params: HttpParameters,
     pub results: Vec<HttpResult>,
     pub should_be_authorized: ShouldBeAuthorized,
 }

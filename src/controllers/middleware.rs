@@ -15,7 +15,6 @@ use super::{
     AuthorizationMap, HttpRoute,
 };
 
-#[cfg(feature = "with-authorization")]
 use super::ControllersAuthorization;
 
 pub struct ControllersMiddleware {
@@ -25,21 +24,17 @@ pub struct ControllersMiddleware {
     pub delete: HttpActions,
     pub http_objects: Vec<HttpObjectStructure>,
 
-    #[cfg(feature = "with-authorization")]
     pub authorization_map: AuthorizationMap,
 }
 
 impl ControllersMiddleware {
-    pub fn new(
-        #[cfg(feature = "with-authorization")] authorization: Option<ControllersAuthorization>,
-    ) -> Self {
+    pub fn new(authorization: Option<ControllersAuthorization>) -> Self {
         Self {
             get: HttpActions::new(),
             post: HttpActions::new(),
             put: HttpActions::new(),
             delete: HttpActions::new(),
             http_objects: Vec::new(),
-            #[cfg(feature = "with-authorization")]
             authorization_map: AuthorizationMap::new(authorization),
         }
     }

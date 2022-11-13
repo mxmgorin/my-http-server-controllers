@@ -4,7 +4,6 @@ use crate::controllers::documentation::{
     data_types::HttpDataType, out_results::HttpResult, HttpActionDescription,
 };
 
-#[cfg(feature = "with-authorization")]
 use crate::controllers::ControllersMiddleware;
 
 use super::yaml_writer::YamlWriter;
@@ -13,13 +12,12 @@ pub fn build(
     yaml_writer: &mut YamlWriter,
     verb: &str,
     action_description: &HttpActionDescription,
-    #[cfg(feature = "with-authorization")] controllers: &ControllersMiddleware,
+    controllers: &ControllersMiddleware,
 ) {
     yaml_writer.write_empty(verb);
 
     yaml_writer.increase_level();
 
-    #[cfg(feature = "with-authorization")]
     if let Some(authorization) = &controllers.authorization_map.global_authorization {
         let mut should_be_authorized = authorization.is_global_authorization_enabled();
 

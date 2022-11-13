@@ -1,4 +1,4 @@
-use my_http_server::{HttpFailResult, HttpPath, ValueAsString};
+use my_http_server::{HttpFailResult, HttpPath, InputParamValue};
 
 use super::HttpRouteSegment;
 
@@ -87,7 +87,7 @@ impl HttpRoute {
         &'s self,
         path: &'s HttpPath,
         key: &str,
-    ) -> Result<ValueAsString<'s>, HttpFailResult> {
+    ) -> Result<InputParamValue<'s>, HttpFailResult> {
         if self.keys_amount == 0 {
             return Err(HttpFailResult {
                 content_type: my_http_server::WebContentType::Text,
@@ -104,7 +104,7 @@ impl HttpRoute {
                 HttpRouteSegment::Key(segment_key) => {
                     if segment_key == key {
                         match path.get_segment_value_as_str(index) {
-                            Some(value) => return Ok(ValueAsString::Raw { value, src: "path" }),
+                            Some(value) => return Ok(InputParamValue::Raw { value, src: "path" }),
                             None => {
                                 panic!("Should not be here");
                             }

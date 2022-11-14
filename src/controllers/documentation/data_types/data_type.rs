@@ -17,6 +17,13 @@ impl HttpDataType {
         }
     }
 
+    pub fn is_none(&self) -> bool {
+        match self {
+            HttpDataType::None => true,
+            _ => false,
+        }
+    }
+
     pub fn is_simple_type(&self) -> bool {
         match self {
             HttpDataType::SimpleType(_) => true,

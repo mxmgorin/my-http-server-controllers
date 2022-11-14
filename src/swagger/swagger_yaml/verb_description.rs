@@ -99,6 +99,10 @@ fn compile_responses(yaml_writer: &mut YamlWriter, results: &[HttpResult]) {
 fn compile_response(yaml_writer: &mut YamlWriter, src: &HttpResult) {
     yaml_writer.write("description", src.description.as_str());
 
+    if src.data_type.is_none() {
+        return;
+    }
+
     yaml_writer.write_empty("content");
     yaml_writer.increase_level();
     yaml_writer.write_empty("application/json");

@@ -95,7 +95,7 @@ impl HttpActions {
                     }
                     super::AuthorizationResult::NotAuthorized(claim_name) => {
                         if let Some(result) = auth_error_factory {
-                            return Some(Err(result.get_not_authorized(claim_name.as_str())));
+                            return Some(Err(result.get_not_authorized(claim_name)));
                         } else {
                             return Some(Err(HttpFailResult::as_unauthorized(None)));
                         }

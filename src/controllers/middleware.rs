@@ -12,7 +12,7 @@ use super::{
         PostAction,
     },
     documentation::{data_types::HttpObjectStructure, ShouldBeAuthorized},
-    AuthorizationMap, HttpRoute,
+    AuthErrorFactory, AuthorizationMap, HttpRoute,
 };
 
 use super::ControllersAuthorization;
@@ -23,12 +23,15 @@ pub struct ControllersMiddleware {
     pub put: HttpActions,
     pub delete: HttpActions,
     pub http_objects: Vec<HttpObjectStructure>,
-
     pub authorization_map: AuthorizationMap,
+    pub auth_error_factory: Option<Arc<dyn AuthErrorFactory + Send + Sync + 'static>>,
 }
 
 impl ControllersMiddleware {
-    pub fn new(authorization: Option<ControllersAuthorization>) -> Self {
+    pub fn new(
+        authorization: Option<ControllersAuthorization>,
+        auth_error_factory: Option<Arc<dyn AuthErrorFactory + Send + Sync + 'static>>,
+    ) -> Self {
         Self {
             get: HttpActions::new(),
             post: HttpActions::new(),
@@ -36,6 +39,7 @@ impl ControllersMiddleware {
             delete: HttpActions::new(),
             http_objects: Vec::new(),
             authorization_map: AuthorizationMap::new(authorization),
+            auth_error_factory,
         }
     }
 
@@ -146,8 +150,10 @@ impl HttpServerMiddleware for ControllersMiddleware {
         match ctx.request.get_method() {
             &Method::GET => {
                 {
-                    if let Some(result) =
-                        self.get.handle_request(ctx, &self.authorization_map).await
+                    if let Some(result) = self
+                        .get
+                        .handle_request(ctx, &self.authorization_map, &self.auth_error_factory)
+                        .await
                     {
                         return result;
                     }
@@ -155,14 +161,22 @@ impl HttpServerMiddleware for ControllersMiddleware {
                 return get_next.next(ctx).await;
             }
             &Method::POST => {
-                if let Some(result) = self.post.handle_request(ctx, &self.authorization_map).await {
+                if let Some(result) = self
+                    .post
+                    .handle_request(ctx, &self.authorization_map, &self.auth_error_factory)
+                    .await
+                {
                     return result;
                 } else {
                     return get_next.next(ctx).await;
                 }
             }
             &Method::PUT => {
-                if let Some(result) = self.put.handle_request(ctx, &self.authorization_map).await {
+                if let Some(result) = self
+                    .put
+                    .handle_request(ctx, &self.authorization_map, &self.auth_error_factory)
+                    .await
+                {
                     return result;
                 } else {
                     return get_next.next(ctx).await;
@@ -171,7 +185,7 @@ impl HttpServerMiddleware for ControllersMiddleware {
             &Method::DELETE => {
                 if let Some(result) = self
                     .delete
-                    .handle_request(ctx, &self.authorization_map)
+                    .handle_request(ctx, &self.authorization_map, &self.auth_error_factory)
                     .await
                 {
                     return result;

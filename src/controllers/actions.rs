@@ -4,7 +4,7 @@ use my_http_server::{HttpContext, HttpFailResult, HttpOkResult};
 
 use super::{
     documentation::{HttpActionDescription, ShouldBeAuthorized},
-    AuthorizationMap, HttpRoute,
+    AuthErrorFactory, AuthorizationMap, HttpRoute,
 };
 
 pub trait GetAction {
@@ -72,6 +72,7 @@ impl HttpActions {
         &self,
         ctx: &mut HttpContext,
         authorization_map: &AuthorizationMap,
+        auth_error_factory: &Option<Arc<dyn AuthErrorFactory + Send + Sync + 'static>>,
     ) -> Option<Result<HttpOkResult, HttpFailResult>> {
         for action in &self.actions {
             if action.http_route.is_my_path(&ctx.request.http_path) {
@@ -84,12 +85,20 @@ impl HttpActions {
                         return Some(action.handler.handle_request(&action.http_route, ctx).await);
                     }
                     super::AuthorizationResult::NotAuthenticated => {
-                        return Some(Err(HttpFailResult::as_unauthorized(Some(
-                            "No session credentials are found".to_string(),
-                        ))));
+                        if let Some(result) = auth_error_factory {
+                            return Some(Err(result.get_not_authenticated()));
+                        } else {
+                            return Some(Err(HttpFailResult::as_unauthorized(Some(
+                                "No session credentials are found".to_string(),
+                            ))));
+                        }
                     }
-                    super::AuthorizationResult::NotAuthorized => {
-                        return Some(Err(HttpFailResult::as_unauthorized(None)));
+                    super::AuthorizationResult::NotAuthorized(claim_name) => {
+                        if let Some(result) = auth_error_factory {
+                            return Some(Err(result.get_not_authorized(claim_name.as_str())));
+                        } else {
+                            return Some(Err(HttpFailResult::as_unauthorized(None)));
+                        }
                     }
                 }
             }

@@ -7,7 +7,7 @@ use super::{
 pub enum AuthorizationResult {
     Allowed,
     NotAuthenticated,
-    NotAuthorized,
+    NotAuthorized(String),
 }
 
 impl AuthorizationResult {
@@ -15,7 +15,7 @@ impl AuthorizationResult {
         match self {
             AuthorizationResult::Allowed => true,
             AuthorizationResult::NotAuthenticated => false,
-            AuthorizationResult::NotAuthorized => false,
+            AuthorizationResult::NotAuthorized(_) => false,
         }
     }
 
@@ -23,7 +23,7 @@ impl AuthorizationResult {
         match self {
             AuthorizationResult::Allowed => false,
             AuthorizationResult::NotAuthenticated => true,
-            AuthorizationResult::NotAuthorized => false,
+            AuthorizationResult::NotAuthorized(_) => false,
         }
     }
 
@@ -31,7 +31,7 @@ impl AuthorizationResult {
         match self {
             AuthorizationResult::Allowed => false,
             AuthorizationResult::NotAuthenticated => false,
-            AuthorizationResult::NotAuthorized => true,
+            AuthorizationResult::NotAuthorized(_) => true,
         }
     }
 }
@@ -66,10 +66,12 @@ impl AuthorizationMap {
             }
             ShouldBeAuthorized::YesWithClaims(action_claims) => {
                 if let Some(req_credentials) = request_credentials {
-                    if action_claims.authorized_by_claims(ip, req_credentials.get_claims()) {
-                        return AuthorizationResult::Allowed;
+                    if let Some(claim_name) =
+                        action_claims.authorized_by_claims(ip, req_credentials.get_claims())
+                    {
+                        return AuthorizationResult::NotAuthorized(claim_name);
                     } else {
-                        return AuthorizationResult::NotAuthorized;
+                        return AuthorizationResult::Allowed;
                     }
                 } else {
                     return AuthorizationResult::NotAuthenticated;
@@ -82,11 +84,12 @@ impl AuthorizationMap {
                         if let Some(req_credentials) = request_credentials {
                             let global_claims = global_auth.get_global_claims();
 
-                            if global_claims.authorized_by_claims(ip, req_credentials.get_claims())
+                            if let Some(claim_name) =
+                                global_claims.authorized_by_claims(ip, req_credentials.get_claims())
                             {
-                                return AuthorizationResult::Allowed;
+                                return AuthorizationResult::NotAuthorized(claim_name);
                             } else {
-                                return AuthorizationResult::NotAuthorized;
+                                return AuthorizationResult::Allowed;
                             }
                         } else {
                             return AuthorizationResult::NotAuthenticated;

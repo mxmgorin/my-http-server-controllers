@@ -42,25 +42,27 @@ impl RequiredClaims {
         &self,
         request_ip: &str,
         request_claims: Option<Vec<RequestClaim>>,
-    ) -> bool {
+    ) -> Option<String> {
         // No Claims means - we are authorizeds
         if self.required_claims.len() == 0 {
-            return true;
+            return None;
         }
 
         if let Some(request_claims) = &request_claims {
             for request_claim in request_claims {
                 if !self.has_claim(&request_claim.id) {
-                    return false;
+                    return Some(request_claim.id.to_string());
                 }
 
                 if !request_claim.is_ip_allowed(request_ip) {
-                    return false;
+                    return Some(request_claim.id.to_string());
                 }
             }
 
-            return true;
+            return None;
         }
-        false
+
+        let first_claim = &self.required_claims[0];
+        Some(first_claim.to_string())
     }
 }

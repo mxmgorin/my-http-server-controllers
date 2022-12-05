@@ -64,8 +64,19 @@ impl HttpActions {
         }
     }
 
-    pub fn register(&mut self, action: HttpAction) {
+    pub fn register(&mut self, action: HttpAction) -> Result<(), String> {
+        for action in &self.actions {
+            if action.http_route.route.to_lowercase() == action.http_route.route.to_lowercase() {
+                return Err(format!(
+                    "Route {} is already registered",
+                    action.http_route.route
+                ));
+            }
+        }
+
         self.actions.push(action);
+
+        Ok(())
     }
 
     pub async fn handle_request(

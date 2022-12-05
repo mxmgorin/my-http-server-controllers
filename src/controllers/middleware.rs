@@ -50,7 +50,7 @@ impl ControllersMiddleware {
         action: Arc<TGetAction>,
     ) {
         let http_route = HttpRoute::new(action.get_route());
-        self.get.register(HttpAction {
+        let result = self.get.register(HttpAction {
             handler: action.clone(),
             http_route,
 
@@ -61,6 +61,10 @@ impl ControllersMiddleware {
             },
             description: action,
         });
+
+        if let Err(err) = result {
+            panic!("Failed to register GET action: {}", err);
+        }
     }
 
     pub fn register_post_action<
@@ -70,7 +74,7 @@ impl ControllersMiddleware {
         action: Arc<TPostAction>,
     ) {
         let http_route = HttpRoute::new(action.get_route());
-        self.post.register(HttpAction {
+        let result = self.post.register(HttpAction {
             handler: action.clone(),
             http_route,
 
@@ -81,6 +85,10 @@ impl ControllersMiddleware {
             },
             description: action,
         });
+
+        if let Err(err) = result {
+            panic!("Failed to register POST action: {}", err);
+        }
     }
 
     pub fn register_put_action<
@@ -90,7 +98,7 @@ impl ControllersMiddleware {
         action: Arc<TPutAction>,
     ) {
         let http_route = HttpRoute::new(action.get_route());
-        self.put.register(HttpAction {
+        let result = self.put.register(HttpAction {
             handler: action.clone(),
             http_route,
 
@@ -101,6 +109,10 @@ impl ControllersMiddleware {
             },
             description: action,
         });
+
+        if let Err(err) = result {
+            panic!("Failed to register PUT action: {}", err);
+        }
     }
 
     pub fn register_delete_action<
@@ -110,7 +122,7 @@ impl ControllersMiddleware {
         action: Arc<TDeleteAction>,
     ) {
         let http_route = HttpRoute::new(action.get_route());
-        self.delete.register(HttpAction {
+        let result = self.delete.register(HttpAction {
             handler: action.clone(),
             http_route,
 
@@ -121,6 +133,10 @@ impl ControllersMiddleware {
             },
             description: action,
         });
+
+        if let Err(err) = result {
+            panic!("Failed to register DELETE action: {}", err);
+        }
     }
 
     pub fn list_of_get_route_actions(&self) -> &Vec<HttpAction> {

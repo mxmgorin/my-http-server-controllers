@@ -1,6 +1,9 @@
 use std::collections::BTreeMap;
 
-use crate::controllers::{documentation::HttpActionDescription, ControllersMiddleware};
+use crate::controllers::{
+    documentation::{out_results::HttpResult, HttpActionDescription},
+    ControllersMiddleware,
+};
 
 use super::yaml_writer::YamlWriter;
 
@@ -10,6 +13,7 @@ pub fn build(
     version: &str,
     host: &str,
     scheme: &str,
+    global_fail_results: Option<Vec<HttpResult>>,
 ) -> Vec<u8> {
     let mut yaml_writer = YamlWriter::new();
 
@@ -26,7 +30,7 @@ pub fn build(
     yaml_writer.increase_level();
     yaml_writer.write("- url", format!("{}://{}", scheme, host).as_str());
 
-    let path_descriptions = build_paths_descriptions(controllers);
+    let path_descriptions = build_paths_descriptions(controllers, global_fail_results);
 
     yaml_writer.reset_level();
     yaml_writer.write_empty("components");
@@ -44,6 +48,7 @@ pub fn build(
 
 fn build_paths_descriptions(
     controllers: &ControllersMiddleware,
+    global_fail_results: Option<Vec<HttpResult>>,
 ) -> BTreeMap<String, BTreeMap<String, HttpActionDescription>> {
     let mut result = BTreeMap::new();
 
@@ -96,6 +101,16 @@ fn build_paths_descriptions(
                 .get_mut(route_action.http_route.route.as_str())
                 .unwrap()
                 .insert("delete".to_string(), description);
+        }
+    }
+
+    if let Some(global_path_description) = global_fail_results {
+        for verbs in result.values_mut() {
+            for action in verbs.values_mut() {
+                for global_fail_result in &global_path_description {
+                    action.results.push(global_fail_result.clone());
+                }
+            }
         }
     }
 

@@ -160,6 +160,12 @@ impl HttpServerMiddleware for SwaggerMiddleware {
             let scheme = ctx.request.get_scheme();
             let host = ctx.request.get_host();
 
+            let global_fail_resulsts = if let Some(factory) = &self.controllers.auth_error_factory {
+                factory.get_global_http_fail_result_types()
+            } else {
+                None
+            };
+
             let output = HttpOutput::Content {
                 headers: None,
                 content_type: Some(WebContentType::Json),
@@ -169,6 +175,7 @@ impl HttpServerMiddleware for SwaggerMiddleware {
                     self.version.as_ref(),
                     host,
                     scheme.as_ref(),
+                    global_fail_resulsts,
                 ),
             };
 

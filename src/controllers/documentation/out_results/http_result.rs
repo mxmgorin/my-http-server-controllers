@@ -2,6 +2,7 @@ use crate::controllers::documentation::data_types::{HttpDataType, HttpObjectStru
 
 use super::IntoHttpResult;
 
+#[derive(Clone)]
 pub struct HttpResult {
     pub http_code: u16,
     pub nullable: bool,

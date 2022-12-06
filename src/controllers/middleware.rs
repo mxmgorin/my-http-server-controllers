@@ -9,7 +9,7 @@ use my_http_server::{
 use super::{
     actions::{
         DeleteAction, GetAction, GetDescription, HandleHttpRequest, HttpAction, HttpActions,
-        PostAction,
+        PostAction, PutAction,
     },
     documentation::{data_types::HttpObjectStructure, ShouldBeAuthorized},
     AuthErrorFactory, AuthorizationMap, HttpRoute,
@@ -92,7 +92,7 @@ impl ControllersMiddleware {
     }
 
     pub fn register_put_action<
-        TPutAction: PostAction + HandleHttpRequest + GetDescription + Send + Sync + 'static,
+        TPutAction: PutAction + HandleHttpRequest + GetDescription + Send + Sync + 'static,
     >(
         &mut self,
         action: Arc<TPutAction>,

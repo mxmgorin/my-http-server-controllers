@@ -96,7 +96,7 @@ impl ControllersMiddleware {
     >(
         &mut self,
         action: Arc<TPutAction>,
-    ) {
+    ){ 
         let http_route = HttpRoute::new(action.get_route());
         let result = self.put.register(HttpAction {
             handler: action.clone(),

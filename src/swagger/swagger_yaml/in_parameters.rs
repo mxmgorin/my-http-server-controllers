@@ -36,7 +36,12 @@ pub fn build(yaml_writer: &mut YamlWriter, action_description: &HttpActionDescri
         } else if has_form_data {
             build_req_body_form_data(yaml_writer, in_params);
         } else if has_data_from_body_reader {
-            build_req_body_model_reader(yaml_writer, in_params);
+            build_req_body_model_reader(yaml_writer, in_params, "application/json");
+            build_req_body_model_reader(
+                yaml_writer,
+                in_params,
+                "application/x-www-form-urlencoded",
+            );
         }
     }
 }
@@ -106,13 +111,17 @@ fn build_req_body_as_file_to_upload(yaml_writer: &mut YamlWriter) {
     yaml_writer.decrease_level();
 }
 
-fn build_req_body_model_reader(yaml_writer: &mut YamlWriter, in_params: &Vec<HttpInputParameter>) {
+fn build_req_body_model_reader(
+    yaml_writer: &mut YamlWriter,
+    in_params: &Vec<HttpInputParameter>,
+    encoding_type: &str,
+) {
     yaml_writer.write_empty("requestBody");
     yaml_writer.increase_level();
     yaml_writer.write_empty("content");
     yaml_writer.increase_level();
 
-    yaml_writer.write_empty("application/x-www-form-urlencoded");
+    yaml_writer.write_empty(encoding_type);
     yaml_writer.increase_level();
     yaml_writer.write_empty("schema");
     yaml_writer.increase_level();

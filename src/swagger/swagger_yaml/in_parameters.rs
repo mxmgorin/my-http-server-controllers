@@ -37,11 +37,14 @@ pub fn build(yaml_writer: &mut YamlWriter, action_description: &HttpActionDescri
             build_req_body_form_data(yaml_writer, in_params);
         } else if has_data_from_body_reader {
             build_req_body_model_reader(yaml_writer, in_params, "application/json");
+
+            /*
             build_req_body_model_reader(
                 yaml_writer,
                 in_params,
                 "application/x-www-form-urlencoded",
             );
+             */
         }
     }
 }

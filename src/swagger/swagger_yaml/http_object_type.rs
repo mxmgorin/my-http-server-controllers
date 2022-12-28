@@ -3,7 +3,7 @@ use crate::controllers::documentation::data_types::HttpObjectStructure;
 use super::yaml_writer::YamlWriter;
 
 pub fn build(result: &mut YamlWriter, http_object: &HttpObjectStructure) {
-    result.write_empty(http_object.struct_id.as_str());
+    result.write_empty(http_object.struct_id);
     result.increase_level();
     result.write("type", "object");
 

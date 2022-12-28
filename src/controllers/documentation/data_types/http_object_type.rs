@@ -15,9 +15,9 @@ impl HttpObjectStructure {
         HttpDataType::ArrayOf(ArrayElement::Object(self))
     }
 
-    pub fn new(struct_id: &str) -> Self {
+    pub fn new(struct_id: &'static str) -> Self {
         Self {
-            struct_id: struct_id.to_string(),
+            struct_id,
             fields: vec![],
         }
     }

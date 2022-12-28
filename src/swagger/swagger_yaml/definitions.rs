@@ -21,7 +21,7 @@ pub fn build_and_write(
     yaml_writer.increase_level();
 
     for http_object in &controllers.http_objects {
-        if !definitions.contains_key(http_object.struct_id.as_str()) {
+        if !definitions.contains_key(http_object.struct_id) {
             super::http_object_type::build(yaml_writer, http_object);
 
             definitions.insert(http_object.struct_id.to_string(), ());
@@ -86,7 +86,7 @@ fn write_object_type(
     definitions: &mut HashMap<String, ()>,
     object_type: &HttpObjectStructure,
 ) {
-    if !definitions.contains_key(object_type.struct_id.as_str()) {
+    if !definitions.contains_key(object_type.struct_id) {
         super::http_object_type::build(yaml_writer, object_type);
         definitions.insert(object_type.struct_id.to_string(), ());
     }

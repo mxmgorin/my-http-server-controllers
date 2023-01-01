@@ -2,8 +2,8 @@ use super::HttpDataType;
 #[derive(Clone)]
 pub struct HttpEnumCase {
     pub id: i16,
-    pub value: String,
-    pub description: String,
+    pub value: &'static str,
+    pub description: &'static str,
 }
 #[derive(Clone)]
 pub enum EnumType {

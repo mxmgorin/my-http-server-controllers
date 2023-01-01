@@ -4,7 +4,7 @@ use super::{ArrayElement, HttpEnumStructure, HttpObjectStructure, HttpSimpleType
 pub enum HttpDataType {
     SimpleType(HttpSimpleType),
     Object(HttpObjectStructure),
-    ObjectId { struct_id: String },
+    ObjectId { struct_id: &'static str },
     ArrayOf(ArrayElement),
     Enum(HttpEnumStructure),
     None,
@@ -75,10 +75,8 @@ impl HttpDataType {
         Self::SimpleType(HttpSimpleType::Password)
     }
 
-    pub fn as_object(struct_id: &str) -> Self {
-        Self::ObjectId {
-            struct_id: struct_id.to_string(),
-        }
+    pub fn as_object(struct_id: &'static str) -> Self {
+        Self::ObjectId { struct_id }
     }
 
     pub fn as_array_simple_type(simple_type: HttpSimpleType) -> Self {

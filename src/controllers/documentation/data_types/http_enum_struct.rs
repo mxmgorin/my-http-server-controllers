@@ -12,7 +12,7 @@ pub enum EnumType {
 }
 #[derive(Clone)]
 pub struct HttpEnumStructure {
-    pub struct_id: String,
+    pub struct_id: &'static str,
     pub enum_type: EnumType,
     pub cases: Vec<HttpEnumCase>,
 }

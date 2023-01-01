@@ -101,7 +101,7 @@ fn write_enum_type(
     definitions: &mut HashMap<String, ()>,
     enum_structure: &crate::controllers::documentation::data_types::HttpEnumStructure,
 ) {
-    if definitions.contains_key(enum_structure.struct_id.as_str()) {
+    if definitions.contains_key(enum_structure.struct_id) {
         return;
     };
 

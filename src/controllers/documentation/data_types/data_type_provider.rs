@@ -1,5 +1,6 @@
 use std::collections::HashMap;
 
+use my_http_server::types::{FileContent, RawData};
 use rust_extensions::date_time::DateTimeAsMicroseconds;
 
 use super::{ArrayElement, HttpDataType, HttpSimpleType};
@@ -105,5 +106,17 @@ impl<TValue: DataTypeProvider> DataTypeProvider for HashMap<String, TValue> {
             HttpDataType::Object(obj) => HttpDataType::DictionaryOf(ArrayElement::Object(obj)),
             _ => panic!("Unsupported data type"),
         }
+    }
+}
+
+impl DataTypeProvider for FileContent {
+    fn get_data_type() -> HttpDataType {
+        HttpDataType::SimpleType(HttpSimpleType::Binary)
+    }
+}
+
+impl DataTypeProvider for RawData {
+    fn get_data_type() -> HttpDataType {
+        HttpDataType::SimpleType(HttpSimpleType::Binary)
     }
 }

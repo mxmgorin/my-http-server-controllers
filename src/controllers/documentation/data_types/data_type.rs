@@ -4,8 +4,8 @@ use super::{ArrayElement, HttpEnumStructure, HttpObjectStructure, HttpSimpleType
 pub enum HttpDataType {
     SimpleType(HttpSimpleType),
     Object(HttpObjectStructure),
-    ObjectId { struct_id: &'static str },
     ArrayOf(ArrayElement),
+    DictionaryOf(ArrayElement),
     Enum(HttpEnumStructure),
     None,
 }
@@ -31,12 +31,9 @@ impl HttpDataType {
             _ => false,
         }
     }
+
     pub fn as_string() -> Self {
         Self::SimpleType(HttpSimpleType::String)
-    }
-
-    pub fn as_integer() -> Self {
-        Self::SimpleType(HttpSimpleType::Integer)
     }
 
     pub fn as_long() -> Self {
@@ -73,10 +70,6 @@ impl HttpDataType {
 
     pub fn as_password() -> Self {
         Self::SimpleType(HttpSimpleType::Password)
-    }
-
-    pub fn as_object(struct_id: &'static str) -> Self {
-        Self::ObjectId { struct_id }
     }
 
     pub fn as_array_simple_type(simple_type: HttpSimpleType) -> Self {

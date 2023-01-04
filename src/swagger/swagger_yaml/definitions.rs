@@ -55,7 +55,7 @@ fn populate_object_type(
         HttpDataType::Object(object_type) => {
             write_object_type(yaml_writer, definitions, object_type);
         }
-        HttpDataType::ObjectId { struct_id: _ } => {}
+
         HttpDataType::ArrayOf(array_element) => {
             populate_array_type(yaml_writer, definitions, array_element);
         }
@@ -64,6 +64,9 @@ fn populate_object_type(
         }
 
         HttpDataType::None => {}
+        HttpDataType::DictionaryOf(array_element) => {
+            populate_array_type(yaml_writer, definitions, array_element);
+        }
     }
 }
 
@@ -74,7 +77,6 @@ fn populate_array_type(
 ) {
     match array_element {
         ArrayElement::SimpleType(_) => {}
-        ArrayElement::ObjectId { struct_id: _ } => {}
         ArrayElement::Object(object_type) => {
             write_object_type(yaml_writer, definitions, object_type)
         }

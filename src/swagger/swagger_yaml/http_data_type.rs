@@ -8,10 +8,7 @@ pub fn build(yaml_writer: &mut YamlWriter, root_name: &str, data_type: &HttpData
             yaml_writer.write_empty(root_name);
             write_simple_type(yaml_writer, param_type);
         }
-        HttpDataType::ObjectId { struct_id } => {
-            yaml_writer.write_empty(root_name);
-            write_object_type(yaml_writer, struct_id);
-        }
+
         HttpDataType::Object(object_type) => {
             yaml_writer.write_empty(root_name);
             write_object_type(yaml_writer, &object_type.struct_id);
@@ -36,7 +33,22 @@ pub fn build(yaml_writer: &mut YamlWriter, root_name: &str, data_type: &HttpData
 
             match array_element {
                 ArrayElement::SimpleType(param_type) => write_simple_type(yaml_writer, param_type),
-                ArrayElement::ObjectId { struct_id } => write_object_type(yaml_writer, struct_id),
+                ArrayElement::Object(object_type) => {
+                    write_object_type(yaml_writer, &object_type.struct_id)
+                }
+            };
+
+            yaml_writer.decrease_level();
+        }
+        HttpDataType::DictionaryOf(array_element) => {
+            yaml_writer.write_empty(root_name);
+            yaml_writer.increase_level();
+            yaml_writer.write("type", "object");
+
+            yaml_writer.write_empty("additionalProperties");
+
+            match array_element {
+                ArrayElement::SimpleType(param_type) => write_simple_type(yaml_writer, param_type),
                 ArrayElement::Object(object_type) => {
                     write_object_type(yaml_writer, &object_type.struct_id)
                 }

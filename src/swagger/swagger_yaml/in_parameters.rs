@@ -86,7 +86,8 @@ fn build_parameter(yaml_writer: &mut YamlWriter, param: &HttpInputParameter) {
 fn get_param_type(data_type: &HttpDataType) -> Option<&str> {
     match data_type {
         HttpDataType::SimpleType(param_type) => Some(param_type.as_swagger_type()),
-        HttpDataType::ObjectId { struct_id: _ } => None,
+        HttpDataType::DictionaryOf(_) => None,
+
         HttpDataType::None => None,
         HttpDataType::ArrayOf(_) => None,
         HttpDataType::Object(_) => None,

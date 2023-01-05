@@ -1,6 +1,6 @@
 use super::HttpDataType;
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct HttpField {
     pub name: String,
     pub data_type: HttpDataType,

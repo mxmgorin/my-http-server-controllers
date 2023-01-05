@@ -1,6 +1,6 @@
 use super::{ArrayElement, HttpDataType, HttpField};
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct HttpObjectStructure {
     pub struct_id: &'static str,
     pub fields: Vec<HttpField>,

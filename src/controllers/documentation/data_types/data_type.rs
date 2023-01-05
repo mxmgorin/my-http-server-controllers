@@ -1,6 +1,6 @@
 use super::{ArrayElement, HttpEnumStructure, HttpObjectStructure, HttpSimpleType};
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub enum HttpDataType {
     SimpleType(HttpSimpleType),
     Object(HttpObjectStructure),

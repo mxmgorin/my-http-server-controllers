@@ -70,6 +70,12 @@ impl DataTypeProvider for f64 {
     }
 }
 
+impl DataTypeProvider for bool {
+    fn get_data_type() -> HttpDataType {
+        HttpDataType::SimpleType(HttpSimpleType::Boolean)
+    }
+}
+
 impl DataTypeProvider for String {
     fn get_data_type() -> HttpDataType {
         HttpDataType::SimpleType(HttpSimpleType::String)

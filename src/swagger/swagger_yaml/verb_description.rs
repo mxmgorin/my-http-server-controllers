@@ -67,6 +67,7 @@ fn compile_produces(yaml_writer: &mut YamlWriter, action_description: &HttpActio
             HttpDataType::SimpleType(_) => Some(WebContentType::Text.as_str()),
             HttpDataType::DictionaryOf(_) => Some(WebContentType::Json.as_str()),
             HttpDataType::Object(_) => Some(WebContentType::Json.as_str()),
+            HttpDataType::DictionaryOfArray(_) => Some(WebContentType::Json.as_str()),
             HttpDataType::None => None,
             HttpDataType::ArrayOf(_) => None,
             HttpDataType::Enum(_) => None,

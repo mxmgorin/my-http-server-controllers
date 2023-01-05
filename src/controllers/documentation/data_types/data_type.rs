@@ -6,6 +6,7 @@ pub enum HttpDataType {
     Object(HttpObjectStructure),
     ArrayOf(ArrayElement),
     DictionaryOf(ArrayElement),
+    DictionaryOfArray(ArrayElement),
     Enum(HttpEnumStructure),
     None,
 }

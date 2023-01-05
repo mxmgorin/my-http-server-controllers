@@ -95,6 +95,7 @@ fn get_param_type(data_type: &HttpDataType) -> Option<&str> {
             EnumType::Integer => Some("integer"),
             EnumType::String => Some("string"),
         },
+        HttpDataType::DictionaryOfArray(_) => None,
     }
 }
 

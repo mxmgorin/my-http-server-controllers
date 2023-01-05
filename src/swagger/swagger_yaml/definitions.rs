@@ -67,6 +67,9 @@ fn populate_object_type(
         HttpDataType::DictionaryOf(array_element) => {
             populate_array_type(yaml_writer, definitions, array_element);
         }
+        HttpDataType::DictionaryOfArray(array_element) => {
+            populate_array_type(yaml_writer, definitions, array_element);
+        }
     }
 }
 

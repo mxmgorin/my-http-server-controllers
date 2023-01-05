@@ -26,19 +26,7 @@ pub fn build(yaml_writer: &mut YamlWriter, root_name: &str, data_type: &HttpData
         HttpDataType::None => {}
         HttpDataType::ArrayOf(array_element) => {
             yaml_writer.write_empty(root_name);
-            yaml_writer.increase_level();
-            yaml_writer.write("type", "array");
-
-            yaml_writer.write_empty("items");
-
-            match array_element {
-                ArrayElement::SimpleType(param_type) => write_simple_type(yaml_writer, param_type),
-                ArrayElement::Object(object_type) => {
-                    write_object_type(yaml_writer, &object_type.struct_id)
-                }
-            };
-
-            yaml_writer.decrease_level();
+            write_array_element(yaml_writer, array_element);
         }
         HttpDataType::DictionaryOf(array_element) => {
             yaml_writer.write_empty(root_name);
@@ -53,6 +41,17 @@ pub fn build(yaml_writer: &mut YamlWriter, root_name: &str, data_type: &HttpData
                     write_object_type(yaml_writer, &object_type.struct_id)
                 }
             };
+
+            yaml_writer.decrease_level();
+        }
+        HttpDataType::DictionaryOfArray(array_element) => {
+            yaml_writer.write_empty(root_name);
+            yaml_writer.increase_level();
+            yaml_writer.write("type", "object");
+
+            yaml_writer.write_empty("additionalProperties");
+
+            write_array_element(yaml_writer, array_element);
 
             yaml_writer.decrease_level();
         }
@@ -73,5 +72,19 @@ fn write_object_type(yaml_writer: &mut YamlWriter, struct_id: &str) {
         "$ref",
         format!("'#/components/schemas/{}'", struct_id).as_str(),
     );
+    yaml_writer.decrease_level();
+}
+
+fn write_array_element(yaml_writer: &mut YamlWriter, array_element: &ArrayElement) {
+    yaml_writer.increase_level();
+    yaml_writer.write("type", "array");
+
+    yaml_writer.write_empty("items");
+
+    match array_element {
+        ArrayElement::SimpleType(param_type) => write_simple_type(yaml_writer, param_type),
+        ArrayElement::Object(object_type) => write_object_type(yaml_writer, &object_type.struct_id),
+    };
+
     yaml_writer.decrease_level();
 }

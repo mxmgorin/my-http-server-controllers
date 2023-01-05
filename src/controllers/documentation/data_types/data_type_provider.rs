@@ -58,6 +58,18 @@ impl DataTypeProvider for i64 {
     }
 }
 
+impl DataTypeProvider for usize {
+    fn get_data_type() -> HttpDataType {
+        HttpDataType::SimpleType(HttpSimpleType::Long)
+    }
+}
+
+impl DataTypeProvider for isize {
+    fn get_data_type() -> HttpDataType {
+        HttpDataType::SimpleType(HttpSimpleType::Long)
+    }
+}
+
 impl DataTypeProvider for f32 {
     fn get_data_type() -> HttpDataType {
         HttpDataType::SimpleType(HttpSimpleType::Double)

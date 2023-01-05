@@ -1,7 +1,8 @@
 use std::collections::HashMap;
 
-use my_http_server::types::{FileContent, RawData};
+use my_http_server::types::*;
 use rust_extensions::date_time::DateTimeAsMicroseconds;
+use serde::de::DeserializeOwned;
 
 use super::{ArrayElement, HttpDataType, HttpSimpleType};
 
@@ -118,5 +119,11 @@ impl DataTypeProvider for FileContent {
 impl DataTypeProvider for RawData {
     fn get_data_type() -> HttpDataType {
         HttpDataType::SimpleType(HttpSimpleType::Binary)
+    }
+}
+
+impl<T: DeserializeOwned + DataTypeProvider> DataTypeProvider for RawDataTyped<T> {
+    fn get_data_type() -> HttpDataType {
+        T::get_data_type()
     }
 }

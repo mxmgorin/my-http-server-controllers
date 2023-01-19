@@ -22,3 +22,9 @@ impl HttpEnumStructure {
         HttpDataType::Enum(self)
     }
 }
+
+impl Into<HttpDataType> for HttpEnumStructure {
+    fn into(self) -> HttpDataType {
+        self.into_http_data_type_object()
+    }
+}

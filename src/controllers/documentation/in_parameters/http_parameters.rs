@@ -9,8 +9,9 @@ pub struct HttpParameters {
 
 impl HttpParameters {
     pub fn new(params: Option<Vec<HttpInputParameter>>) -> Self {
+        println!("----");
         println!("Params: {:?}", params);
-
+        println!("----");
         if params.is_none() {
             return Self {
                 non_body_params: None,

@@ -27,7 +27,7 @@ pub fn build(yaml_writer: &mut YamlWriter, action_description: &HttpActionDescri
             yaml_writer.increase_level();
             yaml_writer.write("- in", param.source.as_str());
             yaml_writer.increase_level();
-            write_input_param(yaml_writer, param);
+            write_query_input_param(yaml_writer, param);
             yaml_writer.decrease_level();
             yaml_writer.decrease_level();
         }
@@ -49,7 +49,7 @@ pub fn build(yaml_writer: &mut YamlWriter, action_description: &HttpActionDescri
         yaml_writer.increase_level();
 
         for param in body_params {
-            write_input_param(yaml_writer, param);
+            write_body_input_param(yaml_writer, param);
         }
         yaml_writer.decrease_level();
         yaml_writer.decrease_level();
@@ -59,7 +59,7 @@ pub fn build(yaml_writer: &mut YamlWriter, action_description: &HttpActionDescri
     }
 }
 
-fn write_input_param(yaml_writer: &mut YamlWriter, input_param: &HttpInputParameter) {
+fn write_query_input_param(yaml_writer: &mut YamlWriter, input_param: &HttpInputParameter) {
     match &input_param.field.data_type {
         HttpDataType::SimpleType(simple_type) => {
             yaml_writer.increase_level();
@@ -69,6 +69,34 @@ fn write_input_param(yaml_writer: &mut YamlWriter, input_param: &HttpInputParame
             yaml_writer.write("type", simple_type.as_swagger_type());
             yaml_writer.write("format", simple_type.as_format());
             yaml_writer.decrease_level();
+            yaml_writer.write("required", "true");
+            yaml_writer.decrease_level();
+        }
+        HttpDataType::Object(object) => {
+            yaml_writer.write("name", input_param.field.name.as_str());
+            yaml_writer.increase_level();
+            yaml_writer.write_empty("schema");
+            yaml_writer.increase_level();
+            yaml_writer.write("$ref", object.struct_id);
+            yaml_writer.decrease_level();
+            yaml_writer.decrease_level();
+        }
+        HttpDataType::ArrayOf(_) => {}
+        HttpDataType::DictionaryOf(_) => {}
+        HttpDataType::DictionaryOfArray(_) => {}
+        HttpDataType::Enum(_) => {}
+        HttpDataType::None => {}
+    }
+}
+
+fn write_body_input_param(yaml_writer: &mut YamlWriter, input_param: &HttpInputParameter) {
+    match &input_param.field.data_type {
+        HttpDataType::SimpleType(simple_type) => {
+            yaml_writer.increase_level();
+            yaml_writer.write("name", input_param.field.name.as_str());
+            yaml_writer.increase_level();
+            yaml_writer.write("type", simple_type.as_swagger_type());
+            yaml_writer.write("format", simple_type.as_format());
             yaml_writer.write("required", "true");
             yaml_writer.decrease_level();
         }
@@ -142,7 +170,7 @@ fn build_req_body_model_reader(
     yaml_writer.increase_level();
     for param in in_params {
         if param.is_body_reader() {
-            write_input_param(yaml_writer, &param);
+            write_body_input_param(yaml_writer, &param);
         }
     }
 
@@ -168,7 +196,7 @@ fn build_req_body_form_data(yaml_writer: &mut YamlWriter, in_params: &Vec<HttpIn
     yaml_writer.increase_level();
     for param in in_params {
         if param.is_form_data() {
-            write_input_param(yaml_writer, &param);
+            write_body_input_param(yaml_writer, &param);
         }
     }
 

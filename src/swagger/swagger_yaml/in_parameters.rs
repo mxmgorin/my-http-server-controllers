@@ -1,6 +1,6 @@
 use crate::controllers::documentation::{
-    data_types::HttpDataType, in_parameters::HttpInputParameter, HttpActionDescription, HttpField,
-    HttpObjectStructure, HttpSimpleType,
+    data_types::HttpDataType, in_parameters::HttpInputParameter, ArrayElement,
+    HttpActionDescription, HttpField, HttpObjectStructure, HttpSimpleType,
 };
 
 use super::yaml_writer::YamlWriter;
@@ -104,25 +104,10 @@ fn write_body_input_param(yaml_writer: &mut YamlWriter, field: &HttpField) {
 
             yaml_writer.decrease_level();
         }
-        HttpDataType::ArrayOf(array_el) => match array_el {
-            crate::controllers::documentation::ArrayElement::SimpleType(simple_type) => {
-                yaml_writer.write_empty(field.name.as_str());
-                yaml_writer.increase_level();
-                yaml_writer.write("type", "array");
-                yaml_writer.write_empty("items");
-                write_body_simple_type(yaml_writer, simple_type);
-                yaml_writer.decrease_level();
-            }
-            crate::controllers::documentation::ArrayElement::Object(obj) => {
-                yaml_writer.write_empty(field.name.as_str());
-                yaml_writer.increase_level();
-
-                yaml_writer.write("type", "array");
-                yaml_writer.write_empty("items");
-                write_body_object_type(yaml_writer, obj);
-                yaml_writer.decrease_level();
-            }
-        },
+        HttpDataType::ArrayOf(array_el) => {
+            yaml_writer.write_empty(field.name.as_str());
+            write_body_array_type(yaml_writer, array_el);
+        }
         HttpDataType::DictionaryOf(array_el) => match array_el {
             crate::controllers::documentation::ArrayElement::SimpleType(simple_type) => {
                 yaml_writer.write_empty(field.name.as_str());
@@ -146,7 +131,17 @@ fn write_body_input_param(yaml_writer: &mut YamlWriter, field: &HttpField) {
                 yaml_writer.decrease_level();
             }
         },
-        HttpDataType::DictionaryOfArray(_) => {}
+        HttpDataType::DictionaryOfArray(array_el) => {
+            yaml_writer.write_empty(field.name.as_str());
+            yaml_writer.increase_level();
+            yaml_writer.write("type", "object");
+            yaml_writer.write_empty("additionalProperties");
+            yaml_writer.increase_level();
+            write_body_array_type(yaml_writer, array_el);
+
+            yaml_writer.decrease_level();
+            yaml_writer.decrease_level();
+        }
         HttpDataType::Enum(_) => {}
         HttpDataType::None => {}
     }
@@ -168,6 +163,26 @@ fn write_body_object_type(yaml_writer: &mut YamlWriter, object: &HttpObjectStruc
     }
 
     yaml_writer.decrease_level();
+}
+
+fn write_body_array_type(yaml_writer: &mut YamlWriter, array_el: &ArrayElement) {
+    match array_el {
+        crate::controllers::documentation::ArrayElement::SimpleType(simple_type) => {
+            yaml_writer.increase_level();
+            yaml_writer.write("type", "array");
+            yaml_writer.write_empty("items");
+            write_body_simple_type(yaml_writer, simple_type);
+            yaml_writer.decrease_level();
+        }
+        crate::controllers::documentation::ArrayElement::Object(obj) => {
+            yaml_writer.increase_level();
+
+            yaml_writer.write("type", "array");
+            yaml_writer.write_empty("items");
+            write_body_object_type(yaml_writer, obj);
+            yaml_writer.decrease_level();
+        }
+    }
 }
 /*
 fn get_param_type(data_type: &HttpDataType) -> Option<&str> {

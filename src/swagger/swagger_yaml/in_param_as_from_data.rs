@@ -69,8 +69,9 @@ fn write_simple_type(yaml_writer: &mut YamlWriter, simple_type: &HttpSimpleType)
 
 fn write_body_object_type(yaml_writer: &mut YamlWriter, object: &HttpObjectStructure) {
     yaml_writer.increase_level();
-    //yaml_writer.write("type", "object");
-    // yaml_writer.increase_level();
+    yaml_writer.write("type", "object");
+    yaml_writer.write_empty("format");
+    yaml_writer.increase_level();
     yaml_writer.write(
         "$ref",
         format!("'#/components/schemas/{}'", object.struct_id).as_str(),
@@ -84,7 +85,7 @@ fn write_body_object_type(yaml_writer: &mut YamlWriter, object: &HttpObjectStruc
 
 
      */
-    // yaml_writer.decrease_level();
+    yaml_writer.decrease_level();
     yaml_writer.decrease_level();
 }
 

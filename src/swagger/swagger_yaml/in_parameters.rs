@@ -105,13 +105,10 @@ fn write_body_input_param(yaml_writer: &mut YamlWriter, field: &HttpField) {
             yaml_writer.write_empty(field.name.as_str());
             yaml_writer.increase_level();
 
-            yaml_writer.write("type", "object");
-
-            yaml_writer.write_empty("properties");
-
-            for field in &object.fields {
-                write_body_input_param(yaml_writer, field);
-            }
+            yaml_writer.write(
+                "$ref",
+                format!("#/components/schemas/{}", object.struct_id).as_str(),
+            );
 
             yaml_writer.decrease_level();
             yaml_writer.decrease_level();

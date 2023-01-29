@@ -50,10 +50,7 @@ pub fn write(yaml_writer: &mut YamlWriter, field: &HttpField) {
             yaml_writer.write("type", "object");
             yaml_writer.write_empty("additionalProperties");
             yaml_writer.increase_level();
-            yaml_writer.write_empty("items");
-            yaml_writer.increase_level();
             write_body_array_type(yaml_writer, array_el);
-            yaml_writer.decrease_level();
             yaml_writer.decrease_level();
             yaml_writer.decrease_level();
         }

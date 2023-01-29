@@ -66,9 +66,9 @@ fn write_input_param(yaml_writer: &mut YamlWriter, input_param: &HttpInputParame
             yaml_writer.write("name", input_param.field.name.as_str());
             yaml_writer.increase_level();
             yaml_writer.write("type", simple_type.as_swagger_type());
-            yaml_writer.write("required", "true");
             yaml_writer.write("format", simple_type.as_format());
             yaml_writer.decrease_level();
+            yaml_writer.write("required", "true");
             yaml_writer.decrease_level();
         }
         HttpDataType::Object(object) => {

@@ -11,8 +11,8 @@ pub struct HttpInputParameter {
 impl HttpInputParameter {
     pub fn is_body_reader(&self) -> bool {
         match self.source {
-            HttpParameterInputSource::Body => {
-                return self.field.data_type.is_simple_type();
+            HttpParameterInputSource::BodyModel => {
+                return true;
             }
             _ => false,
         }
@@ -30,7 +30,7 @@ impl HttpInputParameter {
     pub fn is_file_to_upload_from_body(&self) -> bool {
         if self.field.is_file_upload() {
             match self.source {
-                HttpParameterInputSource::Body => {
+                HttpParameterInputSource::BodyRaw => {
                     return true;
                 }
                 _ => {}

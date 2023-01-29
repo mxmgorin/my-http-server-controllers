@@ -2,7 +2,8 @@ pub enum HttpParameterInputSource {
     Path,
     Query,
     Header,
-    Body,
+    BodyModel,
+    BodyRaw,
     FormData,
 }
 
@@ -14,9 +15,9 @@ impl HttpParameterInputSource {
         }
     }
 
-    pub fn is_body(&self) -> bool {
+    pub fn is_body_raw(&self) -> bool {
         match self {
-            HttpParameterInputSource::Body => true,
+            HttpParameterInputSource::BodyModel => true,
             _ => false,
         }
     }
@@ -26,7 +27,8 @@ impl HttpParameterInputSource {
             HttpParameterInputSource::Path => "path",
             HttpParameterInputSource::Query => "query",
             HttpParameterInputSource::Header => "header",
-            HttpParameterInputSource::Body => "body",
+            HttpParameterInputSource::BodyModel => "body",
+            HttpParameterInputSource::BodyRaw => "body",
             HttpParameterInputSource::FormData => "form_data",
         }
     }

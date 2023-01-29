@@ -34,14 +34,11 @@ impl HttpParameters {
 
     pub fn is_single_body_parameter(&self) -> Option<&HttpInputParameter> {
         let params = self.params.as_ref()?;
-        if params.len() != 1 {
-            return None;
-        }
 
         let param = params.get(0).unwrap();
 
         match &param.source {
-            HttpParameterInputSource::Body => Some(param),
+            HttpParameterInputSource::BodyModel => Some(param),
             _ => None,
         }
     }

@@ -24,43 +24,11 @@ pub fn build(yaml_writer: &mut YamlWriter, action_description: &HttpActionDescri
     }
 
     if let Some(in_params) = action_description.input_params.get_all() {
-        let mut has_data_from_body_reader = false;
-        let mut has_form_data = false;
-        let mut has_file_upload_from_body = false;
-
-        let mut parameters_is_set = false;
+        yaml_writer.write_empty("parameters");
 
         for param in in_params {
-            if param.is_file_to_upload_from_body() {
-                has_file_upload_from_body = true;
-            } else if param.is_body_reader() {
-                has_data_from_body_reader = true;
-            } else if param.is_form_data() {
-                has_form_data = true;
-            } else {
-                if !parameters_is_set {
-                    yaml_writer.write_empty("parameters");
-                    parameters_is_set = true;
-                }
-                yaml_writer.write("- in", param.source.as_str());
-                build_parameter(yaml_writer, param);
-            }
-        }
-
-        if has_file_upload_from_body {
-            build_req_body_as_file_to_upload(yaml_writer);
-        } else if has_form_data {
-            build_req_body_form_data(yaml_writer, in_params);
-        } else if has_data_from_body_reader {
-            build_req_body_model_reader(yaml_writer, in_params, "application/json");
-
-            /*
-            build_req_body_model_reader(
-                yaml_writer,
-                in_params,
-                "application/x-www-form-urlencoded",
-            );
-             */
+            yaml_writer.write("- in", param.source.as_str());
+            build_parameter(yaml_writer, param);
         }
     }
 }

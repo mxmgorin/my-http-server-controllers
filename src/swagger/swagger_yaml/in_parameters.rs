@@ -47,7 +47,7 @@ pub fn build(yaml_writer: &mut YamlWriter, action_description: &HttpActionDescri
 
         for param in body_params {
             if let Some(param_type) = get_param_type(&param.field.data_type) {
-                yaml_writer.write("name", param.field.name.as_str());
+                yaml_writer.write_empty(param.field.name.as_str());
                 yaml_writer.increase_level();
                 yaml_writer.write("type", param_type);
                 yaml_writer.decrease_level();

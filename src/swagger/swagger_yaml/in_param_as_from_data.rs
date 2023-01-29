@@ -13,6 +13,7 @@ pub fn write(yaml_writer: &mut YamlWriter, field: &HttpField) {
         }
         HttpDataType::Object(object) => {
             yaml_writer.write_empty(field.name.as_str());
+            yaml_writer.write_empty(field.name.as_str());
             write_body_object_type(yaml_writer, object);
         }
         HttpDataType::ArrayOf(array_el) => {
@@ -61,7 +62,10 @@ pub fn write(yaml_writer: &mut YamlWriter, field: &HttpField) {
 
 fn write_simple_type(yaml_writer: &mut YamlWriter, simple_type: &HttpSimpleType) {
     yaml_writer.increase_level();
+
     yaml_writer.write("type", simple_type.as_swagger_type());
+    yaml_writer.write("format", simple_type.as_format());
+
     yaml_writer.decrease_level();
 }
 

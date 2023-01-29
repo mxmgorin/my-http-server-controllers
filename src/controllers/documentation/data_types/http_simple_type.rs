@@ -45,4 +45,11 @@ impl HttpSimpleType {
             HttpSimpleType::Password => "string",
         }
     }
+
+    pub fn is_binary(&self) -> bool {
+        match self {
+            HttpSimpleType::Binary => true,
+            _ => false,
+        }
+    }
 }

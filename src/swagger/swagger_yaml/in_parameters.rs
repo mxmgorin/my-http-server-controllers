@@ -106,6 +106,7 @@ fn write_body_input_param(yaml_writer: &mut YamlWriter, input_param: &HttpInputP
             yaml_writer.increase_level();
             yaml_writer.write_empty("schema");
             yaml_writer.increase_level();
+            yaml_writer.write("type", "object");
             yaml_writer.write("$ref", object.struct_id);
             yaml_writer.decrease_level();
             yaml_writer.decrease_level();

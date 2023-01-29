@@ -24,8 +24,10 @@ pub fn build(yaml_writer: &mut YamlWriter, action_description: &HttpActionDescri
     if let Some(non_body_params) = action_description.input_params.get_non_body_params() {
         yaml_writer.write_empty("parameters");
         for param in non_body_params {
+            yaml_writer.increase_level();
             yaml_writer.write("- in", param.source.as_str());
             write_input_param(yaml_writer, param);
+            yaml_writer.decrease_level();
         }
     }
 

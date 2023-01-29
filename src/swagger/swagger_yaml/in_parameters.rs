@@ -46,7 +46,8 @@ pub fn build(yaml_writer: &mut YamlWriter, action_description: &HttpActionDescri
         yaml_writer.increase_level();
 
         for param in body_params {
-            build_parameter(yaml_writer, param);
+            yaml_writer.write("name", param.field.name.as_str());
+            yaml_writer.write("type", "string");
         }
         yaml_writer.decrease_level();
         yaml_writer.decrease_level();
@@ -57,7 +58,6 @@ pub fn build(yaml_writer: &mut YamlWriter, action_description: &HttpActionDescri
 }
 
 fn build_parameter(yaml_writer: &mut YamlWriter, param: &HttpInputParameter) {
-    yaml_writer.increase_level();
     yaml_writer.increase_level();
     yaml_writer.write("description", param.description.as_str());
 
@@ -86,7 +86,6 @@ fn build_parameter(yaml_writer: &mut YamlWriter, param: &HttpInputParameter) {
 
     super::http_data_type::build(yaml_writer, "schema", &param.field.data_type);
 
-    yaml_writer.decrease_level();
     yaml_writer.decrease_level();
 }
 

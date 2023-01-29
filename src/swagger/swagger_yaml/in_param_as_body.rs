@@ -43,9 +43,6 @@ pub fn write(yaml_writer: &mut YamlWriter, field: &HttpField) {
                 yaml_writer.decrease_level();
                 yaml_writer.decrease_level();
             }
-            crate::controllers::documentation::ArrayElement::Enum(_) => {
-                panic!("Array of enum is not supported for body");
-            }
         },
         HttpDataType::DictionaryOfArray(array_el) => {
             yaml_writer.write_empty(field.name.as_str());
@@ -101,9 +98,6 @@ fn write_body_array_type(yaml_writer: &mut YamlWriter, array_el: &ArrayElement) 
             yaml_writer.write_empty("items");
             write_body_object_type(yaml_writer, obj);
             yaml_writer.decrease_level();
-        }
-        crate::controllers::documentation::ArrayElement::Enum(_) => {
-            panic!("Array of enum is not supported for body");
         }
     }
 }

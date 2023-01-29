@@ -86,16 +86,6 @@ fn write_query_input_param(yaml_writer: &mut YamlWriter, input_param: &HttpInput
             crate::controllers::documentation::ArrayElement::Object(_) => {
                 panic!("Array of object type is not supported for non body parameter")
             }
-            crate::controllers::documentation::ArrayElement::Enum(enum_case) => {
-                yaml_writer.increase_level();
-                yaml_writer.write(
-                    "name",
-                    format!("{}[]", input_param.field.name.as_str()).as_str(),
-                );
-                yaml_writer.write("description", input_param.description.as_str());
-                write_array_enum_case(yaml_writer, enum_case);
-                yaml_writer.decrease_level();
-            }
         },
         HttpDataType::DictionaryOf(_) => {
             panic!("Dictionary can not be used as a non body parameter")
@@ -141,19 +131,5 @@ fn write_enum_case(yaml_writer: &mut YamlWriter, enum_data: &HttpEnumStructure) 
     yaml_writer.increase_level();
     yaml_writer.write("type", "string");
     yaml_writer.write_array("enum", enum_data.cases.iter().map(|itm| itm.value));
-    yaml_writer.decrease_level();
-}
-
-fn write_array_enum_case(yaml_writer: &mut YamlWriter, enum_data: &HttpEnumStructure) {
-    yaml_writer.write_empty("schema");
-    yaml_writer.increase_level();
-    yaml_writer.write("type", "array");
-    yaml_writer.write_empty("items");
-    yaml_writer.increase_level();
-    yaml_writer.write(
-        "$ref",
-        format!("'#/components/schemas/{}'", enum_data.struct_id).as_str(),
-    );
-    yaml_writer.decrease_level();
     yaml_writer.decrease_level();
 }

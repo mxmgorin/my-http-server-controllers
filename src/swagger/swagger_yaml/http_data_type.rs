@@ -1,7 +1,4 @@
-use crate::controllers::documentation::{
-    data_types::{ArrayElement, HttpDataType, HttpSimpleType},
-    HttpEnumStructure,
-};
+use crate::controllers::documentation::data_types::{ArrayElement, HttpDataType, HttpSimpleType};
 
 use super::yaml_writer::YamlWriter;
 
@@ -43,7 +40,6 @@ pub fn build(yaml_writer: &mut YamlWriter, root_name: &str, data_type: &HttpData
                 ArrayElement::Object(object_type) => {
                     write_object_type(yaml_writer, &object_type.struct_id)
                 }
-                ArrayElement::Enum(enum_data) => write_enum_case(yaml_writer, enum_data),
             };
 
             yaml_writer.decrease_level();
@@ -60,13 +56,6 @@ pub fn build(yaml_writer: &mut YamlWriter, root_name: &str, data_type: &HttpData
             yaml_writer.decrease_level();
         }
     }
-}
-
-fn write_enum_case(yaml_writer: &mut YamlWriter, enum_data: &HttpEnumStructure) {
-    yaml_writer.increase_level();
-    yaml_writer.write("type", "string");
-    yaml_writer.write_array("enum", enum_data.cases.iter().map(|itm| itm.value));
-    yaml_writer.decrease_level();
 }
 
 fn write_simple_type(yaml_writer: &mut YamlWriter, param_type: &HttpSimpleType) {
@@ -95,7 +84,6 @@ fn write_array_element(yaml_writer: &mut YamlWriter, array_element: &ArrayElemen
     match array_element {
         ArrayElement::SimpleType(param_type) => write_simple_type(yaml_writer, param_type),
         ArrayElement::Object(object_type) => write_object_type(yaml_writer, &object_type.struct_id),
-        ArrayElement::Enum(enum_data) => write_enum_case(yaml_writer, enum_data),
     };
 
     yaml_writer.decrease_level();

@@ -2,6 +2,7 @@ use crate::controllers::documentation::data_types::HttpField;
 
 use super::HttpParameterInputSource;
 
+#[derive(Debug, Clone)]
 pub struct HttpInputParameter {
     pub field: HttpField,
     pub description: String,

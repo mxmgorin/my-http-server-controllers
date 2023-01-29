@@ -82,6 +82,7 @@ pub fn build(yaml_writer: &mut YamlWriter, action_description: &HttpActionDescri
         }
         yaml_writer.decrease_level();
         yaml_writer.decrease_level();
+        yaml_writer.decrease_level();
 
         if objects.len() > 0 {
             yaml_writer.write_empty("encoding");
@@ -96,7 +97,6 @@ pub fn build(yaml_writer: &mut YamlWriter, action_description: &HttpActionDescri
             yaml_writer.decrease_level();
         }
 
-        yaml_writer.decrease_level();
         yaml_writer.decrease_level();
         yaml_writer.decrease_level();
     }

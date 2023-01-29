@@ -47,7 +47,9 @@ pub fn build(yaml_writer: &mut YamlWriter, action_description: &HttpActionDescri
 
         for param in body_params {
             yaml_writer.write("name", param.field.name.as_str());
+            yaml_writer.increase_level();
             yaml_writer.write("type", "string");
+            yaml_writer.decrease_level();
         }
         yaml_writer.decrease_level();
         yaml_writer.decrease_level();

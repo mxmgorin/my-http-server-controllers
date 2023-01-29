@@ -127,19 +127,11 @@ fn write_array_input_paramt(yaml_writer: &mut YamlWriter, simple_type: &HttpSimp
 }
 
 fn write_enum_case(yaml_writer: &mut YamlWriter, enum_data: &HttpEnumStructure) {
-    yaml_writer.increase_level();
-    yaml_writer.write(
-        "#ref",
-        format!("`#/components/schemas/{}`", enum_data.struct_id).as_str(),
-    );
-    yaml_writer.decrease_level();
-    /*
     yaml_writer.write_empty("schema");
     yaml_writer.increase_level();
     yaml_writer.write("type", "string");
     yaml_writer.write_array("enum", enum_data.cases.iter().map(|itm| itm.value));
     yaml_writer.decrease_level();
-     */
 }
 
 /*

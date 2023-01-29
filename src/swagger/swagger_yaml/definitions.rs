@@ -45,6 +45,12 @@ pub fn build_and_write(
                     populate_object_type(yaml_writer, &mut definitions, &in_param.field.data_type);
                 }
             }
+
+            if let Some(input_parameters) = action_description.input_params.get_form_data_params() {
+                for in_param in input_parameters {
+                    populate_object_type(yaml_writer, &mut definitions, &in_param.field.data_type);
+                }
+            }
         }
     }
 

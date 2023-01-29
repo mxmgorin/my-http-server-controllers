@@ -56,7 +56,7 @@ impl HttpParameters {
         let param = params.get(0).unwrap();
 
         match &param.source {
-            HttpParameterInputSource::BodyModel => Some(param),
+            HttpParameterInputSource::BodyRaw => Some(param),
             _ => None,
         }
     }

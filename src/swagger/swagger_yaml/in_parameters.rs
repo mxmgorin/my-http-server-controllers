@@ -74,7 +74,10 @@ fn write_query_input_param(yaml_writer: &mut YamlWriter, input_param: &HttpInput
         HttpDataType::ArrayOf(array_el) => match array_el {
             crate::controllers::documentation::ArrayElement::SimpleType(simple_type) => {
                 yaml_writer.increase_level();
-                yaml_writer.write("name", input_param.field.name.as_str());
+                yaml_writer.write(
+                    "name",
+                    format!("{}[]", input_param.field.name.as_str()).as_str(),
+                );
                 write_array_input_paramt(yaml_writer, simple_type);
                 yaml_writer.decrease_level();
             }

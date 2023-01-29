@@ -27,7 +27,7 @@ pub fn build(yaml_writer: &mut YamlWriter, action_description: &HttpActionDescri
         yaml_writer.write_empty("parameters");
         for param in non_body_params {
             yaml_writer.write("- in", param.source.as_str());
-            build_parameter(yaml_writer, param);
+            write_input_param(yaml_writer, param);
         }
     }
 
@@ -47,12 +47,7 @@ pub fn build(yaml_writer: &mut YamlWriter, action_description: &HttpActionDescri
         yaml_writer.increase_level();
 
         for param in body_params {
-            if let Some(param_type) = get_param_type(&param.field.data_type) {
-                yaml_writer.write_empty(param.field.name.as_str());
-                yaml_writer.increase_level();
-                yaml_writer.write("type", param_type);
-                yaml_writer.decrease_level();
-            }
+            write_input_param(yaml_writer, param);
         }
         yaml_writer.decrease_level();
         yaml_writer.decrease_level();
@@ -62,40 +57,34 @@ pub fn build(yaml_writer: &mut YamlWriter, action_description: &HttpActionDescri
     }
 }
 
-fn build_parameter(yaml_writer: &mut YamlWriter, param: &HttpInputParameter) {
-    yaml_writer.increase_level();
-    yaml_writer.increase_level();
-    yaml_writer.write("description", param.description.as_str());
-
-    if param.source.is_query() {
-        if param.field.data_type.is_array() {
-            yaml_writer.write("name", format!("{}[]", param.field.name.as_str()).as_str());
-        } else {
-            yaml_writer.write("name", param.field.name.as_str());
+fn write_input_param(yaml_writer: &mut YamlWriter, input_param: &HttpInputParameter) {
+    match &input_param.field.data_type {
+        HttpDataType::SimpleType(simple_type) => {
+            yaml_writer.write("name", input_param.field.name.as_str());
+            yaml_writer.increase_level();
+            yaml_writer.write("type", simple_type.as_swagger_type());
+            yaml_writer.write("required", "true");
+            yaml_writer.write("format", simple_type.as_format());
+            yaml_writer.decrease_level();
         }
-    } else {
-        yaml_writer.write("name", param.field.name.as_str());
+        HttpDataType::Object(object) => {
+            yaml_writer.write("name", input_param.field.name.as_str());
+            yaml_writer.increase_level();
+            yaml_writer.write_empty("type");
+            yaml_writer.increase_level();
+            yaml_writer.write("$ref", object.struct_id);
+            yaml_writer.decrease_level();
+            yaml_writer.decrease_level();
+        }
+        HttpDataType::ArrayOf(_) => {}
+        HttpDataType::DictionaryOf(_) => {}
+        HttpDataType::DictionaryOfArray(_) => {}
+        HttpDataType::Enum(_) => {}
+        HttpDataType::None => {}
     }
-
-    if param.field.required && param.field.default_value.is_none() {
-        yaml_writer.write_bool("required", true);
-    }
-
-    if let Some(param_type) = get_param_type(&param.field.data_type) {
-        yaml_writer.write("type", param_type);
-    }
-
-    if let Some(default_value) = &param.field.default_value {
-        let line_to_add = format!("{}. Default value: {}", param.description, default_value);
-        yaml_writer.write("description", line_to_add.as_str());
-    }
-
-    super::http_data_type::build(yaml_writer, "schema", &param.field.data_type);
-
-    yaml_writer.decrease_level();
-    yaml_writer.decrease_level();
 }
 
+/*
 fn get_param_type(data_type: &HttpDataType) -> Option<&str> {
     match data_type {
         HttpDataType::SimpleType(param_type) => Some(param_type.as_swagger_type()),
@@ -111,7 +100,7 @@ fn get_param_type(data_type: &HttpDataType) -> Option<&str> {
         HttpDataType::DictionaryOfArray(_) => None,
     }
 }
-
+ */
 fn build_req_body_as_file_to_upload(yaml_writer: &mut YamlWriter) {
     yaml_writer.write_empty("requestBody");
     yaml_writer.increase_level();
@@ -148,17 +137,7 @@ fn build_req_body_model_reader(
     yaml_writer.increase_level();
     for param in in_params {
         if param.is_body_reader() {
-            yaml_writer.write_empty(&param.field.name);
-            yaml_writer.increase_level();
-            if let Some(param_type) = get_param_type(&param.field.data_type) {
-                yaml_writer.write("type", param_type);
-                yaml_writer.write("required", "true");
-
-                if let HttpDataType::SimpleType(simple_type) = &param.field.data_type {
-                    yaml_writer.write("format", simple_type.as_format());
-                }
-            }
-            yaml_writer.decrease_level();
+            write_input_param(yaml_writer, &param);
         }
     }
 
@@ -184,17 +163,7 @@ fn build_req_body_form_data(yaml_writer: &mut YamlWriter, in_params: &Vec<HttpIn
     yaml_writer.increase_level();
     for param in in_params {
         if param.is_form_data() {
-            yaml_writer.write_empty(&param.field.name);
-            yaml_writer.increase_level();
-            if let Some(param_type) = get_param_type(&param.field.data_type) {
-                yaml_writer.write("type", param_type);
-                yaml_writer.write("required", "true");
-
-                if let HttpDataType::SimpleType(simple_type) = &param.field.data_type {
-                    yaml_writer.write("format", simple_type.as_format());
-                }
-            }
-            yaml_writer.decrease_level();
+            write_input_param(yaml_writer, &param);
         }
     }
 

@@ -1,6 +1,6 @@
 use crate::controllers::documentation::{
     data_types::HttpDataType, in_parameters::HttpInputParameter, HttpActionDescription,
-    HttpObjectStructure, HttpSimpleType,
+    HttpEnumStructure, HttpSimpleType,
 };
 
 use super::{in_param_as_body, yaml_writer::YamlWriter};
@@ -91,8 +91,8 @@ fn write_query_input_param(yaml_writer: &mut YamlWriter, input_param: &HttpInput
         HttpDataType::DictionaryOfArray(_) => {
             panic!("Dictionary of array can not be used as a non body parameter")
         }
-        HttpDataType::Enum(_) => {
-            panic!("Enum can not be used as a non body parameter")
+        HttpDataType::Enum(enum_data) => {
+            write_enum_case(yaml_writer, enum_data);
         }
         HttpDataType::None => {
             panic!("Somehow we have non parameter")
@@ -116,6 +116,20 @@ fn write_array_input_paramt(yaml_writer: &mut YamlWriter, simple_type: &HttpSimp
     yaml_writer.write_empty("items");
     yaml_writer.increase_level();
     yaml_writer.write("type", simple_type.as_swagger_type());
+    yaml_writer.decrease_level();
+    yaml_writer.decrease_level();
+}
+
+fn write_enum_case(yaml_writer: &mut YamlWriter, enum_data: &HttpEnumStructure) {
+    yaml_writer.write_empty("schema");
+    yaml_writer.increase_level();
+    yaml_writer.write("type", "string");
+    yaml_writer.write_empty("enum");
+    yaml_writer.increase_level();
+
+    for item in &enum_data.cases {
+        yaml_writer.write_empty(format!("- {}", item.value).as_str());
+    }
     yaml_writer.decrease_level();
     yaml_writer.decrease_level();
 }

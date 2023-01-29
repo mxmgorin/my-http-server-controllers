@@ -94,6 +94,7 @@ fn write_query_input_param(yaml_writer: &mut YamlWriter, input_param: &HttpInput
         HttpDataType::Enum(enum_data) => {
             yaml_writer.increase_level();
             yaml_writer.write("name", input_param.field.name.as_str());
+            yaml_writer.write("description", input_param.description.as_str());
             write_enum_case(yaml_writer, enum_data);
             yaml_writer.decrease_level();
         }
@@ -124,11 +125,13 @@ fn write_array_input_paramt(yaml_writer: &mut YamlWriter, simple_type: &HttpSimp
 }
 
 fn write_enum_case(yaml_writer: &mut YamlWriter, enum_data: &HttpEnumStructure) {
+    /*
     yaml_writer.write_empty("schema");
     yaml_writer.increase_level();
     yaml_writer.write("type", "string");
     yaml_writer.write_array("enum", enum_data.cases.iter().map(|itm| itm.value));
     yaml_writer.decrease_level();
+     */
 }
 
 /*

@@ -64,6 +64,7 @@ fn write_input_param(yaml_writer: &mut YamlWriter, input_param: &HttpInputParame
         HttpDataType::SimpleType(simple_type) => {
             yaml_writer.increase_level();
             yaml_writer.write("name", input_param.field.name.as_str());
+            yaml_writer.write_empty("schema");
             yaml_writer.increase_level();
             yaml_writer.write("type", simple_type.as_swagger_type());
             yaml_writer.write("format", simple_type.as_format());

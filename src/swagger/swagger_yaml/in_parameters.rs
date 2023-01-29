@@ -67,9 +67,7 @@ fn write_query_input_param(yaml_writer: &mut YamlWriter, input_param: &HttpInput
             yaml_writer.write_empty("schema");
             yaml_writer.increase_level();
             yaml_writer.write("type", simple_type.as_swagger_type());
-            yaml_writer.write("format", simple_type.as_format());
             yaml_writer.decrease_level();
-            yaml_writer.write("required", "true");
             yaml_writer.decrease_level();
         }
         HttpDataType::Object(object) => {

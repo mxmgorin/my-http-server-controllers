@@ -59,6 +59,7 @@ pub fn build(yaml_writer: &mut YamlWriter, action_description: &HttpActionDescri
 
 fn build_parameter(yaml_writer: &mut YamlWriter, param: &HttpInputParameter) {
     yaml_writer.increase_level();
+    yaml_writer.increase_level();
     yaml_writer.write("description", param.description.as_str());
 
     if param.source.is_query() {
@@ -86,6 +87,7 @@ fn build_parameter(yaml_writer: &mut YamlWriter, param: &HttpInputParameter) {
 
     super::http_data_type::build(yaml_writer, "schema", &param.field.data_type);
 
+    yaml_writer.decrease_level();
     yaml_writer.decrease_level();
 }
 

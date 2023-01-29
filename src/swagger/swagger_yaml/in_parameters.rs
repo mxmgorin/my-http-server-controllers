@@ -20,6 +20,7 @@ pub fn build(yaml_writer: &mut YamlWriter, action_description: &HttpActionDescri
 
         yaml_writer.decrease_level();
         yaml_writer.decrease_level();
+        return;
     }
 
     if let Some(in_params) = action_description.input_params.get_all() {

@@ -1,6 +1,5 @@
 use crate::controllers::documentation::{
-    in_parameters::HttpInputParameter, ArrayElement, HttpDataType, HttpField, HttpObjectStructure,
-    HttpSimpleType,
+    ArrayElement, HttpDataType, HttpField, HttpObjectStructure, HttpSimpleType,
 };
 
 use super::yaml_writer::YamlWriter;
@@ -71,6 +70,11 @@ fn write_simple_type(yaml_writer: &mut YamlWriter, simple_type: &HttpSimpleType)
 fn write_body_object_type(yaml_writer: &mut YamlWriter, object: &HttpObjectStructure) {
     yaml_writer.increase_level();
     yaml_writer.write("type", "object");
+    yaml_writer.write(
+        "$ref",
+        format!("#/components/schemas/{}", object.struct_id).as_str(),
+    );
+    /*
     yaml_writer.write_empty("properties");
     yaml_writer.increase_level();
     for obj_field in &object.fields {
@@ -78,6 +82,7 @@ fn write_body_object_type(yaml_writer: &mut YamlWriter, object: &HttpObjectStruc
     }
 
     yaml_writer.decrease_level();
+     */
     yaml_writer.decrease_level();
 }
 
@@ -99,77 +104,4 @@ fn write_body_array_type(yaml_writer: &mut YamlWriter, array_el: &ArrayElement) 
             yaml_writer.decrease_level();
         }
     }
-}
-
-fn build_req_body_as_file_to_upload(yaml_writer: &mut YamlWriter) {
-    yaml_writer.write_empty("requestBody");
-    yaml_writer.increase_level();
-    yaml_writer.write_empty("content");
-    yaml_writer.increase_level();
-    yaml_writer.write_empty("application/octet-stream");
-    yaml_writer.increase_level();
-    yaml_writer.write_empty("schema");
-    yaml_writer.increase_level();
-    yaml_writer.write("type", "string");
-    yaml_writer.write("format", "binary");
-    yaml_writer.decrease_level();
-    yaml_writer.decrease_level();
-    yaml_writer.decrease_level();
-    yaml_writer.decrease_level();
-}
-
-fn build_req_body_model_reader(
-    yaml_writer: &mut YamlWriter,
-    in_params: &Vec<HttpInputParameter>,
-    encoding_type: &str,
-) {
-    yaml_writer.write_empty("requestBody");
-    yaml_writer.increase_level();
-    yaml_writer.write_empty("content");
-    yaml_writer.increase_level();
-
-    yaml_writer.write_empty(encoding_type);
-    yaml_writer.increase_level();
-    yaml_writer.write_empty("schema");
-    yaml_writer.increase_level();
-    yaml_writer.write("type", "object");
-    yaml_writer.write_empty("properties");
-    yaml_writer.increase_level();
-    for param in in_params {
-        if param.is_body_reader() {
-            write(yaml_writer, &param.field);
-        }
-    }
-
-    yaml_writer.decrease_level();
-    yaml_writer.decrease_level();
-    yaml_writer.decrease_level();
-    yaml_writer.decrease_level();
-    yaml_writer.decrease_level();
-}
-
-fn build_req_body_form_data(yaml_writer: &mut YamlWriter, in_params: &Vec<HttpInputParameter>) {
-    yaml_writer.write_empty("requestBody");
-    yaml_writer.increase_level();
-    yaml_writer.write_empty("content");
-    yaml_writer.increase_level();
-
-    yaml_writer.write_empty("multipart/form-data");
-    yaml_writer.increase_level();
-    yaml_writer.write_empty("schema");
-    yaml_writer.increase_level();
-    yaml_writer.write("type", "object");
-    yaml_writer.write_empty("properties");
-    yaml_writer.increase_level();
-    for param in in_params {
-        if param.is_form_data() {
-            write(yaml_writer, &param.field);
-        }
-    }
-
-    yaml_writer.decrease_level();
-    yaml_writer.decrease_level();
-    yaml_writer.decrease_level();
-    yaml_writer.decrease_level();
-    yaml_writer.decrease_level();
 }

@@ -2,6 +2,7 @@ use rust_extensions::lazy::LazyVec;
 
 use super::{HttpInputParameter, HttpParameterInputSource};
 
+#[derive(Debug)]
 pub struct HttpParameters {
     non_body_params: Option<Vec<HttpInputParameter>>,
     body_params: Option<Vec<HttpInputParameter>>,
@@ -32,10 +33,14 @@ impl HttpParameters {
             }
         }
 
-        Self {
+        let result = Self {
             body_params: body_params.get_result(),
             non_body_params: non_body_params.get_result(),
-        }
+        };
+
+        println!("Params: {:?}", result);
+        println!("--------");
+        result
     }
 
     pub fn get_non_body_params(&self) -> Option<&Vec<HttpInputParameter>> {

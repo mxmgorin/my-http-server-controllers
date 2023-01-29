@@ -27,6 +27,7 @@ impl HttpParameterInputSource {
         match self {
             HttpParameterInputSource::BodyModel => true,
             HttpParameterInputSource::BodyRaw => true,
+            HttpParameterInputSource::FormData => true,
             _ => false,
         }
     }

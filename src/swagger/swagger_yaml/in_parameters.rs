@@ -1,5 +1,6 @@
 use crate::controllers::documentation::{
     data_types::HttpDataType, in_parameters::HttpInputParameter, HttpActionDescription, HttpField,
+    HttpObjectStructure, HttpSimpleType,
 };
 
 use super::yaml_writer::YamlWriter;
@@ -94,10 +95,7 @@ fn write_body_input_param(yaml_writer: &mut YamlWriter, field: &HttpField) {
         HttpDataType::SimpleType(simple_type) => {
             yaml_writer.increase_level();
             yaml_writer.write_empty(field.name.as_str());
-            yaml_writer.increase_level();
-            yaml_writer.write("type", simple_type.as_swagger_type());
-
-            yaml_writer.decrease_level();
+            write_body_simple_type(yaml_writer, simple_type);
             yaml_writer.decrease_level();
         }
         HttpDataType::Object(object) => {
@@ -105,23 +103,23 @@ fn write_body_input_param(yaml_writer: &mut YamlWriter, field: &HttpField) {
             yaml_writer.write_empty(field.name.as_str());
             yaml_writer.increase_level();
 
-            yaml_writer.write("type", "object");
-            yaml_writer.write_empty("properties");
-            yaml_writer.increase_level();
-            for obj_field in &object.fields {
-                write_body_input_param(yaml_writer, obj_field);
-            }
+            write_body_object_type(yaml_writer, object);
 
-            //            yaml_writer.write(
-            //               "$ref",
-            //              format!("#/components/schemas/{}", object.struct_id).as_str(),
-            //          );
-
-            yaml_writer.decrease_level();
             yaml_writer.decrease_level();
             yaml_writer.decrease_level();
         }
-        HttpDataType::ArrayOf(_) => {}
+        HttpDataType::ArrayOf(array_el) => match array_el {
+            crate::controllers::documentation::ArrayElement::SimpleType(simple_type) => {
+                yaml_writer.write("type", "array");
+                yaml_writer.write_empty("items");
+                write_body_simple_type(yaml_writer, simple_type);
+            }
+            crate::controllers::documentation::ArrayElement::Object(obj) => {
+                yaml_writer.write("type", "array");
+                yaml_writer.write_empty("items");
+                write_body_object_type(yaml_writer, obj);
+            }
+        },
         HttpDataType::DictionaryOf(_) => {}
         HttpDataType::DictionaryOfArray(_) => {}
         HttpDataType::Enum(_) => {}
@@ -129,6 +127,23 @@ fn write_body_input_param(yaml_writer: &mut YamlWriter, field: &HttpField) {
     }
 }
 
+fn write_body_simple_type(yaml_writer: &mut YamlWriter, simple_type: &HttpSimpleType) {
+    yaml_writer.increase_level();
+    yaml_writer.write("type", simple_type.as_swagger_type());
+
+    yaml_writer.decrease_level();
+}
+
+fn write_body_object_type(yaml_writer: &mut YamlWriter, object: &HttpObjectStructure) {
+    yaml_writer.write("type", "object");
+    yaml_writer.write_empty("properties");
+    yaml_writer.increase_level();
+    for obj_field in &object.fields {
+        write_body_input_param(yaml_writer, obj_field);
+    }
+
+    yaml_writer.decrease_level();
+}
 /*
 fn get_param_type(data_type: &HttpDataType) -> Option<&str> {
     match data_type {

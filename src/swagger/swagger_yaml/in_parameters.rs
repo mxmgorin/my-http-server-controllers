@@ -150,7 +150,10 @@ fn write_array_enum_case(yaml_writer: &mut YamlWriter, enum_data: &HttpEnumStruc
     yaml_writer.write("type", "array");
     yaml_writer.write_empty("items");
     yaml_writer.increase_level();
-    write_enum_case(yaml_writer, enum_data);
+    yaml_writer.write(
+        "$ref",
+        format!("#/components/schemas/{}", enum_data.struct_id).as_str(),
+    );
     yaml_writer.decrease_level();
     yaml_writer.decrease_level();
 }

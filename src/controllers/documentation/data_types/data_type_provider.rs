@@ -122,8 +122,8 @@ impl<TValue: DataTypeProvider> DataTypeProvider for HashMap<String, TValue> {
             HttpDataType::SimpleType(tp) => {
                 HttpDataType::DictionaryOf(ArrayElement::SimpleType(tp))
             }
-            HttpDataType::Object(obj) => HttpDataType::DictionaryOf(ArrayElement::Object(obj)),
-            HttpDataType::ArrayOf(item) => HttpDataType::DictionaryOfArray(item),
+            HttpDataType::DictionaryOf(obj) => HttpDataType::DictionaryOf(obj),
+            HttpDataType::ArrayOf(item) => HttpDataType::ArrayOf(item),
             _ => panic!("Unsupported data type {:?}", TValue::get_data_type()),
         }
     }

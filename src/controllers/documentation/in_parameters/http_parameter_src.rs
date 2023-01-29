@@ -22,6 +22,14 @@ impl HttpParameterInputSource {
         }
     }
 
+    pub fn is_body(&self) -> bool {
+        match self {
+            HttpParameterInputSource::BodyModel => true,
+            HttpParameterInputSource::BodyRaw => true,
+            _ => false,
+        }
+    }
+
     pub fn as_str(&self) -> &str {
         match self {
             HttpParameterInputSource::Path => "path",

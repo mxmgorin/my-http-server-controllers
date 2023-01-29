@@ -23,12 +23,29 @@ pub fn build(yaml_writer: &mut YamlWriter, action_description: &HttpActionDescri
         return;
     }
 
-    if let Some(in_params) = action_description.input_params.get_all() {
+    if let Some(non_body_params) = action_description.input_params.get_non_body_params() {
         yaml_writer.write_empty("parameters");
-
-        for param in in_params {
+        for param in non_body_params {
             yaml_writer.write("- in", param.source.as_str());
             build_parameter(yaml_writer, param);
+        }
+    }
+
+    if let Some(body_params) = action_description.input_params.get_body_params() {
+        yaml_writer.write_empty("parameters");
+        for param in body_params {
+            yaml_writer.write_empty("requestBody");
+            yaml_writer.increase_level();
+            yaml_writer.write("description", param.description.as_str());
+            yaml_writer.write_bool("required", true);
+            yaml_writer.write_empty("content");
+            yaml_writer.increase_level();
+            yaml_writer.write_empty("application/json");
+            yaml_writer.increase_level();
+            super::http_data_type::build(yaml_writer, "schema", &param.field.data_type);
+            yaml_writer.decrease_level();
+            yaml_writer.decrease_level();
+            yaml_writer.decrease_level();
         }
     }
 }

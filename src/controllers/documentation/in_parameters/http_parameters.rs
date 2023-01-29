@@ -3,37 +3,48 @@ use rust_extensions::lazy::LazyVec;
 use super::{HttpInputParameter, HttpParameterInputSource};
 
 pub struct HttpParameters {
-    params: Option<Vec<HttpInputParameter>>,
+    non_body_params: Option<Vec<HttpInputParameter>>,
+    body_params: Option<Vec<HttpInputParameter>>,
 }
 
 impl HttpParameters {
     pub fn new(params: Option<Vec<HttpInputParameter>>) -> Self {
-        Self { params }
-    }
+        if params.is_none() {
+            return Self {
+                non_body_params: None,
+                body_params: None,
+            };
+        }
 
-    pub fn get_all(&self) -> &Option<Vec<HttpInputParameter>> {
-        &self.params
-    }
+        let params = params.unwrap();
 
-    pub fn get_filtered<TFilter: Fn(&HttpInputParameter) -> bool>(
-        &self,
-        filter: TFilter,
-    ) -> Option<Vec<&HttpInputParameter>> {
-        let params = self.params.as_ref()?;
-
-        let mut result = LazyVec::new();
+        let mut non_body_params = LazyVec::new();
+        let mut body_params = LazyVec::new();
 
         for param in params {
-            if filter(param) {
-                result.add(param);
+            if param.source.is_body() {
+                body_params.add(param);
+            } else {
+                non_body_params.add(param);
             }
         }
 
-        result.get_result()
+        Self {
+            body_params: body_params.get_result(),
+            non_body_params: non_body_params.get_result(),
+        }
+    }
+
+    pub fn get_non_body_params(&self) -> Option<&Vec<HttpInputParameter>> {
+        self.non_body_params.as_ref()
+    }
+
+    pub fn get_body_params(&self) -> Option<&Vec<HttpInputParameter>> {
+        self.non_body_params.as_ref()
     }
 
     pub fn is_single_body_parameter(&self) -> Option<&HttpInputParameter> {
-        let params = self.params.as_ref()?;
+        let params = self.body_params.as_ref()?;
 
         let param = params.get(0).unwrap();
 

@@ -27,8 +27,8 @@ pub fn build(yaml_writer: &mut YamlWriter, action_description: &HttpActionDescri
             yaml_writer.increase_level();
             yaml_writer.write("- in", param.source.as_str());
             yaml_writer.increase_level();
-            yaml_writer.decrease_level();
             write_input_param(yaml_writer, param);
+            yaml_writer.decrease_level();
             yaml_writer.decrease_level();
         }
     }

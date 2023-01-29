@@ -1,6 +1,11 @@
-use crate::controllers::documentation::data_types::HttpField;
+use crate::controllers::documentation::{data_types::HttpField, ArrayElement, HttpSimpleType};
 
 use super::HttpParameterInputSource;
+
+pub enum NonBodyParameter {
+    SimpleType(HttpSimpleType),
+    ArrayOf(ArrayElement),
+}
 
 #[derive(Debug, Clone)]
 pub struct HttpInputParameter {

@@ -1,5 +1,6 @@
 use crate::controllers::documentation::{
     data_types::HttpDataType, in_parameters::HttpInputParameter, HttpActionDescription,
+    HttpObjectStructure, HttpSimpleType,
 };
 
 use super::{in_param_as_body, yaml_writer::YamlWriter};
@@ -64,29 +65,52 @@ fn write_query_input_param(yaml_writer: &mut YamlWriter, input_param: &HttpInput
         HttpDataType::SimpleType(simple_type) => {
             yaml_writer.increase_level();
             yaml_writer.write("name", input_param.field.name.as_str());
-            yaml_writer.write_empty("schema");
-            yaml_writer.increase_level();
-            yaml_writer.write("type", simple_type.as_swagger_type());
-            yaml_writer.write("format", simple_type.as_format());
-            yaml_writer.decrease_level();
-            yaml_writer.write("required", "true");
+            write_simple_type(yaml_writer, simple_type);
             yaml_writer.decrease_level();
         }
         HttpDataType::Object(object) => {
-            yaml_writer.write("name", input_param.field.name.as_str());
-            yaml_writer.increase_level();
-            yaml_writer.write_empty("schema");
-            yaml_writer.increase_level();
-            yaml_writer.write("$ref", object.struct_id);
-            yaml_writer.decrease_level();
-            yaml_writer.decrease_level();
+            panic!("Object type is not supported for non body parameter")
         }
-        HttpDataType::ArrayOf(_) => {}
-        HttpDataType::DictionaryOf(_) => {}
-        HttpDataType::DictionaryOfArray(_) => {}
-        HttpDataType::Enum(_) => {}
-        HttpDataType::None => {}
+        HttpDataType::ArrayOf(array_el) => match array_el {
+            crate::controllers::documentation::ArrayElement::SimpleType(simple_type) => {
+                write_array_input_paramt(yaml_writer, simple_type);
+            }
+            crate::controllers::documentation::ArrayElement::Object(_) => {
+                panic!("Array of object type is not supported for non body parameter")
+            }
+        },
+        HttpDataType::DictionaryOf(_) => {
+            panic!("Dictionary can not be used as a non body parameter")
+        }
+        HttpDataType::DictionaryOfArray(_) => {
+            panic!("Dictionary of array can not be used as a non body parameter")
+        }
+        HttpDataType::Enum(_) => {
+            panic!("Enum can not be used as a non body parameter")
+        }
+        HttpDataType::None => {
+            panic!("Somehow we have non parameter")
+        }
     }
+}
+
+fn write_simple_type(yaml_writer: &mut YamlWriter, simple_type: &HttpSimpleType) {
+    yaml_writer.write_empty("schema");
+    yaml_writer.increase_level();
+    yaml_writer.write("type", simple_type.as_swagger_type());
+    yaml_writer.write("format", simple_type.as_format());
+    yaml_writer.decrease_level();
+    yaml_writer.write("required", "true");
+}
+
+fn write_array_input_paramt(yaml_writer: &mut YamlWriter, simple_type: &HttpSimpleType) {
+    yaml_writer.write_empty("schema");
+    yaml_writer.increase_level();
+    yaml_writer.write("type", "array");
+    yaml_writer.write_empty("items");
+    yaml_writer.increase_level();
+    yaml_writer.write("type", simple_type.as_swagger_type());
+    yaml_writer.decrease_level();
 }
 
 /*

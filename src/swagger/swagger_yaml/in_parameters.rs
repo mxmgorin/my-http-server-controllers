@@ -16,7 +16,7 @@ pub fn build(yaml_writer: &mut YamlWriter, action_description: &HttpActionDescri
         yaml_writer.increase_level();
         yaml_writer.write_empty("application/json");
 
-        super::http_data_type::build(yaml_writer, "schema", &param.field.data_type);
+        super::http_data_type::build(yaml_writer, "schema", &body_param.field.data_type);
 
         yaml_writer.decrease_level();
         yaml_writer.decrease_level();

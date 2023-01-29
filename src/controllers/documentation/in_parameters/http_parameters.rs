@@ -1,6 +1,6 @@
 use rust_extensions::lazy::LazyVec;
 
-use super::HttpInputParameter;
+use super::{HttpInputParameter, HttpParameterInputSource};
 
 pub struct HttpParameters {
     params: Option<Vec<HttpInputParameter>>,
@@ -33,7 +33,7 @@ impl HttpParameters {
     }
 
     pub fn is_single_body_parameter(&self) -> Option<&HttpInputParameter> {
-        let params = &self.params?;
+        let params = self.params.as_ref()?;
         if params.len() != 1 {
             return None;
         }
@@ -41,11 +41,9 @@ impl HttpParameters {
         let param = params.get(0).unwrap();
 
         match &param.source {
-            HttpInputParameterSource::Body => Some(param),
+            HttpParameterInputSource::Body => Some(param),
             _ => None,
         }
-
-        None
     }
 }
 

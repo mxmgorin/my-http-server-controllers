@@ -40,6 +40,16 @@ impl HttpParameters {
 
         let param = params.get(0).unwrap();
 
+        match param.field.data_type {
+            crate::controllers::documentation::HttpDataType::SimpleType(_) => return None,
+            crate::controllers::documentation::HttpDataType::Object(_) => {}
+            crate::controllers::documentation::HttpDataType::ArrayOf(_) => {}
+            crate::controllers::documentation::HttpDataType::DictionaryOf(_) => {}
+            crate::controllers::documentation::HttpDataType::DictionaryOfArray(_) => {}
+            crate::controllers::documentation::HttpDataType::Enum(_) => return None,
+            crate::controllers::documentation::HttpDataType::None => return None,
+        }
+
         match &param.source {
             HttpParameterInputSource::Body => Some(param),
             _ => None,

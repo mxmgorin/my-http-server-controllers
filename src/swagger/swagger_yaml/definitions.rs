@@ -89,6 +89,7 @@ fn populate_array_type(
         ArrayElement::Object(object_type) => {
             write_object_type(yaml_writer, definitions, object_type)
         }
+        ArrayElement::Enum(enum_type) => write_enum_type(yaml_writer, definitions, enum_type),
     }
 }
 

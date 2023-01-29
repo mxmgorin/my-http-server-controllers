@@ -68,12 +68,15 @@ fn write_query_input_param(yaml_writer: &mut YamlWriter, input_param: &HttpInput
             write_simple_type(yaml_writer, simple_type);
             yaml_writer.decrease_level();
         }
-        HttpDataType::Object(object) => {
+        HttpDataType::Object(_) => {
             panic!("Object type is not supported for non body parameter")
         }
         HttpDataType::ArrayOf(array_el) => match array_el {
             crate::controllers::documentation::ArrayElement::SimpleType(simple_type) => {
+                yaml_writer.increase_level();
+                yaml_writer.write("name", input_param.field.name.as_str());
                 write_array_input_paramt(yaml_writer, simple_type);
+                yaml_writer.decrease_level();
             }
             crate::controllers::documentation::ArrayElement::Object(_) => {
                 panic!("Array of object type is not supported for non body parameter")

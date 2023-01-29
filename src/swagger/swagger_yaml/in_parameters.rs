@@ -105,11 +105,13 @@ fn write_body_input_param(yaml_writer: &mut YamlWriter, input_param: &HttpInputP
             yaml_writer.write_empty(input_param.field.name.as_str());
             yaml_writer.increase_level();
 
-            yaml_writer.write_empty("type");
+            yaml_writer.write("type", "object");
+            yaml_writer.increase_level();
             yaml_writer.write(
                 "$ref",
                 format!("#/componenets/schemas/{}", object.struct_id).as_str(),
             );
+            yaml_writer.decrease_level();
             yaml_writer.decrease_level();
             yaml_writer.decrease_level();
         }

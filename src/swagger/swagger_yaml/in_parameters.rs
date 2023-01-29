@@ -98,11 +98,7 @@ fn write_body_input_param(yaml_writer: &mut YamlWriter, field: &HttpField) {
         }
         HttpDataType::Object(object) => {
             yaml_writer.write_empty(field.name.as_str());
-            yaml_writer.increase_level();
-
             write_body_object_type(yaml_writer, object);
-
-            yaml_writer.decrease_level();
         }
         HttpDataType::ArrayOf(array_el) => {
             yaml_writer.write_empty(field.name.as_str());
@@ -159,6 +155,7 @@ fn write_body_simple_type(yaml_writer: &mut YamlWriter, simple_type: &HttpSimple
 }
 
 fn write_body_object_type(yaml_writer: &mut YamlWriter, object: &HttpObjectStructure) {
+    yaml_writer.increase_level();
     yaml_writer.write("type", "object");
     yaml_writer.write_empty("properties");
     yaml_writer.increase_level();
@@ -166,6 +163,7 @@ fn write_body_object_type(yaml_writer: &mut YamlWriter, object: &HttpObjectStruc
         write_body_input_param(yaml_writer, obj_field);
     }
 
+    yaml_writer.decrease_level();
     yaml_writer.decrease_level();
 }
 

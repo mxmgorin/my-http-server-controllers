@@ -27,6 +27,12 @@ impl HttpParameterInputSource {
         match self {
             HttpParameterInputSource::BodyModel => true,
             HttpParameterInputSource::BodyRaw => true,
+            _ => false,
+        }
+    }
+
+    pub fn is_form_data(&self) -> bool {
+        match self {
             HttpParameterInputSource::FormData => true,
             _ => false,
         }

@@ -4,6 +4,7 @@ mod http_data_type;
 mod http_enum_type;
 mod http_object_type;
 mod in_param_as_body;
+mod in_param_as_from_data;
 mod in_parameters;
 mod paths;
 mod security_defentions;

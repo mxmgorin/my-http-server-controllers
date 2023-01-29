@@ -6,6 +6,7 @@ use super::{HttpInputParameter, HttpParameterInputSource};
 pub struct HttpParameters {
     non_body_params: Option<Vec<HttpInputParameter>>,
     body_params: Option<Vec<HttpInputParameter>>,
+    form_data_params: Option<Vec<HttpInputParameter>>,
 }
 
 impl HttpParameters {
@@ -14,6 +15,7 @@ impl HttpParameters {
             return Self {
                 non_body_params: None,
                 body_params: None,
+                form_data_params: None,
             };
         }
 
@@ -21,10 +23,13 @@ impl HttpParameters {
 
         let mut non_body_params = LazyVec::new();
         let mut body_params = LazyVec::new();
+        let mut form_data_params = LazyVec::new();
 
         for param in params {
             if param.source.is_body() {
                 body_params.add(param);
+            } else if param.source.is_form_data() {
+                form_data_params.add(param);
             } else {
                 non_body_params.add(param);
             }
@@ -33,6 +38,7 @@ impl HttpParameters {
         let result = Self {
             body_params: body_params.get_result(),
             non_body_params: non_body_params.get_result(),
+            form_data_params: form_data_params.get_result(),
         };
 
         result
@@ -43,6 +49,10 @@ impl HttpParameters {
     }
 
     pub fn get_body_params(&self) -> Option<&Vec<HttpInputParameter>> {
+        self.body_params.as_ref()
+    }
+
+    pub fn get_form_data_params(&self) -> Option<&Vec<HttpInputParameter>> {
         self.body_params.as_ref()
     }
 

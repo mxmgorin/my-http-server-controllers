@@ -3,7 +3,7 @@ use crate::controllers::documentation::{
     HttpEnumStructure, HttpSimpleType,
 };
 
-use super::{in_param_as_body, yaml_writer::YamlWriter};
+use super::{in_param_as_body, in_param_as_from_data, yaml_writer::YamlWriter};
 
 pub fn build(yaml_writer: &mut YamlWriter, action_description: &HttpActionDescription) {
     if let Some(body_param) = action_description.input_params.is_single_body_parameter() {
@@ -51,6 +51,29 @@ pub fn build(yaml_writer: &mut YamlWriter, action_description: &HttpActionDescri
 
         for param in body_params {
             in_param_as_body::write(yaml_writer, &param.field);
+        }
+        yaml_writer.decrease_level();
+        yaml_writer.decrease_level();
+        yaml_writer.decrease_level();
+        yaml_writer.decrease_level();
+        yaml_writer.decrease_level();
+    }
+
+    if let Some(form_data_params) = action_description.input_params.get_form_data_params() {
+        yaml_writer.write_empty("requestBody");
+        yaml_writer.increase_level();
+        yaml_writer.write_empty("content");
+        yaml_writer.increase_level();
+        yaml_writer.write_empty("multipart/form-data");
+        yaml_writer.increase_level();
+        yaml_writer.write_empty("schema");
+        yaml_writer.increase_level();
+        yaml_writer.write("type", "object");
+        yaml_writer.write_empty("properties");
+        yaml_writer.increase_level();
+
+        for param in form_data_params {
+            in_param_as_from_data::write(yaml_writer, &param.field);
         }
         yaml_writer.decrease_level();
         yaml_writer.decrease_level();

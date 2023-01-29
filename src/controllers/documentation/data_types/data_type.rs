@@ -33,6 +33,13 @@ impl HttpDataType {
         }
     }
 
+    pub fn is_object(&self) -> bool {
+        match self {
+            HttpDataType::Object(_) => true,
+            _ => false,
+        }
+    }
+
     pub fn as_string() -> Self {
         Self::SimpleType(HttpSimpleType::String)
     }

@@ -69,12 +69,32 @@ pub fn build(yaml_writer: &mut YamlWriter, action_description: &HttpActionDescri
         yaml_writer.increase_level();
         yaml_writer.write("type", "object");
         yaml_writer.write_empty("properties");
+
+        let mut objects = Vec::new();
         yaml_writer.increase_level();
 
         for param in form_data_params {
             in_param_as_from_data::write(yaml_writer, &param.field);
+
+            if param.field.data_type.is_object() {
+                objects.push(param);
+            }
         }
         yaml_writer.decrease_level();
+
+        if objects.len() > 0 {
+            yaml_writer.write_empty("encoding");
+            yaml_writer.increase_level();
+            for obj in objects {
+                yaml_writer.write_empty(obj.field.name.as_str());
+                yaml_writer.increase_level();
+                yaml_writer.write("contentType", "application/json");
+                yaml_writer.decrease_level();
+            }
+
+            yaml_writer.decrease_level();
+        }
+
         yaml_writer.decrease_level();
         yaml_writer.decrease_level();
         yaml_writer.decrease_level();

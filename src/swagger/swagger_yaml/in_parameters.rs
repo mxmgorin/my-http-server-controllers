@@ -37,7 +37,8 @@ pub fn build(yaml_writer: &mut YamlWriter, action_description: &HttpActionDescri
         yaml_writer.write_bool("required", true);
         yaml_writer.write_empty("content");
         yaml_writer.increase_level();
-        yaml_writer.write_empty("application/x-www-form-urlencoded");
+        //yaml_writer.write_empty("application/x-www-form-urlencoded");
+        yaml_writer.write_empty("application/json");
         yaml_writer.increase_level();
         yaml_writer.write_empty("schema");
         yaml_writer.increase_level();

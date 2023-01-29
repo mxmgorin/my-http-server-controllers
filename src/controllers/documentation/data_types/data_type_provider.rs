@@ -111,7 +111,7 @@ impl<T: DataTypeProvider> DataTypeProvider for Vec<T> {
         match T::get_data_type() {
             HttpDataType::SimpleType(tp) => HttpDataType::ArrayOf(ArrayElement::SimpleType(tp)),
             HttpDataType::Object(obj) => HttpDataType::ArrayOf(ArrayElement::Object(obj)),
-            HttpDataType::Enum(obj) => HttpDataType::Enum(obj),
+            HttpDataType::Enum(obj) => HttpDataType::ArrayOf(ArrayElement::Enum(obj)),
             _ => panic!("Unsupported data type"),
         }
     }

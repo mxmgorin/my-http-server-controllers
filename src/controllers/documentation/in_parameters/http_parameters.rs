@@ -31,6 +31,22 @@ impl HttpParameters {
 
         result.get_result()
     }
+
+    pub fn is_single_body_parameter(&self) -> Option<&HttpInputParameter> {
+        let params = &self.params?;
+        if params.len() != 1 {
+            return None;
+        }
+
+        let param = params.get(0).unwrap();
+
+        match &param.source {
+            HttpInputParameterSource::Body => Some(param),
+            _ => None,
+        }
+
+        None
+    }
 }
 
 impl From<Vec<HttpInputParameter>> for HttpParameters {

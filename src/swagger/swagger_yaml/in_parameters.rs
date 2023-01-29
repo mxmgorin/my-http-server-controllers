@@ -7,6 +7,21 @@ use crate::controllers::documentation::{
 use super::yaml_writer::YamlWriter;
 
 pub fn build(yaml_writer: &mut YamlWriter, action_description: &HttpActionDescription) {
+    if let Some(body_param) = action_description.input_params.is_single_body_parameter() {
+        yaml_writer.write_empty("requestBody");
+        yaml_writer.increase_level();
+        yaml_writer.write("description", body_param.description.as_str());
+        yaml_writer.write_bool("required", true);
+        yaml_writer.write_empty("content");
+        yaml_writer.increase_level();
+        yaml_writer.write_empty("application/json");
+
+        super::http_data_type::build(yaml_writer, "schema", &param.field.data_type);
+
+        yaml_writer.decrease_level();
+        yaml_writer.decrease_level();
+    }
+
     if let Some(in_params) = action_description.input_params.get_all() {
         let mut has_data_from_body_reader = false;
         let mut has_form_data = false;

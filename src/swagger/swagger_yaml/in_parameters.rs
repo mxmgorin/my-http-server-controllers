@@ -32,21 +32,27 @@ pub fn build(yaml_writer: &mut YamlWriter, action_description: &HttpActionDescri
     }
 
     if let Some(body_params) = action_description.input_params.get_body_params() {
-        yaml_writer.write_empty("parameters");
+        yaml_writer.write_empty("requestBody");
+        yaml_writer.increase_level();
+        yaml_writer.write_bool("required", true);
+        yaml_writer.write_empty("content");
+        yaml_writer.increase_level();
+        yaml_writer.write_empty("application/json");
+        yaml_writer.increase_level();
+        yaml_writer.write_empty("schema");
+        yaml_writer.increase_level();
+        yaml_writer.write("type", "object");
+        yaml_writer.write_empty("properties");
+        yaml_writer.increase_level();
+
         for param in body_params {
-            yaml_writer.write_empty("requestBody");
-            yaml_writer.increase_level();
-            yaml_writer.write("description", param.description.as_str());
-            yaml_writer.write_bool("required", true);
-            yaml_writer.write_empty("content");
-            yaml_writer.increase_level();
-            yaml_writer.write_empty("application/json");
-            yaml_writer.increase_level();
-            super::http_data_type::build(yaml_writer, "schema", &param.field.data_type);
-            yaml_writer.decrease_level();
-            yaml_writer.decrease_level();
-            yaml_writer.decrease_level();
+            build_parameter(yaml_writer, param);
         }
+        yaml_writer.decrease_level();
+        yaml_writer.decrease_level();
+        yaml_writer.decrease_level();
+        yaml_writer.decrease_level();
+        yaml_writer.decrease_level();
     }
 }
 

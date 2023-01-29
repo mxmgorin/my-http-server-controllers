@@ -37,7 +37,7 @@ impl HttpSimpleType {
             HttpSimpleType::Float => "number",
             HttpSimpleType::Double => "number",
             HttpSimpleType::String => "string",
-            HttpSimpleType::Byte => "string",
+            HttpSimpleType::Byte => "integer",
             HttpSimpleType::Binary => "string",
             HttpSimpleType::Boolean => "boolean",
             HttpSimpleType::Date => "string",

@@ -101,11 +101,13 @@ fn write_body_input_param(yaml_writer: &mut YamlWriter, input_param: &HttpInputP
             yaml_writer.decrease_level();
         }
         HttpDataType::Object(object) => {
-            yaml_writer.write("name", input_param.field.name.as_str());
+            yaml_writer.increase_level();
+            yaml_writer.write_empty(input_param.field.name.as_str());
             yaml_writer.increase_level();
             yaml_writer.write_empty("schema");
             yaml_writer.increase_level();
             yaml_writer.write("$ref", object.struct_id);
+            yaml_writer.decrease_level();
             yaml_writer.decrease_level();
             yaml_writer.decrease_level();
         }

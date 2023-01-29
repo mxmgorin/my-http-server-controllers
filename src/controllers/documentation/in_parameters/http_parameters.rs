@@ -40,7 +40,7 @@ impl HttpParameters {
     }
 
     pub fn get_body_params(&self) -> Option<&Vec<HttpInputParameter>> {
-        self.non_body_params.as_ref()
+        self.body_params.as_ref()
     }
 
     pub fn is_single_body_parameter(&self) -> Option<&HttpInputParameter> {

@@ -1,7 +1,5 @@
 use crate::controllers::documentation::{
-    data_types::{EnumType, HttpDataType},
-    in_parameters::HttpInputParameter,
-    HttpActionDescription,
+    data_types::HttpDataType, in_parameters::HttpInputParameter, HttpActionDescription,
 };
 
 use super::yaml_writer::YamlWriter;
@@ -60,11 +58,13 @@ pub fn build(yaml_writer: &mut YamlWriter, action_description: &HttpActionDescri
 fn write_input_param(yaml_writer: &mut YamlWriter, input_param: &HttpInputParameter) {
     match &input_param.field.data_type {
         HttpDataType::SimpleType(simple_type) => {
+            yaml_writer.increase_level();
             yaml_writer.write("name", input_param.field.name.as_str());
             yaml_writer.increase_level();
             yaml_writer.write("type", simple_type.as_swagger_type());
             yaml_writer.write("required", "true");
             yaml_writer.write("format", simple_type.as_format());
+            yaml_writer.decrease_level();
             yaml_writer.decrease_level();
         }
         HttpDataType::Object(object) => {

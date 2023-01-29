@@ -92,7 +92,10 @@ fn write_query_input_param(yaml_writer: &mut YamlWriter, input_param: &HttpInput
             panic!("Dictionary of array can not be used as a non body parameter")
         }
         HttpDataType::Enum(enum_data) => {
+            yaml_writer.increase_level();
+            yaml_writer.write("name", input_param.field.name.as_str());
             write_enum_case(yaml_writer, enum_data);
+            yaml_writer.decrease_level();
         }
         HttpDataType::None => {
             panic!("Somehow we have non parameter")

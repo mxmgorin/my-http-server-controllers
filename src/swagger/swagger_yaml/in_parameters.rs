@@ -133,21 +133,3 @@ fn write_enum_case(yaml_writer: &mut YamlWriter, enum_data: &HttpEnumStructure) 
     yaml_writer.write_array("enum", enum_data.cases.iter().map(|itm| itm.value));
     yaml_writer.decrease_level();
 }
-
-/*
-fn get_param_type(data_type: &HttpDataType) -> Option<&str> {
-    match data_type {
-        HttpDataType::SimpleType(param_type) => Some(param_type.as_swagger_type()),
-        HttpDataType::DictionaryOf(_) => None,
-
-        HttpDataType::None => None,
-        HttpDataType::ArrayOf(_) => None,
-        HttpDataType::Object(_) => None,
-        HttpDataType::Enum(data) => match &data.enum_type {
-            EnumType::Integer => Some("integer"),
-            EnumType::String => Some("string"),
-        },
-        HttpDataType::DictionaryOfArray(_) => None,
-    }
-}
- */

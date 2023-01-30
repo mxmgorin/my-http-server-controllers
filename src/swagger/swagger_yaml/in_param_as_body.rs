@@ -1,5 +1,5 @@
 use crate::controllers::documentation::{
-    ArrayElement, HttpDataType, HttpField, HttpObjectStructure, HttpSimpleType,
+    ArrayElement, HttpDataType, HttpEnumStructure, HttpField, HttpObjectStructure, HttpSimpleType,
 };
 
 use super::yaml_writer::YamlWriter;
@@ -53,7 +53,10 @@ pub fn write(yaml_writer: &mut YamlWriter, field: &HttpField) {
             yaml_writer.decrease_level();
             yaml_writer.decrease_level();
         }
-        HttpDataType::Enum(_) => {}
+        HttpDataType::Enum(enum_data) => {
+            yaml_writer.write_empty(field.name.as_str());
+            write_enum(yaml_writer, enum_data);
+        }
         HttpDataType::None => {}
     }
 }
@@ -61,6 +64,20 @@ pub fn write(yaml_writer: &mut YamlWriter, field: &HttpField) {
 fn write_body_simple_type(yaml_writer: &mut YamlWriter, simple_type: &HttpSimpleType) {
     yaml_writer.increase_level();
     yaml_writer.write("type", simple_type.as_swagger_type());
+
+    yaml_writer.decrease_level();
+}
+
+fn write_enum(yaml_writer: &mut YamlWriter, enum_data: &HttpEnumStructure) {
+    yaml_writer.increase_level();
+    match &enum_data.enum_type {
+        crate::controllers::documentation::EnumType::Integer => {
+            yaml_writer.write("type", "string");
+        }
+        crate::controllers::documentation::EnumType::String => {
+            yaml_writer.write("type", "integer");
+        }
+    }
 
     yaml_writer.decrease_level();
 }

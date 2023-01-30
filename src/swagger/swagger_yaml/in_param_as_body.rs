@@ -72,10 +72,10 @@ fn write_enum(yaml_writer: &mut YamlWriter, enum_data: &HttpEnumStructure) {
     yaml_writer.increase_level();
     match &enum_data.enum_type {
         crate::controllers::documentation::EnumType::Integer => {
-            yaml_writer.write("type", "string");
+            yaml_writer.write("type", "integer");
         }
         crate::controllers::documentation::EnumType::String => {
-            yaml_writer.write("type", "integer");
+            yaml_writer.write("type", "string");
         }
     }
 

@@ -108,7 +108,7 @@ fn write_query_input_param(yaml_writer: &mut YamlWriter, input_param: &HttpInput
             yaml_writer.increase_level();
             yaml_writer.write("name", input_param.field.name.as_str());
             yaml_writer.write("description", input_param.description.as_str());
-            write_simple_type(yaml_writer, simple_type);
+            write_simple_type(yaml_writer, simple_type, input_param.field.required);
             yaml_writer.decrease_level();
         }
         HttpDataType::Object(_) => {
@@ -148,13 +148,13 @@ fn write_query_input_param(yaml_writer: &mut YamlWriter, input_param: &HttpInput
     }
 }
 
-fn write_simple_type(yaml_writer: &mut YamlWriter, simple_type: &HttpSimpleType) {
+fn write_simple_type(yaml_writer: &mut YamlWriter, simple_type: &HttpSimpleType, required: bool) {
     yaml_writer.write_empty("schema");
     yaml_writer.increase_level();
     yaml_writer.write("type", simple_type.as_swagger_type());
     yaml_writer.write("format", simple_type.as_format());
     yaml_writer.decrease_level();
-    yaml_writer.write("required", "true");
+    yaml_writer.write_bool("required", required);
 }
 
 fn write_array_input_paramt(yaml_writer: &mut YamlWriter, simple_type: &HttpSimpleType) {

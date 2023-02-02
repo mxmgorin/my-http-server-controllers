@@ -9,18 +9,22 @@ use super::{
 
 pub trait GetAction {
     fn get_route(&self) -> &str;
+    fn get_model_routes(&self) -> Option<Vec<&'static str>>;
 }
 
 pub trait PostAction {
     fn get_route(&self) -> &str;
+    fn get_model_routes(&self) -> Option<Vec<&'static str>>;
 }
 
 pub trait PutAction {
     fn get_route(&self) -> &str;
+    fn get_model_routes(&self) -> Option<Vec<&'static str>>;
 }
 
 pub trait DeleteAction {
     fn get_route(&self) -> &str;
+    fn get_model_routes(&self) -> Option<Vec<&'static str>>;
 }
 
 #[async_trait::async_trait]

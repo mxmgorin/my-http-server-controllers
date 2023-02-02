@@ -50,6 +50,11 @@ impl ControllersMiddleware {
         action: Arc<TGetAction>,
     ) {
         let http_route = HttpRoute::new(action.get_route());
+
+        if let Some(route_keys) = action.get_model_routes() {
+            http_route.check_route_keys(&route_keys).unwrap();
+        }
+
         let result = self.get.register(HttpAction {
             handler: action.clone(),
             http_route,
@@ -74,6 +79,10 @@ impl ControllersMiddleware {
         action: Arc<TPostAction>,
     ) {
         let http_route = HttpRoute::new(action.get_route());
+        if let Some(route_keys) = action.get_model_routes() {
+            http_route.check_route_keys(&route_keys).unwrap();
+        }
+
         let result = self.post.register(HttpAction {
             handler: action.clone(),
             http_route,
@@ -96,8 +105,12 @@ impl ControllersMiddleware {
     >(
         &mut self,
         action: Arc<TPutAction>,
-    ){ 
+    ) {
         let http_route = HttpRoute::new(action.get_route());
+        if let Some(route_keys) = action.get_model_routes() {
+            http_route.check_route_keys(&route_keys).unwrap();
+        }
+
         let result = self.put.register(HttpAction {
             handler: action.clone(),
             http_route,
@@ -122,6 +135,11 @@ impl ControllersMiddleware {
         action: Arc<TDeleteAction>,
     ) {
         let http_route = HttpRoute::new(action.get_route());
+
+        if let Some(route_keys) = action.get_model_routes() {
+            http_route.check_route_keys(&route_keys).unwrap();
+        }
+
         let result = self.delete.register(HttpAction {
             handler: action.clone(),
             http_route,

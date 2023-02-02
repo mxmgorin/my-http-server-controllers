@@ -80,6 +80,7 @@ fn write_body_object_type(yaml_writer: &mut YamlWriter, object: &HttpObjectStruc
     }
 
     yaml_writer.decrease_level();
+    yaml_writer.decrease_level();
 }
 
 fn write_enum(yaml_writer: &mut YamlWriter, enum_data: &HttpEnumStructure) {

@@ -125,6 +125,34 @@ impl HttpRoute {
             write_to_log: true,
         });
     }
+
+    pub fn has_route_key(&self, key: &str) -> bool {
+        for segment in &self.segments {
+            match segment {
+                HttpRouteSegment::Key(segment_key) => {
+                    if segment_key == key {
+                        return true;
+                    }
+                }
+                HttpRouteSegment::Segment(_) => {}
+            }
+        }
+
+        false
+    }
+
+    pub fn check_route_keys(&self, route_keys: &Vec<&'static str>) -> Result<(), String> {
+        for key in route_keys {
+            if !self.has_route_key(key) {
+                return Err(format!(
+                    "Route '{}' does not have key '{}'",
+                    self.route, key
+                ));
+            }
+        }
+
+        Ok(())
+    }
 }
 
 #[cfg(test)]
@@ -192,5 +220,17 @@ mod tests {
 
         let path = HttpPath::from_str("/test/1/second/4");
         assert_eq!(route.is_my_path(&path), false);
+    }
+
+    #[test]
+    fn check_has_route_key() {
+        let route = HttpRoute::new("/test/{key}/second");
+        assert_eq!(route.has_route_key("key"), true);
+        assert_eq!(route.has_route_key("Key"), false);
+        assert_eq!(route.has_route_key("key2"), false);
+
+        let route = HttpRoute::new("/test/{Key}/second");
+        assert_eq!(route.has_route_key("Key"), true);
+        assert_eq!(route.has_route_key("key"), false);
     }
 }

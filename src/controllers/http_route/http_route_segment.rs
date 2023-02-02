@@ -6,14 +6,14 @@ pub enum HttpRouteSegment {
 impl HttpRouteSegment {
     pub fn new(value: &[u8]) -> Self {
         if value.len() < 2 {
-            return Self::Key(std::str::from_utf8(value).unwrap().to_lowercase());
+            return Self::Segment(std::str::from_utf8(value).unwrap().to_lowercase());
         }
 
         if value[0] == b'{' && value[value.len() - 1] == b'}' {
             return Self::Key(
                 std::str::from_utf8(&value[1..value.len() - 1])
                     .unwrap()
-                    .to_lowercase(),
+                    .to_string(),
             );
         }
 

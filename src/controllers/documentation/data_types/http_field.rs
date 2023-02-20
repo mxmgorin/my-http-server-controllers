@@ -5,7 +5,7 @@ pub struct HttpField {
     pub name: String,
     pub data_type: HttpDataType,
     pub required: bool,
-    pub default_value: Option<String>,
+    pub default_value: Option<&'static str>,
 }
 
 impl HttpField {
@@ -13,7 +13,7 @@ impl HttpField {
         name: &str,
         data_type: HttpDataType,
         required: bool,
-        default_value: Option<String>,
+        default_value: Option<&'static str>,
     ) -> Self {
         Self {
             name: name.to_string(),

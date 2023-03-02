@@ -52,7 +52,9 @@ impl ControllersMiddleware {
         let http_route = HttpRoute::new(action.get_route());
 
         if let Some(route_keys) = action.get_model_routes() {
-            http_route.check_route_keys(&route_keys).unwrap();
+            if let Err(err) = http_route.check_route_keys(&route_keys) {
+                panic!("[GET]: {}", err)
+            }
         }
 
         let result = self.get.register(HttpAction {
@@ -80,7 +82,9 @@ impl ControllersMiddleware {
     ) {
         let http_route = HttpRoute::new(action.get_route());
         if let Some(route_keys) = action.get_model_routes() {
-            http_route.check_route_keys(&route_keys).unwrap();
+            if let Err(err) = http_route.check_route_keys(&route_keys) {
+                panic!("[POST]: {}", err)
+            }
         }
 
         let result = self.post.register(HttpAction {
@@ -108,7 +112,9 @@ impl ControllersMiddleware {
     ) {
         let http_route = HttpRoute::new(action.get_route());
         if let Some(route_keys) = action.get_model_routes() {
-            http_route.check_route_keys(&route_keys).unwrap();
+            if let Err(err) = http_route.check_route_keys(&route_keys) {
+                panic!("[PUT]: {}", err)
+            }
         }
 
         let result = self.put.register(HttpAction {
@@ -137,7 +143,9 @@ impl ControllersMiddleware {
         let http_route = HttpRoute::new(action.get_route());
 
         if let Some(route_keys) = action.get_model_routes() {
-            http_route.check_route_keys(&route_keys).unwrap();
+            if let Err(err) = http_route.check_route_keys(&route_keys) {
+                panic!("[DELETE]: {}", err)
+            }
         }
 
         let result = self.delete.register(HttpAction {

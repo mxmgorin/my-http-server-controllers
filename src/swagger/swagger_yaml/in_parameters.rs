@@ -128,6 +128,13 @@ fn write_query_input_param(yaml_writer: &mut YamlWriter, input_param: &HttpInput
             crate::controllers::documentation::ArrayElement::Object(_) => {
                 panic!("Array of object type is not supported for non body parameter")
             }
+
+            crate::controllers::documentation::ArrayElement::Enum(enum_type) => {
+                panic!(
+                    "Array of object type is not supported for non body parameter. {:?}",
+                    enum_type
+                )
+            }
         },
         HttpDataType::DictionaryOf(_) => {
             panic!("Dictionary can not be used as a non body parameter")

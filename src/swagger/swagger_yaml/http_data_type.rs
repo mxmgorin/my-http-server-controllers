@@ -40,6 +40,7 @@ pub fn build(yaml_writer: &mut YamlWriter, root_name: &str, data_type: &HttpData
                 ArrayElement::Object(object_type) => {
                     write_object_type(yaml_writer, &object_type.struct_id)
                 }
+                ArrayElement::Enum(enum_type) => write_enum_type(yaml_writer, &enum_type.struct_id),
             };
 
             yaml_writer.decrease_level();
@@ -75,6 +76,15 @@ fn write_object_type(yaml_writer: &mut YamlWriter, struct_id: &str) {
     yaml_writer.decrease_level();
 }
 
+fn write_enum_type(yaml_writer: &mut YamlWriter, struct_id: &str) {
+    yaml_writer.increase_level();
+    yaml_writer.write(
+        "$ref",
+        format!("'#/components/schemas/{}'", struct_id).as_str(),
+    );
+    yaml_writer.decrease_level();
+}
+
 fn write_array_element(yaml_writer: &mut YamlWriter, array_element: &ArrayElement) {
     yaml_writer.increase_level();
     yaml_writer.write("type", "array");
@@ -84,6 +94,7 @@ fn write_array_element(yaml_writer: &mut YamlWriter, array_element: &ArrayElemen
     match array_element {
         ArrayElement::SimpleType(param_type) => write_simple_type(yaml_writer, param_type),
         ArrayElement::Object(object_type) => write_object_type(yaml_writer, &object_type.struct_id),
+        ArrayElement::Enum(enum_type) => write_enum_type(yaml_writer, enum_type.struct_id),
     };
 
     yaml_writer.decrease_level();

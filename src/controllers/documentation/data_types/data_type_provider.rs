@@ -108,10 +108,11 @@ impl<'s> DataTypeProvider for DateTimeAsMicroseconds {
 
 impl<T: DataTypeProvider> DataTypeProvider for Vec<T> {
     fn get_data_type() -> HttpDataType {
-        match T::get_data_type() {
+        let data_type = T::get_data_type();
+        match data_type {
             HttpDataType::SimpleType(tp) => HttpDataType::ArrayOf(ArrayElement::SimpleType(tp)),
             HttpDataType::Object(obj) => HttpDataType::ArrayOf(ArrayElement::Object(obj)),
-            _ => panic!("Unsupported data type"),
+            _ => panic!("Unsupported data type: {:?}", data_type),
         }
     }
 }

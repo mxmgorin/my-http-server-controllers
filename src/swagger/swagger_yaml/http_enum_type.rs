@@ -13,7 +13,10 @@ pub fn build(yaml_writer: &mut YamlWriter, enum_structure: &HttpEnumStructure) {
         }
     }
 
-    yaml_writer.write_array("enum", enum_structure.cases.iter().map(|case| case.value));
+    yaml_writer.write_array(
+        "enum",
+        enum_structure.cases.iter().map(|case| case.value.into()),
+    );
 
     yaml_writer.write("description", "|");
 

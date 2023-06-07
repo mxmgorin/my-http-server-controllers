@@ -150,7 +150,7 @@ fn write_query_input_param(yaml_writer: &mut YamlWriter, input_param: &HttpInput
             yaml_writer.increase_level();
             yaml_writer.write("name", input_param.field.name.as_str());
             yaml_writer.write("description", input_param.description.as_str());
-            write_enum_case(yaml_writer, enum_data);
+            write_array_enum_case(yaml_writer, enum_data);
             yaml_writer.decrease_level();
         }
         HttpDataType::None => {
@@ -181,8 +181,32 @@ fn write_array_input_param(yaml_writer: &mut YamlWriter, simple_type: &HttpSimpl
 
 fn write_enum_case(yaml_writer: &mut YamlWriter, enum_data: &HttpEnumStructure) {
     yaml_writer.write_empty("schema");
+    write_enum_type(yaml_writer, enum_data);
+}
+
+fn write_enum_type(yaml_writer: &mut YamlWriter, enum_data: &HttpEnumStructure) {
     yaml_writer.increase_level();
-    yaml_writer.write("type", "string");
-    yaml_writer.write_array("enum", enum_data.cases.iter().map(|itm| itm.value));
+    match &enum_data.enum_type {
+        crate::controllers::documentation::EnumType::Integer => {
+            yaml_writer.write("type", "integer");
+            yaml_writer.write_array("enum", enum_data.cases.iter().map(|itm| itm.value.into()));
+        }
+        crate::controllers::documentation::EnumType::String => {
+            yaml_writer.write("type", "string");
+            yaml_writer.write_array(
+                "enum",
+                enum_data.cases.iter().map(|itm| itm.id.to_string().into()),
+            );
+        }
+    }
+
+    yaml_writer.decrease_level();
+}
+
+fn write_array_enum_case(yaml_writer: &mut YamlWriter, enum_data: &HttpEnumStructure) {
+    yaml_writer.write_empty("schema");
+    yaml_writer.increase_level();
+    yaml_writer.write("type", "array");
+    write_enum_type(yaml_writer, enum_data);
     yaml_writer.decrease_level();
 }

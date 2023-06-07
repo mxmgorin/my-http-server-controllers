@@ -13,7 +13,7 @@ pub fn build(result: &mut YamlWriter, http_object: &HttpObjectStructure) {
             .fields
             .iter()
             .filter(|itm| itm.required)
-            .map(|itm| itm.name.as_str()),
+            .map(|itm| itm.name.as_str().into()),
     );
 
     write_properties(result, http_object);

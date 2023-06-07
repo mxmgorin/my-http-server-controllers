@@ -44,7 +44,12 @@ pub fn build(
         }
     }
 
-    yaml_writer.write_array("tags", [action_description.controller_name].into_iter());
+    yaml_writer.write_array(
+        "tags",
+        [action_description.controller_name]
+            .into_iter()
+            .map(|itm| itm.into()),
+    );
 
     yaml_writer.write("summary", action_description.summary);
 
@@ -80,7 +85,7 @@ fn compile_produces(yaml_writer: &mut YamlWriter, action_description: &HttpActio
         }
     }
 
-    yaml_writer.write_array("produces", produces.iter().map(|itm| itm.as_str()));
+    yaml_writer.write_array("produces", produces.iter().map(|itm| itm.as_str().into()));
 }
 
 fn compile_responses(yaml_writer: &mut YamlWriter, results: &[HttpResult]) {

@@ -1,3 +1,5 @@
+use rust_extensions::StrOrString;
+
 pub struct YamlWriter {
     content: Vec<u8>,
     pub level: usize,
@@ -59,7 +61,7 @@ impl YamlWriter {
 
     pub fn write_array<'s, TIter>(&mut self, name: &str, values: TIter)
     where
-        TIter: Iterator<Item = &'s str>,
+        TIter: Iterator<Item = StrOrString<'s>>,
     {
         self.write_empty(name);
 
@@ -67,7 +69,7 @@ impl YamlWriter {
             self.fill_spaces(1);
 
             self.content.extend_from_slice("- ".as_bytes());
-            self.content.extend_from_slice(value.as_bytes());
+            self.content.extend_from_slice(value.as_str().as_bytes());
             self.content.push(13);
             self.content.push(10);
         }

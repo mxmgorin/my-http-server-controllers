@@ -122,18 +122,22 @@ fn write_query_input_param(yaml_writer: &mut YamlWriter, input_param: &HttpInput
                     format!("{}[]", input_param.field.name.as_str()).as_str(),
                 );
                 yaml_writer.write("description", input_param.description.as_str());
-                write_array_input_paramt(yaml_writer, simple_type);
+                write_array_input_param(yaml_writer, simple_type);
                 yaml_writer.decrease_level();
             }
             crate::controllers::documentation::ArrayElement::Object(_) => {
                 panic!("Array of object type is not supported for non body parameter")
             }
 
-            crate::controllers::documentation::ArrayElement::Enum(enum_type) => {
-                panic!(
-                    "Array of object type is not supported for non body parameter. {:?}",
-                    enum_type
-                )
+            crate::controllers::documentation::ArrayElement::Enum(enum_data) => {
+                yaml_writer.increase_level();
+                yaml_writer.write(
+                    "name",
+                    format!("{}[]", input_param.field.name.as_str()).as_str(),
+                );
+                yaml_writer.write("description", input_param.description.as_str());
+                write_enum_case(yaml_writer, enum_data);
+                yaml_writer.decrease_level();
             }
         },
         HttpDataType::DictionaryOf(_) => {
@@ -164,7 +168,7 @@ fn write_simple_type(yaml_writer: &mut YamlWriter, simple_type: &HttpSimpleType,
     yaml_writer.write_bool("required", required);
 }
 
-fn write_array_input_paramt(yaml_writer: &mut YamlWriter, simple_type: &HttpSimpleType) {
+fn write_array_input_param(yaml_writer: &mut YamlWriter, simple_type: &HttpSimpleType) {
     yaml_writer.write_empty("schema");
     yaml_writer.increase_level();
     yaml_writer.write("type", "array");

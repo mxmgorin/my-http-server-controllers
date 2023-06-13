@@ -7,6 +7,6 @@ mod in_param_as_body;
 mod in_param_as_from_data;
 mod in_parameters;
 mod paths;
-mod security_defentions;
+mod security_definitions;
 mod verb_description;
 mod yaml_writer;

@@ -23,7 +23,7 @@ pub fn build(yaml_writer: &mut YamlWriter, action_description: &HttpActionDescri
         yaml_writer.write_empty("parameters");
         for param in non_body_params {
             yaml_writer.increase_level();
-            yaml_writer.write_upper_level("- in", |upper_level| {
+            yaml_writer.write_upper_level_with_value("- in", "query".into(), |upper_level| {
                 super::query_params::write_query_input_param(upper_level, param);
             });
 

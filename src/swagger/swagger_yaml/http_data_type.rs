@@ -15,9 +15,18 @@ pub fn build(yaml_writer: &mut YamlWriter, root_name: &str, data_type: &HttpData
                 super::object::write_reference_to_object(yaml_writer, object_type);
             });
         }
-        HttpDataType::Enum(enum_type) => {
-            super::object::write_reference_to_object(yaml_writer, enum_type);
-        }
+        HttpDataType::Enum(enum_type) => match enum_type.enum_type {
+            crate::controllers::documentation::data_types::EnumType::Integer => {
+                yaml_writer.write_upper_level(root_name, |yaml_writer| {
+                    write_simple_type(yaml_writer, &HttpSimpleType::Integer);
+                });
+            }
+            crate::controllers::documentation::data_types::EnumType::String => {
+                yaml_writer.write_upper_level(root_name, |yaml_writer| {
+                    write_simple_type(yaml_writer, &HttpSimpleType::String);
+                });
+            }
+        },
         HttpDataType::None => {}
         HttpDataType::ArrayOf(array_element) => {
             yaml_writer.write_upper_level(root_name, |yaml_writer| {

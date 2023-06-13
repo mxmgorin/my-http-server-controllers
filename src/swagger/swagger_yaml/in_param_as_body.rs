@@ -57,8 +57,9 @@ pub fn write(yaml_writer: &mut YamlWriter, field: &HttpField) {
             });
         }
         HttpDataType::Enum(enum_data) => {
-            yaml_writer.write_empty(field.name.as_str());
-            write_enum(yaml_writer, enum_data);
+            yaml_writer.write_upper_level(field.name.as_str(), |yaml_writer| {
+                write_enum(yaml_writer, enum_data);
+            });
         }
         HttpDataType::None => {}
     }

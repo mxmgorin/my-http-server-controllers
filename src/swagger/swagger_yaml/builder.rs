@@ -37,9 +37,9 @@ pub fn build(
             yaml_writer,
             &controllers.authorization_map.global_authorization,
         );
-
-        super::paths::build(yaml_writer, &path_descriptions, controllers);
     });
+
+    super::paths::build(&mut yaml_writer, &path_descriptions, controllers);
 
     yaml_writer.build()
 }

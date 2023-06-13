@@ -8,6 +8,9 @@ use super::{ArrayElement, HttpDataType, HttpSimpleType};
 
 pub trait DataTypeProvider {
     fn get_data_type(generic_type: Option<&'static str>) -> HttpDataType;
+    fn get_generic_type() -> Option<&'static str> {
+        None
+    }
 }
 
 impl DataTypeProvider for u8 {

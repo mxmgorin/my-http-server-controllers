@@ -124,21 +124,23 @@ fn write_object_type(
 
     if !definitions.contains_key(struct_id.as_str()) {
         super::http_object_type::build(yaml_writer, &object_type.main);
-        definitions.insert(struct_id.to_string(), ());
-    }
 
-    for field in &object_type.main.fields {
-        populate_object_type(yaml_writer, definitions, &field.data_type);
+        for field in &object_type.main.fields {
+            populate_object_type(yaml_writer, definitions, &field.data_type);
+        }
+
+        definitions.insert(struct_id.to_string(), ());
     }
 
     if let Some(generic_data) = &object_type.generic {
         if !definitions.contains_key(generic_data.struct_id) {
             super::http_object_type::build(yaml_writer, generic_data);
-            definitions.insert(generic_data.struct_id.to_string(), ());
-        }
 
-        for field in &generic_data.fields {
-            populate_object_type(yaml_writer, definitions, &field.data_type);
+            for field in &generic_data.fields {
+                populate_object_type(yaml_writer, definitions, &field.data_type);
+            }
+
+            definitions.insert(generic_data.struct_id.to_string(), ());
         }
     }
 }

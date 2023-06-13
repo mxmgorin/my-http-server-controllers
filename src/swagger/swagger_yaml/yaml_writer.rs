@@ -75,6 +75,13 @@ impl YamlWriter {
         }
     }
 
+    pub fn write_upper_level(&mut self, name: &str, level_up: impl Fn(&mut Self)) {
+        self.write_empty(name);
+        self.increase_level();
+        level_up(self);
+        self.decrease_level();
+    }
+
     pub fn increase_level(&mut self) {
         self.level += 1;
     }

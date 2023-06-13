@@ -93,13 +93,15 @@ fn write_body_array_type(yaml_writer: &mut YamlWriter, array_el: &ArrayElement) 
     match array_el {
         crate::controllers::documentation::ArrayElement::SimpleType(simple_type) => {
             yaml_writer.write("type", "array");
-            yaml_writer.write_empty("items");
-            write_simple_type(yaml_writer, simple_type);
+            yaml_writer.write_upper_level("items", |yaml_writer| {
+                write_simple_type(yaml_writer, simple_type);
+            });
         }
         crate::controllers::documentation::ArrayElement::Object(obj) => {
             yaml_writer.write("type", "array");
-            yaml_writer.write_empty("items");
-            write_body_object_type(yaml_writer, obj);
+            yaml_writer.write_upper_level("items", |yaml_writer| {
+                write_body_object_type(yaml_writer, obj);
+            });
         }
 
         crate::controllers::documentation::ArrayElement::Enum(enum_data) => {

@@ -64,11 +64,6 @@ pub fn build_and_write(
             }
         }
     });
-
-    //yaml_writer.write_empty("schemas");
-    //yaml_writer.increase_level();
-
-    //yaml_writer.decrease_level();
 }
 
 fn populate_object_type(
@@ -123,7 +118,9 @@ fn write_object_type(
     let struct_id = object_type.get_struct_id();
 
     if !definitions.contains_key(struct_id.as_str()) {
-        super::http_object_type::build(yaml_writer, &object_type.main);
+        yaml_writer.write_upper_level(struct_id.as_str(), |yaml_writer| {
+            super::http_object_type::build(yaml_writer, &object_type.main);
+        });
 
         for field in &object_type.main.fields {
             populate_object_type(yaml_writer, definitions, &field.data_type);
@@ -134,8 +131,9 @@ fn write_object_type(
 
     if let Some(generic_data) = &object_type.generic {
         if !definitions.contains_key(generic_data.struct_id) {
-            super::http_object_type::build(yaml_writer, generic_data);
-
+            yaml_writer.write_upper_level(generic_data.struct_id, |yaml_writer| {
+                super::http_object_type::build(yaml_writer, generic_data);
+            });
             for field in &generic_data.fields {
                 populate_object_type(yaml_writer, definitions, &field.data_type);
             }

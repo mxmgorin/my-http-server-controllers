@@ -14,7 +14,7 @@ pub fn write_array_input_param(yaml_writer: &mut YamlWriter, simple_type: &HttpS
     yaml_writer.decrease_level();
 }
 
-pub fn write_array_enum_case(yaml_writer: &mut YamlWriter, enum_data: &HttpEnumStructure) {
+pub fn write_array_enum_case(yaml_writer: &mut YamlWriter, enum_structure: &HttpEnumStructure) {
     yaml_writer.write_empty("schema");
     yaml_writer.increase_level();
     yaml_writer.write("type", "array");
@@ -22,7 +22,9 @@ pub fn write_array_enum_case(yaml_writer: &mut YamlWriter, enum_data: &HttpEnumS
     yaml_writer.increase_level();
 
     yaml_writer.write_empty("schema");
-    super::write_enum_type(yaml_writer, enum_data);
+
+    super::super::http_enum_type::build(yaml_writer, enum_structure);
+    //super::write_enum_type(yaml_writer, enum_structure);
 
     yaml_writer.decrease_level();
     yaml_writer.decrease_level();

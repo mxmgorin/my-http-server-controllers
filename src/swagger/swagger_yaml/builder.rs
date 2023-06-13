@@ -19,20 +19,17 @@ pub fn build(
 
     yaml_writer.write("openapi", "3.0.0");
 
-    yaml_writer.write_empty("info");
-
-    yaml_writer.increase_level();
-    yaml_writer.write("title", title);
-    yaml_writer.write("version", version);
-
-    yaml_writer.reset_level();
-    yaml_writer.write_empty("servers");
-    yaml_writer.increase_level();
-    yaml_writer.write("- url", format!("{}://{}", scheme, host).as_str());
+    yaml_writer.write_upper_level("info", |yaml_writer| {
+        yaml_writer.write("title", title);
+        yaml_writer.write("version", version);
+    });
 
     let path_descriptions = build_paths_descriptions(controllers, global_fail_results);
 
-    yaml_writer.reset_level();
+    yaml_writer.write_upper_level("servers", |yaml_writer| {
+        yaml_writer.write("- url", format!("{}://{}", scheme, host).as_str());
+    });
+
     yaml_writer.write_empty("components");
     yaml_writer.increase_level();
     super::definitions::build_and_write(&mut yaml_writer, controllers, &path_descriptions);

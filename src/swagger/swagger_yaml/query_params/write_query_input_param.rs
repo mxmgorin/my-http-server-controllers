@@ -3,8 +3,6 @@ use crate::{
     swagger::swagger_yaml::yaml_writer::YamlWriter,
 };
 
-use super::write_enum_type;
-
 pub fn write_query_input_param(yaml_writer: &mut YamlWriter, input_param: &HttpInputParameter) {
     yaml_writer.write("name", input_param.field.get_query_field_name().as_str());
     yaml_writer.write("description", input_param.description.as_str());
@@ -26,7 +24,7 @@ pub fn write_query_input_param(yaml_writer: &mut YamlWriter, input_param: &HttpI
                 panic!("Dictionary of array can not be used as a non body parameter")
             }
             HttpDataType::Enum(enum_data) => {
-                write_enum_type(yaml_writer, enum_data);
+                super::super::object::write_reference_to_object(yaml_writer, enum_data);
             }
             HttpDataType::None => {
                 panic!("Somehow we have non parameter")

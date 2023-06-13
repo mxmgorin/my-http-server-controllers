@@ -2,33 +2,27 @@ use crate::controllers::documentation::data_types::HttpObjectStructure;
 
 use super::yaml_writer::YamlWriter;
 
-pub fn build(result: &mut YamlWriter, http_object: &HttpObjectStructure) {
-    result.write_empty(http_object.struct_id);
-    result.increase_level();
-    result.write("type", "object");
+pub fn build(yaml_writer: &mut YamlWriter, http_object: &HttpObjectStructure) {
+    yaml_writer.write_upper_level(http_object.struct_id, |yaml_writer| {
+        yaml_writer.write("type", "object");
 
-    result.write_array(
-        "required",
-        http_object
-            .fields
-            .iter()
-            .filter(|itm| itm.required)
-            .map(|itm| itm.name.as_str().into()),
-    );
+        yaml_writer.write_array(
+            "required",
+            http_object
+                .fields
+                .iter()
+                .filter(|itm| itm.required)
+                .map(|itm| itm.name.as_str().into()),
+        );
 
-    write_properties(result, http_object);
-
-    result.decrease_level();
+        write_properties(yaml_writer, http_object);
+    });
 }
 
 fn write_properties(yaml_writer: &mut YamlWriter, src: &HttpObjectStructure) {
-    yaml_writer.write_empty("properties");
-
-    yaml_writer.increase_level();
-
-    for field in &src.fields {
-        super::http_data_type::build(yaml_writer, field.name.as_str(), &field.data_type);
-    }
-
-    yaml_writer.decrease_level();
+    yaml_writer.write_upper_level("properties", |yaml_writer| {
+        for field in &src.fields {
+            super::http_data_type::build(yaml_writer, field.name.as_str(), &field.data_type);
+        }
+    });
 }

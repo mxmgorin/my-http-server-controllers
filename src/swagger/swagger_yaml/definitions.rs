@@ -15,46 +15,64 @@ pub fn build_and_write(
     controllers: &ControllersMiddleware,
     path_descriptions: &BTreeMap<String, BTreeMap<String, HttpActionDescription>>,
 ) {
-    let mut definitions = HashMap::new();
+    yaml_writer.write_upper_level("schemas", |yaml_writer| {
+        let mut definitions = HashMap::new();
 
-    yaml_writer.write_empty("schemas");
-    yaml_writer.increase_level();
+        for http_object in &controllers.http_objects {
+            if !definitions.contains_key(http_object.struct_id) {
+                super::http_object_type::build(yaml_writer, http_object);
 
-    for http_object in &controllers.http_objects {
-        if !definitions.contains_key(http_object.struct_id) {
-            super::http_object_type::build(yaml_writer, http_object);
-
-            definitions.insert(http_object.struct_id.to_string(), ());
-        }
-    }
-
-    for (_, action_descriptions) in path_descriptions {
-        for (_, action_description) in action_descriptions {
-            for result in &action_description.results {
-                populate_object_type(yaml_writer, &mut definitions, &result.data_type);
-            }
-
-            if let Some(input_parameters) = action_description.input_params.get_body_params() {
-                for in_param in input_parameters {
-                    populate_object_type(yaml_writer, &mut definitions, &in_param.field.data_type);
-                }
-            }
-
-            if let Some(input_parameters) = action_description.input_params.get_non_body_params() {
-                for in_param in input_parameters {
-                    populate_object_type(yaml_writer, &mut definitions, &in_param.field.data_type);
-                }
-            }
-
-            if let Some(input_parameters) = action_description.input_params.get_form_data_params() {
-                for in_param in input_parameters {
-                    populate_object_type(yaml_writer, &mut definitions, &in_param.field.data_type);
-                }
+                definitions.insert(http_object.struct_id.to_string(), ());
             }
         }
-    }
 
-    yaml_writer.decrease_level();
+        for (_, action_descriptions) in path_descriptions {
+            for (_, action_description) in action_descriptions {
+                for result in &action_description.results {
+                    populate_object_type(yaml_writer, &mut definitions, &result.data_type);
+                }
+
+                if let Some(input_parameters) = action_description.input_params.get_body_params() {
+                    for in_param in input_parameters {
+                        populate_object_type(
+                            yaml_writer,
+                            &mut definitions,
+                            &in_param.field.data_type,
+                        );
+                    }
+                }
+
+                if let Some(input_parameters) =
+                    action_description.input_params.get_non_body_params()
+                {
+                    for in_param in input_parameters {
+                        populate_object_type(
+                            yaml_writer,
+                            &mut definitions,
+                            &in_param.field.data_type,
+                        );
+                    }
+                }
+
+                if let Some(input_parameters) =
+                    action_description.input_params.get_form_data_params()
+                {
+                    for in_param in input_parameters {
+                        populate_object_type(
+                            yaml_writer,
+                            &mut definitions,
+                            &in_param.field.data_type,
+                        );
+                    }
+                }
+            }
+        }
+    });
+
+    //yaml_writer.write_empty("schemas");
+    //yaml_writer.increase_level();
+
+    //yaml_writer.decrease_level();
 }
 
 fn populate_object_type(
@@ -125,9 +143,9 @@ fn write_enum_type(
         return;
     };
 
-    yaml_writer.write_empty(enum_structure.struct_id.as_ref());
-
-    super::http_enum_type::build(yaml_writer, enum_structure);
+    yaml_writer.write_upper_level(enum_structure.struct_id.as_ref(), |yaml_writer| {
+        super::http_enum_type::build(yaml_writer, enum_structure);
+    });
 
     definitions.insert(enum_structure.struct_id.to_string(), ());
 }

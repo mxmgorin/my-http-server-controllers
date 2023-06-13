@@ -14,54 +14,50 @@ pub fn build(
     action_description: &HttpActionDescription,
     controllers: &ControllersMiddleware,
 ) {
-    yaml_writer.write_empty(verb);
+    yaml_writer.write_upper_level(verb, |yaml_writer| {
+        if let Some(authorization) = &controllers.authorization_map.global_authorization {
+            let mut should_be_authorized = authorization.is_global_authorization_enabled();
 
-    yaml_writer.increase_level();
+            match &action_description.should_be_authorized {
+                crate::controllers::documentation::ShouldBeAuthorized::Yes => {
+                    should_be_authorized = true;
+                }
+                crate::controllers::documentation::ShouldBeAuthorized::YesWithClaims(_) => {
+                    should_be_authorized = true;
+                }
+                crate::controllers::documentation::ShouldBeAuthorized::No => {
+                    should_be_authorized = false;
+                }
+                crate::controllers::documentation::ShouldBeAuthorized::UseGlobal => {}
+            }
 
-    if let Some(authorization) = &controllers.authorization_map.global_authorization {
-        let mut should_be_authorized = authorization.is_global_authorization_enabled();
+            if should_be_authorized {
+                yaml_writer.write_empty("security");
 
-        match &action_description.should_be_authorized {
-            crate::controllers::documentation::ShouldBeAuthorized::Yes => {
-                should_be_authorized = true;
+                yaml_writer.write(
+                    format!(" - {}", authorization.as_openid_str()).as_str(),
+                    "[]",
+                );
             }
-            crate::controllers::documentation::ShouldBeAuthorized::YesWithClaims(_) => {
-                should_be_authorized = true;
-            }
-            crate::controllers::documentation::ShouldBeAuthorized::No => {
-                should_be_authorized = false;
-            }
-            crate::controllers::documentation::ShouldBeAuthorized::UseGlobal => {}
         }
 
-        if should_be_authorized {
-            yaml_writer.write_empty("security");
+        yaml_writer.write_array(
+            "tags",
+            [action_description.controller_name]
+                .into_iter()
+                .map(|itm| itm.into()),
+        );
 
-            yaml_writer.write(
-                format!(" - {}", authorization.as_openid_str()).as_str(),
-                "[]",
-            );
-        }
-    }
+        yaml_writer.write("summary", action_description.summary);
 
-    yaml_writer.write_array(
-        "tags",
-        [action_description.controller_name]
-            .into_iter()
-            .map(|itm| itm.into()),
-    );
+        yaml_writer.write("description", action_description.description);
 
-    yaml_writer.write("summary", action_description.summary);
+        compile_produces(yaml_writer, action_description);
 
-    yaml_writer.write("description", action_description.description);
+        super::in_parameters::build(yaml_writer, &action_description);
 
-    compile_produces(yaml_writer, action_description);
-
-    super::in_parameters::build(yaml_writer, &action_description);
-
-    compile_responses(yaml_writer, &action_description.results);
-
-    yaml_writer.decrease_level();
+        compile_responses(yaml_writer, &action_description.results);
+    });
 }
 
 fn compile_produces(yaml_writer: &mut YamlWriter, action_description: &HttpActionDescription) {
@@ -90,16 +86,17 @@ fn compile_produces(yaml_writer: &mut YamlWriter, action_description: &HttpActio
 
 fn compile_responses(yaml_writer: &mut YamlWriter, results: &[HttpResult]) {
     yaml_writer.write_empty("responses");
-    yaml_writer.increase_level();
 
-    for http_result in results {
-        yaml_writer.write_empty(format!("{}", http_result.http_code).as_str());
-        yaml_writer.increase_level();
-        compile_response(yaml_writer, http_result);
-        yaml_writer.decrease_level();
-    }
-
-    yaml_writer.decrease_level();
+    yaml_writer.write_upper_level("responses", |yaml_writer| {
+        for http_result in results {
+            yaml_writer.write_upper_level(
+                format!("{}", http_result.http_code).as_str(),
+                |yaml_writer| {
+                    compile_response(yaml_writer, http_result);
+                },
+            );
+        }
+    });
 }
 
 fn compile_response(yaml_writer: &mut YamlWriter, src: &HttpResult) {
@@ -110,11 +107,10 @@ fn compile_response(yaml_writer: &mut YamlWriter, src: &HttpResult) {
     }
 
     yaml_writer.write_empty("content");
-    yaml_writer.increase_level();
-    yaml_writer.write_empty("application/json");
-    yaml_writer.increase_level();
-    super::http_data_type::build(yaml_writer, "schema", &src.data_type);
 
-    yaml_writer.decrease_level();
-    yaml_writer.decrease_level();
+    yaml_writer.write_upper_level("content", |yaml_writer| {
+        yaml_writer.write_upper_level("application/json", |yaml_writer| {
+            super::http_data_type::build(yaml_writer, "schema", &src.data_type);
+        });
+    });
 }

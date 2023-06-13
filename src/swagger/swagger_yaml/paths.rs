@@ -13,20 +13,18 @@ pub fn build(
     controllers: &ControllersMiddleware,
 ) {
     yaml_writer.reset_level();
-    yaml_writer.write_empty("paths");
-
-    yaml_writer.increase_level();
-
-    for (path, actions) in actions {
-        yaml_writer.write_empty(path);
-        yaml_writer.increase_level();
-
-        for (verb, action_description) in actions {
-            super::verb_description::build(yaml_writer, verb, action_description, controllers)
+    yaml_writer.write_upper_level("paths", |yaml_writer| {
+        for (path, actions) in actions {
+            yaml_writer.write_upper_level(path, |yaml_writer| {
+                for (verb, action_description) in actions {
+                    super::verb_description::build(
+                        yaml_writer,
+                        verb,
+                        action_description,
+                        controllers,
+                    )
+                }
+            });
         }
-
-        yaml_writer.decrease_level();
-    }
-
-    yaml_writer.decrease_level();
+    });
 }

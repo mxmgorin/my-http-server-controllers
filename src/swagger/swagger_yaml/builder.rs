@@ -24,21 +24,22 @@ pub fn build(
         yaml_writer.write("version", version);
     });
 
-    let path_descriptions = build_paths_descriptions(controllers, global_fail_results);
-
     yaml_writer.write_upper_level("servers", |yaml_writer| {
         yaml_writer.write("- url", format!("{}://{}", scheme, host).as_str());
     });
 
-    yaml_writer.write_empty("components");
-    yaml_writer.increase_level();
-    super::definitions::build_and_write(&mut yaml_writer, controllers, &path_descriptions);
+    let path_descriptions = build_paths_descriptions(controllers, global_fail_results);
 
-    if let Some(authorization) = &controllers.authorization_map.global_authorization {
-        super::security_definitions::build(&mut yaml_writer, authorization);
-    }
+    yaml_writer.write_upper_level("components", |yaml_writer| {
+        super::definitions::build_and_write(yaml_writer, controllers, &path_descriptions);
 
-    super::paths::build(&mut yaml_writer, &path_descriptions, controllers);
+        super::security_definitions::build(
+            yaml_writer,
+            &controllers.authorization_map.global_authorization,
+        );
+
+        super::paths::build(yaml_writer, &path_descriptions, controllers);
+    });
 
     yaml_writer.build()
 }

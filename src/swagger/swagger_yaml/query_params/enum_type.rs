@@ -1,10 +1,8 @@
-use crate::{
-    controllers::documentation::HttpEnumStructure, swagger::swagger_yaml::yaml_writer::YamlWriter,
-};
+/*
 pub fn write_enum_type(yaml_writer: &mut YamlWriter, enum_structure: &HttpEnumStructure) {
     super::super::http_enum_type::build(yaml_writer, enum_structure);
 }
-/*
+
 pub fn write_enum_type(yaml_writer: &mut YamlWriter, enum_data: &HttpEnumStructure) {
     yaml_writer.increase_level();
     match &enum_data.enum_type {

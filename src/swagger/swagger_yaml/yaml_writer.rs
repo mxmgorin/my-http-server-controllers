@@ -91,6 +91,28 @@ impl YamlWriter {
         }
     }
 
+    pub fn write_upper_level_with_ctx<TCtx>(
+        &mut self,
+        name: &str,
+        ctx: TCtx,
+        level_up: impl Fn(TCtx, &mut Self) -> TCtx,
+    ) -> TCtx {
+        let array = name.starts_with('-');
+        self.write_empty(name);
+        self.increase_level();
+        if array {
+            self.increase_level();
+        }
+
+        let ctx = level_up(ctx, self);
+        self.decrease_level();
+
+        if array {
+            self.decrease_level();
+        }
+        ctx
+    }
+
     pub fn write_upper_level_with_value(
         &mut self,
         name: &str,
@@ -112,11 +134,11 @@ impl YamlWriter {
         }
     }
 
-    pub fn increase_level(&mut self) {
+    fn increase_level(&mut self) {
         self.level += 1;
     }
 
-    pub fn decrease_level(&mut self) {
+    fn decrease_level(&mut self) {
         self.level -= 1;
     }
 

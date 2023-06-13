@@ -94,15 +94,15 @@ fn write_enum_type(yaml_writer: &mut YamlWriter, struct_id: &str) {
 fn write_array_element(yaml_writer: &mut YamlWriter, array_element: &ArrayElement) {
     yaml_writer.write("type", "array");
 
-    yaml_writer.write_empty("items");
-
-    match array_element {
-        ArrayElement::SimpleType(param_type) => write_simple_type(yaml_writer, param_type),
-        ArrayElement::Object(object_type) => {
-            super::object::write_reference_to_object(yaml_writer, object_type);
-        }
-        ArrayElement::Enum(enum_type) => {
-            super::object::write_reference_to_object(yaml_writer, enum_type);
-        }
-    };
+    yaml_writer.write_upper_level("items", |yaml_writer| {
+        match array_element {
+            ArrayElement::SimpleType(param_type) => write_simple_type(yaml_writer, param_type),
+            ArrayElement::Object(object_type) => {
+                super::object::write_reference_to_object(yaml_writer, object_type);
+            }
+            ArrayElement::Enum(enum_type) => {
+                super::object::write_reference_to_object(yaml_writer, enum_type);
+            }
+        };
+    });
 }

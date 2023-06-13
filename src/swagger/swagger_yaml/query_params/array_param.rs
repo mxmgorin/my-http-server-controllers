@@ -22,7 +22,7 @@ pub fn write_array_enum_case(yaml_writer: &mut YamlWriter, enum_structure: &Http
     yaml_writer.increase_level();
 
     yaml_writer.write_empty("schema");
-    super::write_enum_type(yaml_writer, enum_structure);
+    super::super::object::write_reference_to_object(yaml_writer, enum_structure);
 
     yaml_writer.decrease_level();
     yaml_writer.decrease_level();

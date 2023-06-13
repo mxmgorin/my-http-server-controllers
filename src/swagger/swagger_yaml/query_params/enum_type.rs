@@ -3,11 +3,6 @@ use crate::{
 };
 
 pub fn write_enum_type(yaml_writer: &mut YamlWriter, enum_data: &HttpEnumStructure) {
-    super::super::object::write_reference_to_object(yaml_writer, enum_data);
-}
-
-/*
-pub fn write_enum_type(yaml_writer: &mut YamlWriter, enum_data: &HttpEnumStructure) {
     yaml_writer.increase_level();
     match &enum_data.enum_type {
         crate::controllers::documentation::EnumType::Integer => {
@@ -25,5 +20,3 @@ pub fn write_enum_type(yaml_writer: &mut YamlWriter, enum_data: &HttpEnumStructu
 
     yaml_writer.decrease_level();
 }
-
-*/

@@ -1,7 +1,4 @@
-use crate::controllers::documentation::{
-    data_types::HttpDataType, in_parameters::HttpInputParameter, HttpActionDescription,
-    HttpEnumStructure, HttpSimpleType,
-};
+use crate::controllers::documentation::HttpActionDescription;
 
 use super::{in_param_as_body, in_param_as_from_data, yaml_writer::YamlWriter};
 
@@ -28,7 +25,7 @@ pub fn build(yaml_writer: &mut YamlWriter, action_description: &HttpActionDescri
             yaml_writer.increase_level();
             yaml_writer.write("- in", param.source.as_str());
             yaml_writer.increase_level();
-            write_query_input_param(yaml_writer, param);
+            super::query_params::write_query_input_param(yaml_writer, param);
             yaml_writer.decrease_level();
             yaml_writer.decrease_level();
         }
@@ -100,113 +97,4 @@ pub fn build(yaml_writer: &mut YamlWriter, action_description: &HttpActionDescri
         yaml_writer.decrease_level();
         yaml_writer.decrease_level();
     }
-}
-
-fn write_query_input_param(yaml_writer: &mut YamlWriter, input_param: &HttpInputParameter) {
-    match &input_param.field.data_type {
-        HttpDataType::SimpleType(simple_type) => {
-            yaml_writer.increase_level();
-            yaml_writer.write("name", input_param.field.name.as_str());
-            yaml_writer.write("description", input_param.description.as_str());
-            write_simple_type(yaml_writer, simple_type, input_param.field.required);
-            yaml_writer.decrease_level();
-        }
-        HttpDataType::Object(_) => {
-            panic!("Object type is not supported for non body parameter")
-        }
-        HttpDataType::ArrayOf(array_el) => match array_el {
-            crate::controllers::documentation::ArrayElement::SimpleType(simple_type) => {
-                yaml_writer.increase_level();
-                yaml_writer.write(
-                    "name",
-                    format!("{}[]", input_param.field.name.as_str()).as_str(),
-                );
-                yaml_writer.write("description", input_param.description.as_str());
-                write_array_input_param(yaml_writer, simple_type);
-                yaml_writer.decrease_level();
-            }
-            crate::controllers::documentation::ArrayElement::Object(_) => {
-                panic!("Array of object type is not supported for non body parameter")
-            }
-
-            crate::controllers::documentation::ArrayElement::Enum(enum_data) => {
-                yaml_writer.increase_level();
-                yaml_writer.write(
-                    "name",
-                    format!("{}[]", input_param.field.name.as_str()).as_str(),
-                );
-                yaml_writer.write("description", input_param.description.as_str());
-                write_enum_case(yaml_writer, enum_data);
-                yaml_writer.decrease_level();
-            }
-        },
-        HttpDataType::DictionaryOf(_) => {
-            panic!("Dictionary can not be used as a non body parameter")
-        }
-        HttpDataType::DictionaryOfArray(_) => {
-            panic!("Dictionary of array can not be used as a non body parameter")
-        }
-        HttpDataType::Enum(enum_data) => {
-            yaml_writer.increase_level();
-            yaml_writer.write("name", input_param.field.name.as_str());
-            yaml_writer.write("description", input_param.description.as_str());
-            write_array_enum_case(yaml_writer, enum_data);
-            yaml_writer.decrease_level();
-        }
-        HttpDataType::None => {
-            panic!("Somehow we have non parameter")
-        }
-    }
-}
-
-fn write_simple_type(yaml_writer: &mut YamlWriter, simple_type: &HttpSimpleType, required: bool) {
-    yaml_writer.write_empty("schema");
-    yaml_writer.increase_level();
-    yaml_writer.write("type", simple_type.as_swagger_type());
-    yaml_writer.write("format", simple_type.as_format());
-    yaml_writer.decrease_level();
-    yaml_writer.write_bool("required", required);
-}
-
-fn write_array_input_param(yaml_writer: &mut YamlWriter, simple_type: &HttpSimpleType) {
-    yaml_writer.write_empty("schema");
-    yaml_writer.increase_level();
-    yaml_writer.write("type", "array");
-    yaml_writer.write_empty("items");
-    yaml_writer.increase_level();
-    yaml_writer.write("type", simple_type.as_swagger_type());
-    yaml_writer.decrease_level();
-    yaml_writer.decrease_level();
-}
-
-fn write_enum_case(yaml_writer: &mut YamlWriter, enum_data: &HttpEnumStructure) {
-    yaml_writer.write_empty("schema");
-    write_enum_type(yaml_writer, enum_data);
-}
-
-fn write_enum_type(yaml_writer: &mut YamlWriter, enum_data: &HttpEnumStructure) {
-    yaml_writer.increase_level();
-    match &enum_data.enum_type {
-        crate::controllers::documentation::EnumType::Integer => {
-            yaml_writer.write("type", "integer");
-            yaml_writer.write_array("enum", enum_data.cases.iter().map(|itm| itm.value.into()));
-        }
-        crate::controllers::documentation::EnumType::String => {
-            yaml_writer.write("type", "string");
-            yaml_writer.write_array(
-                "enum",
-                enum_data.cases.iter().map(|itm| itm.id.to_string().into()),
-            );
-        }
-    }
-
-    yaml_writer.decrease_level();
-}
-
-fn write_array_enum_case(yaml_writer: &mut YamlWriter, enum_data: &HttpEnumStructure) {
-    yaml_writer.write_empty("schema");
-    yaml_writer.increase_level();
-    yaml_writer.write("type", "array");
-    write_enum_type(yaml_writer, enum_data);
-    yaml_writer.decrease_level();
 }

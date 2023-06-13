@@ -11,7 +11,7 @@ pub fn build(yaml_writer: &mut YamlWriter, root_name: &str, data_type: &HttpData
 
         HttpDataType::Object(object_type) => {
             yaml_writer.write_empty(root_name);
-            write_object_type(yaml_writer, &object_type.struct_id);
+            super::object::write_reference_to_object(yaml_writer, object_type);
         }
         HttpDataType::Enum(enum_type) => match enum_type.enum_type {
             crate::controllers::documentation::data_types::EnumType::Integer => {
@@ -20,7 +20,7 @@ pub fn build(yaml_writer: &mut YamlWriter, root_name: &str, data_type: &HttpData
             }
             crate::controllers::documentation::data_types::EnumType::String => {
                 yaml_writer.write_empty(root_name);
-                write_object_type(yaml_writer, &enum_type.struct_id);
+                super::object::write_reference_to_object(yaml_writer, enum_type);
             }
         },
         HttpDataType::None => {}
@@ -38,7 +38,7 @@ pub fn build(yaml_writer: &mut YamlWriter, root_name: &str, data_type: &HttpData
             match array_element {
                 ArrayElement::SimpleType(param_type) => write_simple_type(yaml_writer, param_type),
                 ArrayElement::Object(object_type) => {
-                    write_object_type(yaml_writer, &object_type.struct_id)
+                    super::object::write_reference_to_object(yaml_writer, object_type);
                 }
                 ArrayElement::Enum(enum_type) => write_enum_type(yaml_writer, &enum_type.struct_id),
             };
@@ -67,6 +67,7 @@ fn write_simple_type(yaml_writer: &mut YamlWriter, param_type: &HttpSimpleType) 
     yaml_writer.decrease_level();
 }
 
+/*
 fn write_object_type(yaml_writer: &mut YamlWriter, struct_id: &str) {
     yaml_writer.increase_level();
     yaml_writer.write(
@@ -75,6 +76,7 @@ fn write_object_type(yaml_writer: &mut YamlWriter, struct_id: &str) {
     );
     yaml_writer.decrease_level();
 }
+ */
 
 fn write_enum_type(yaml_writer: &mut YamlWriter, struct_id: &str) {
     yaml_writer.increase_level();
@@ -93,7 +95,9 @@ fn write_array_element(yaml_writer: &mut YamlWriter, array_element: &ArrayElemen
 
     match array_element {
         ArrayElement::SimpleType(param_type) => write_simple_type(yaml_writer, param_type),
-        ArrayElement::Object(object_type) => write_object_type(yaml_writer, &object_type.struct_id),
+        ArrayElement::Object(object_type) => {
+            super::object::write_reference_to_object(yaml_writer, object_type);
+        }
         ArrayElement::Enum(enum_type) => write_enum_type(yaml_writer, enum_type.struct_id),
     };
 

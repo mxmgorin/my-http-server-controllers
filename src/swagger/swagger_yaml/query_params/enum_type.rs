@@ -1,0 +1,29 @@
+use crate::{
+    controllers::documentation::HttpEnumStructure, swagger::swagger_yaml::yaml_writer::YamlWriter,
+};
+
+pub fn write_enum_type(yaml_writer: &mut YamlWriter, enum_data: &HttpEnumStructure) {
+    super::super::object::write_reference_to_object(yaml_writer, enum_data);
+}
+
+/*
+pub fn write_enum_type(yaml_writer: &mut YamlWriter, enum_data: &HttpEnumStructure) {
+    yaml_writer.increase_level();
+    match &enum_data.enum_type {
+        crate::controllers::documentation::EnumType::Integer => {
+            yaml_writer.write("type", "integer");
+            yaml_writer.write_array("enum", enum_data.cases.iter().map(|itm| itm.value.into()));
+        }
+        crate::controllers::documentation::EnumType::String => {
+            yaml_writer.write("type", "string");
+            yaml_writer.write_array(
+                "enum",
+                enum_data.cases.iter().map(|itm| itm.id.to_string().into()),
+            );
+        }
+    }
+
+    yaml_writer.decrease_level();
+}
+
+*/

@@ -17,6 +17,12 @@ pub struct HttpEnumStructure {
     pub cases: Vec<HttpEnumCase>,
 }
 
+impl super::InputStructure for HttpEnumStructure {
+    fn get_struct_id(&self) -> &str {
+        self.struct_id
+    }
+}
+
 impl HttpEnumStructure {
     pub fn into_http_data_type_object(self) -> HttpDataType {
         HttpDataType::Enum(self)

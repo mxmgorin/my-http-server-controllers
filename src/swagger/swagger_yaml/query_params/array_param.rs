@@ -6,9 +6,7 @@ use crate::{
 pub fn write_array_input_param(yaml_writer: &mut YamlWriter, simple_type: &HttpSimpleType) {
     yaml_writer.write("type", "array");
     yaml_writer.write_upper_level("items", |yaml_writer| {
-        yaml_writer.write_upper_level("type", |yaml_writer| {
-            yaml_writer.write("type", simple_type.as_swagger_type());
-        })
+        yaml_writer.write("type", simple_type.as_swagger_type())
     });
 }
 

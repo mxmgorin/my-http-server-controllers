@@ -12,7 +12,6 @@ pub fn build(
     actions: &BTreeMap<String, BTreeMap<String, HttpActionDescription>>,
     controllers: &ControllersMiddleware,
 ) {
-    yaml_writer.reset_level();
     yaml_writer.write_upper_level("paths", |yaml_writer| {
         for (path, actions) in actions {
             yaml_writer.write_upper_level(path, |yaml_writer| {

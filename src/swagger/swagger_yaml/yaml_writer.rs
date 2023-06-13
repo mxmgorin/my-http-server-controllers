@@ -139,11 +139,11 @@ impl YamlWriter {
     }
 
     fn decrease_level(&mut self) {
+        if self.level == 0 {
+            println!("Content: {}", String::from_utf8_lossy(&self.content));
+            panic!("Somehow level is 0");
+        }
         self.level -= 1;
-    }
-
-    pub fn reset_level(&mut self) {
-        self.level = 0;
     }
 
     pub fn build(self) -> Vec<u8> {

@@ -85,8 +85,6 @@ fn compile_produces(yaml_writer: &mut YamlWriter, action_description: &HttpActio
 }
 
 fn compile_responses(yaml_writer: &mut YamlWriter, results: &[HttpResult]) {
-    yaml_writer.write_empty("responses");
-
     yaml_writer.write_upper_level("responses", |yaml_writer| {
         for http_result in results {
             yaml_writer.write_upper_level(

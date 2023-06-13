@@ -1,7 +1,7 @@
 use my_http_server::RequestCredentials;
 
 use super::{
-    actions::GetShouldBeAuthoriazed, documentation::ShouldBeAuthorized, ControllersAuthorization,
+    actions::GetShouldBeAuthorized, documentation::ShouldBeAuthorized, ControllersAuthorization,
 };
 
 pub enum AuthorizationResult {
@@ -47,12 +47,12 @@ impl AuthorizationMap {
         }
     }
 
-    pub fn authorizatio_is_enabled(&self) -> bool {
+    pub fn authorization_is_enabled(&self) -> bool {
         self.global_authorization.is_some()
     }
-    pub fn is_authorized<TGetShouldBeAuthoriazed: GetShouldBeAuthoriazed>(
+    pub fn is_authorized<TGetShouldBeAuthorized: GetShouldBeAuthorized>(
         &self,
-        action: &TGetShouldBeAuthoriazed,
+        action: &TGetShouldBeAuthorized,
         request_credentials: &Option<Box<dyn RequestCredentials + Send + Sync + 'static>>,
         ip: &str,
     ) -> AuthorizationResult {
@@ -118,7 +118,7 @@ mod tests {
         value: ShouldBeAuthorized,
     }
 
-    impl GetShouldBeAuthoriazed for HttpActionMock {
+    impl GetShouldBeAuthorized for HttpActionMock {
         fn get_should_be_authorized(&self) -> &ShouldBeAuthorized {
             &self.value
         }

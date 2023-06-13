@@ -40,7 +40,7 @@ pub trait GetDescription {
     fn get_description(&self) -> Option<HttpActionDescription>;
 }
 
-pub trait GetShouldBeAuthoriazed {
+pub trait GetShouldBeAuthorized {
     fn get_should_be_authorized(&self) -> &ShouldBeAuthorized;
 }
 
@@ -51,7 +51,7 @@ pub struct HttpAction {
     pub should_be_authorized: ShouldBeAuthorized,
 }
 
-impl GetShouldBeAuthoriazed for HttpAction {
+impl GetShouldBeAuthorized for HttpAction {
     fn get_should_be_authorized(&self) -> &ShouldBeAuthorized {
         &self.should_be_authorized
     }

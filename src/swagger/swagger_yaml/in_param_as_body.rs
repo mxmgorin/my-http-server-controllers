@@ -82,7 +82,7 @@ fn write_enum(yaml_writer: &mut YamlWriter, enum_data: &HttpEnumStructure) {
 fn write_body_object_type(yaml_writer: &mut YamlWriter, object: &HttpObjectStructure) {
     yaml_writer.write("type", "object");
     yaml_writer.write_upper_level("properties", |yaml_writer| {
-        for obj_field in &object.fields {
+        for obj_field in &object.main.fields {
             write(yaml_writer, obj_field);
         }
     });

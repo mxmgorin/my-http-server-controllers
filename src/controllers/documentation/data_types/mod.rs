@@ -12,7 +12,7 @@ pub use data_type::HttpDataType;
 pub use data_type_provider::*;
 pub use http_enum_struct::{EnumType, HttpEnumCase, HttpEnumStructure};
 pub use http_field::HttpField;
-pub use http_object_type::HttpObjectStructure;
+pub use http_object_type::*;
 pub use http_simple_type::HttpSimpleType;
 use rust_extensions::StrOrString;
 

@@ -104,8 +104,6 @@ fn compile_response(yaml_writer: &mut YamlWriter, src: &HttpResult) {
         return;
     }
 
-    yaml_writer.write_empty("content");
-
     yaml_writer.write_upper_level("content", |yaml_writer| {
         yaml_writer.write_upper_level("application/json", |yaml_writer| {
             super::http_data_type::build(yaml_writer, "schema", &src.data_type);

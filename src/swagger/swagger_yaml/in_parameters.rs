@@ -24,9 +24,13 @@ pub fn build(yaml_writer: &mut YamlWriter, action_description: &HttpActionDescri
     if let Some(non_body_params) = action_description.input_params.get_non_body_params() {
         yaml_writer.write_upper_level("parameters", |yaml_writer| {
             for param in non_body_params {
-                yaml_writer.write_upper_level_with_value("- in", "query".into(), |upper_level| {
-                    super::query_params::write_query_input_param(upper_level, param);
-                });
+                yaml_writer.write_upper_level_with_value(
+                    "- in",
+                    param.source.as_str().into(),
+                    |upper_level| {
+                        super::query_params::write_query_input_param(upper_level, param);
+                    },
+                );
             }
         });
     }

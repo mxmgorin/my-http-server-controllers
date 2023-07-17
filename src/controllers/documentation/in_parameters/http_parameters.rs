@@ -1,3 +1,4 @@
+use hyper::Method;
 use rust_extensions::lazy::LazyVec;
 
 use super::{HttpInputParameter, HttpParameterInputSource};
@@ -68,6 +69,33 @@ impl HttpParameters {
         match &param.source {
             HttpParameterInputSource::BodyRaw => Some(param),
             _ => None,
+        }
+    }
+
+    pub fn check_parameters(&self, method: &Method, route: &str) {
+        if let Some(body_params) = &self.body_params {
+            for body_param in body_params {
+                match method {
+                    &Method::GET => {
+                        if self.body_params.is_some() {
+                            panic!(
+                                "GET method cannot have body parameters. Please check param {} for route {}",
+                                body_param.field.name,
+                                route
+                            );
+                        }
+                    }
+                    &Method::DELETE => {
+                        if self.body_params.is_some() {
+                            panic!(
+                                "DELETE method cannot have body parameters. Please check param {} for route {}",
+                                body_param.field.name, route
+                            );
+                        }
+                    }
+                    _ => {}
+                }
+            }
         }
     }
 }

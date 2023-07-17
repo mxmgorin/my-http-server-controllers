@@ -59,13 +59,15 @@ impl ControllersMiddleware {
 
         let result = self.get.register(HttpAction {
             handler: action.clone(),
-            http_route,
 
             should_be_authorized: if let Some(desc) = action.get_description() {
+                desc.input_params
+                    .check_parameters(&Method::GET, http_route.route.as_str());
                 desc.should_be_authorized
             } else {
                 ShouldBeAuthorized::UseGlobal
             },
+            http_route,
             description: action,
         });
 
@@ -89,13 +91,15 @@ impl ControllersMiddleware {
 
         let result = self.post.register(HttpAction {
             handler: action.clone(),
-            http_route,
 
             should_be_authorized: if let Some(desc) = action.get_description() {
+                desc.input_params
+                    .check_parameters(&Method::POST, http_route.route.as_str());
                 desc.should_be_authorized
             } else {
                 ShouldBeAuthorized::UseGlobal
             },
+            http_route,
             description: action,
         });
 
@@ -119,13 +123,15 @@ impl ControllersMiddleware {
 
         let result = self.put.register(HttpAction {
             handler: action.clone(),
-            http_route,
 
             should_be_authorized: if let Some(desc) = action.get_description() {
+                desc.input_params
+                    .check_parameters(&Method::PUT, http_route.route.as_str());
                 desc.should_be_authorized
             } else {
                 ShouldBeAuthorized::UseGlobal
             },
+            http_route,
             description: action,
         });
 
@@ -150,13 +156,15 @@ impl ControllersMiddleware {
 
         let result = self.delete.register(HttpAction {
             handler: action.clone(),
-            http_route,
 
             should_be_authorized: if let Some(desc) = action.get_description() {
+                desc.input_params
+                    .check_parameters(&Method::DELETE, http_route.route.as_str());
                 desc.should_be_authorized
             } else {
                 ShouldBeAuthorized::UseGlobal
             },
+            http_route,
             description: action,
         });
 

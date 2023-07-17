@@ -73,28 +73,41 @@ impl HttpParameters {
     }
 
     pub fn check_parameters(&self, method: &Method, route: &str) {
+        let mut found_body_param = None;
         if let Some(body_params) = &self.body_params {
             for body_param in body_params {
-                match method {
-                    &Method::GET => {
-                        if self.body_params.is_some() {
-                            panic!(
-                                "GET method cannot have body parameters. Please check param {} for route {}",
-                                body_param.field.name,
-                                route
-                            );
-                        }
+                found_body_param = Some(body_param);
+                break;
+            }
+        }
+
+        if let Some(form_data_params) = &self.form_data_params {
+            for param in form_data_params {
+                found_body_param = Some(param);
+                break;
+            }
+        }
+
+        if let Some(found_body_param) = found_body_param {
+            match method {
+                &Method::GET => {
+                    if self.body_params.is_some() {
+                        panic!(
+                            "GET method cannot have body parameters. Please check param {} for route {}",
+                            found_body_param.field.name,
+                            route
+                        );
                     }
-                    &Method::DELETE => {
-                        if self.body_params.is_some() {
-                            panic!(
-                                "DELETE method cannot have body parameters. Please check param {} for route {}",
-                                body_param.field.name, route
-                            );
-                        }
-                    }
-                    _ => {}
                 }
+                &Method::DELETE => {
+                    if self.body_params.is_some() {
+                        panic!(
+                            "DELETE method cannot have body parameters. Please check param {} for route {}",
+                            found_body_param.field.name, route
+                        );
+                    }
+                }
+                _ => {}
             }
         }
     }

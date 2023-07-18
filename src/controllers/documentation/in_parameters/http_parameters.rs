@@ -32,7 +32,6 @@ impl HttpParameters {
             } else if param.source.is_form_data() {
                 form_data_params.add(param);
             } else {
-                println!("Added: {:?}", param);
                 non_body_params.add(param);
             }
         }

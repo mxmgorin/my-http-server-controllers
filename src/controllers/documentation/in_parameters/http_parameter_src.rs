@@ -38,6 +38,13 @@ impl HttpParameterInputSource {
         }
     }
 
+    pub fn is_header(&self) -> bool {
+        match self {
+            HttpParameterInputSource::Header => true,
+            _ => false,
+        }
+    }
+
     pub fn as_str(&self) -> &str {
         match self {
             HttpParameterInputSource::Path => "path",

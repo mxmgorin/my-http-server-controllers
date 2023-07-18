@@ -3,10 +3,19 @@ use crate::controllers::documentation::HttpActionDescription;
 use super::{in_param_as_body, in_param_as_from_data, yaml_writer::YamlWriter};
 
 pub fn build(yaml_writer: &mut YamlWriter, action_description: &HttpActionDescription) {
-    println!(
-        "action_description.input_params: {:?}",
-        action_description.input_params
-    );
+    if let Some(non_body_params) = action_description.input_params.get_non_body_params() {
+        yaml_writer.write_upper_level("parameters", |yaml_writer| {
+            for param in non_body_params {
+                yaml_writer.write_upper_level_with_value(
+                    "- in",
+                    param.source.as_str().into(),
+                    |upper_level| {
+                        super::query_params::write_query_input_param(upper_level, param);
+                    },
+                );
+            }
+        });
+    }
 
     if let Some(body_param) = action_description.input_params.is_single_body_parameter() {
         yaml_writer.write_upper_level("requestBody", |yaml_writer| {
@@ -24,20 +33,6 @@ pub fn build(yaml_writer: &mut YamlWriter, action_description: &HttpActionDescri
         });
 
         return;
-    }
-
-    if let Some(non_body_params) = action_description.input_params.get_non_body_params() {
-        yaml_writer.write_upper_level("parameters", |yaml_writer| {
-            for param in non_body_params {
-                yaml_writer.write_upper_level_with_value(
-                    "- in",
-                    param.source.as_str().into(),
-                    |upper_level| {
-                        super::query_params::write_query_input_param(upper_level, param);
-                    },
-                );
-            }
-        });
     }
 
     if let Some(body_params) = action_description.input_params.get_body_params() {

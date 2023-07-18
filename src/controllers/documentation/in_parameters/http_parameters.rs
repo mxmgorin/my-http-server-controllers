@@ -27,6 +27,7 @@ impl HttpParameters {
         let mut form_data_params = LazyVec::new();
 
         for param in params {
+            println!("Param: {:?}", param);
             if param.source.is_body() {
                 body_params.add(param);
             } else if param.source.is_form_data() {

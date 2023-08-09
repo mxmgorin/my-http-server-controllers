@@ -82,6 +82,7 @@ fn write_body_object_type(yaml_writer: &mut YamlWriter, object: &HttpObjectStruc
 fn write_enum(yaml_writer: &mut YamlWriter, enum_data: &HttpEnumStructure) {
     super::object::write_reference_to_object(yaml_writer, enum_data);
     /*
+
     match &enum_data.enum_type {
         crate::controllers::documentation::EnumType::Integer => {
             super::object::write_reference_to_object(yaml_writer, enum_data);

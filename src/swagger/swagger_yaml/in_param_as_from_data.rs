@@ -80,14 +80,18 @@ fn write_body_object_type(yaml_writer: &mut YamlWriter, object: &HttpObjectStruc
 }
 
 fn write_enum(yaml_writer: &mut YamlWriter, enum_data: &HttpEnumStructure) {
+    super::object::write_reference_to_object(yaml_writer, enum_data);
+    /*
     match &enum_data.enum_type {
         crate::controllers::documentation::EnumType::Integer => {
-            yaml_writer.write("type", "integer");
+            super::object::write_reference_to_object(yaml_writer, enum_data);
+            //yaml_writer.write("type", "integer");
         }
         crate::controllers::documentation::EnumType::String => {
             yaml_writer.write("type", "string");
         }
     }
+     */
 }
 
 fn write_body_array_type(yaml_writer: &mut YamlWriter, array_el: &ArrayElement) {

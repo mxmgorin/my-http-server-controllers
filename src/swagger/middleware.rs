@@ -50,10 +50,8 @@ impl HttpServerMiddleware for SwaggerMiddleware {
                 url: new_url,
                 permanent: false,
             };
-            return Ok(HttpOkResult {
-                write_telemetry: false,
-                output,
-            });
+
+            return output.into_ok_result(false);
         }
 
         if ctx
@@ -66,10 +64,7 @@ impl HttpServerMiddleware for SwaggerMiddleware {
                 content_type: Some(WebContentType::Html),
                 content: super::resources::INDEX_PAGE.to_vec(),
             };
-            return Ok(HttpOkResult {
-                write_telemetry: false,
-                output,
-            });
+            return output.into_ok_result(false);
         }
 
         if ctx
@@ -82,10 +77,7 @@ impl HttpServerMiddleware for SwaggerMiddleware {
                 content_type: Some(WebContentType::Css),
                 content: super::resources::SWAGGER_UI_CSS.to_vec(),
             };
-            return Ok(HttpOkResult {
-                write_telemetry: false,
-                output,
-            });
+            return output.into_ok_result(false);
         }
 
         if ctx
@@ -98,10 +90,7 @@ impl HttpServerMiddleware for SwaggerMiddleware {
                 content_type: Some(WebContentType::JavaScript),
                 content: super::resources::SWAGGER_UI_BUNDLE_JS.to_vec(),
             };
-            return Ok(HttpOkResult {
-                write_telemetry: false,
-                output,
-            });
+            return output.into_ok_result(false);
         }
 
         if ctx
@@ -114,10 +103,7 @@ impl HttpServerMiddleware for SwaggerMiddleware {
                 content_type: Some(WebContentType::JavaScript),
                 content: super::resources::SWAGGER_UI_STANDALONE_PRESET_JS.to_vec(),
             };
-            return Ok(HttpOkResult {
-                write_telemetry: false,
-                output,
-            });
+            return output.into_ok_result(false);
         }
 
         if ctx
@@ -130,10 +116,7 @@ impl HttpServerMiddleware for SwaggerMiddleware {
                 content_type: Some(WebContentType::Png),
                 content: super::resources::FAVICON_32.to_vec(),
             };
-            return Ok(HttpOkResult {
-                write_telemetry: false,
-                output,
-            });
+            return output.into_ok_result(false);
         }
 
         if ctx
@@ -146,10 +129,7 @@ impl HttpServerMiddleware for SwaggerMiddleware {
                 content_type: Some(WebContentType::Png),
                 content: super::resources::FAVICON_16.to_vec(),
             };
-            return Ok(HttpOkResult {
-                write_telemetry: false,
-                output,
-            });
+            return output.into_ok_result(false);
         }
 
         if ctx
@@ -179,12 +159,7 @@ impl HttpServerMiddleware for SwaggerMiddleware {
                 ),
             };
 
-            let result = HttpOkResult {
-                write_telemetry: false,
-                output,
-            };
-
-            return Ok(result);
+            return output.into_ok_result(false);
         }
 
         get_next.next(ctx).await

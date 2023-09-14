@@ -89,13 +89,13 @@ impl HttpRoute {
         key: &str,
     ) -> Result<InputParamValue<'s>, HttpFailResult> {
         if self.keys_amount == 0 {
-            return Err(HttpFailResult {
-                content_type: my_http_server::WebContentType::Text,
-                status_code: 400,
-                content: format!("Route {} does not contain any keys", self.route).into_bytes(),
-                write_telemetry: false,
-                write_to_log: true,
-            });
+            return Err(HttpFailResult::new(
+                my_http_server::WebContentType::Text,
+                400,
+                format!("Route {} does not contain any keys", self.route).into_bytes(),
+                false,
+                true,
+            ));
         }
 
         let mut index = 0;
@@ -117,13 +117,13 @@ impl HttpRoute {
             index += 1;
         }
 
-        return Err(HttpFailResult {
-            content_type: my_http_server::WebContentType::Text,
-            status_code: 400,
-            content: format!("Route {} does not have key {}", self.route, key).into_bytes(),
-            write_telemetry: false,
-            write_to_log: true,
-        });
+        return Err(HttpFailResult::new(
+            my_http_server::WebContentType::Text,
+            400,
+            format!("Route {} does not have key {}", self.route, key).into_bytes(),
+            false,
+            true,
+        ));
     }
 
     pub fn has_route_key(&self, key: &str) -> bool {
